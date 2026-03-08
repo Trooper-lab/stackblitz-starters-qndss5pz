@@ -2,7 +2,7 @@ export default function Stats() {
     const stats = [
         { value: "24h", label: "Response Time", desc: "We know you're busy. We act fast." },
         { value: "98%", label: "Client Retention", desc: "Proven results that keep businesses growing." },
-        { value: "3.5x", label: "Average ROI", desc: "Turn your website into an investment." },
+        { value: "5 Days", label: "Average Delivery", desc: "Your custom built website, delivered fast." },
     ];
 
     return (

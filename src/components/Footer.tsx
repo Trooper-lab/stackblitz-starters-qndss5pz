@@ -45,7 +45,7 @@ export default function Footer() {
 
                 <div style={{ paddingTop: 40, borderTop: "1px solid #112240", textAlign: "center" }}>
                     <p style={{ fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.15em", color: "#475569" }}>
-                        © 2024 AIleadsite.com. Engineered for growth.
+                        © 2026 AIleadsite.com. Engineered for growth.
                     </p>
                 </div>
             </div>
