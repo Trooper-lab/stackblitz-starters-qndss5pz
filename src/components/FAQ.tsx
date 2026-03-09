@@ -21,69 +21,36 @@ export default function FAQ() {
     const [open, setOpen] = useState<number | null>(null);
 
     return (
-        <section style={{ padding: "96px 0", backgroundColor: "#fff" }}>
-            <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 1.5rem" }}>
-                <div style={{ textAlign: "center", marginBottom: 64 }}>
-                    <h2
-                        style={{
-                            fontFamily: "Montserrat, sans-serif",
-                            fontSize: "clamp(1.8rem, 3vw, 2.5rem)",
-                            fontWeight: 800,
-                            color: "#0A192F",
-                            marginBottom: 12,
-                        }}
-                    >
+        <section className="py-24 bg-white">
+            <div className="max-w-3xl mx-auto px-6">
+                <div className="text-center mb-16">
+                    <h2 className="font-display text-3xl md:text-4xl font-extrabold text-navy mb-3">
                         You Ask, We Answer
                     </h2>
-                    <p style={{ color: "#64748b", fontWeight: 500, margin: 0 }}>Clear answers for busy entrepreneurs.</p>
+                    <p className="text-slate-500 font-medium">Clear answers for busy entrepreneurs.</p>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div className="flex flex-col gap-4">
                     {faqs.map((faq, i) => (
                         <div
                             key={i}
-                            style={{
-                                backgroundColor: "#f8fafc",
-                                borderRadius: 12,
-                                border: "1px solid #e2e8f0",
-                                overflow: "hidden",
-                            }}
+                            className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden"
                         >
                             <button
                                 onClick={() => setOpen(open === i ? null : i)}
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    width: "100%",
-                                    padding: "24px",
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    textAlign: "left",
-                                    fontWeight: 700,
-                                    color: "#0A192F",
-                                    fontSize: 16,
-                                }}
+                                className="flex items-center justify-between w-full p-6 text-left font-bold text-navy text-lg hover:bg-slate-100 transition-colors"
                             >
                                 <span>{faq.q}</span>
                                 <span
-                                    style={{
-                                        fontSize: 24,
-                                        fontWeight: 900,
-                                        transform: open === i ? "rotate(45deg)" : "rotate(0deg)",
-                                        transition: "transform 0.2s",
-                                        color: "#FF6B00",
-                                        flexShrink: 0,
-                                        marginLeft: 16,
-                                        lineHeight: 1,
-                                    }}
+                                    className={`text-2xl font-black text-accent transition-transform duration-200 shrink-0 ml-4 leading-none
+                                        ${open === i ? "rotate-45" : "rotate-0"}
+                                    `}
                                 >
                                     +
                                 </span>
                             </button>
                             {open === i && (
-                                <div style={{ padding: "0 24px 24px", color: "#475569", fontWeight: 500, lineHeight: 1.7 }}>
+                                <div className="px-6 pb-6 text-slate-600 font-medium leading-relaxed">
                                     {faq.a}
                                 </div>
                             )}

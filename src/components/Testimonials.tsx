@@ -24,76 +24,38 @@ const testimonials = [
 
 export default function Testimonials() {
     return (
-        <section id="testimonials" style={{ padding: "96px 0", backgroundColor: "#f8fafc" }}>
-            <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
-                <div style={{ textAlign: "center", maxWidth: 600, margin: "0 auto 80px" }}>
-                    <h2
-                        style={{
-                            fontFamily: "Montserrat, sans-serif",
-                            fontSize: "clamp(2rem, 4vw, 3rem)",
-                            fontWeight: 800,
-                            color: "#0A192F",
-                            textTransform: "uppercase",
-                            letterSpacing: "-0.02em",
-                            marginBottom: 16,
-                        }}
-                    >
-                        Voices of <span style={{ color: "#FF6B00" }}>Growth</span>
+        <section id="testimonials" className="py-24 bg-slate-50">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="text-center max-w-2xl mx-auto mb-20">
+                    <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold text-navy uppercase tracking-tight mb-4">
+                        Voices of <span className="text-accent">Growth</span>
                     </h2>
-                    <p style={{ fontSize: 18, color: "#475569", fontWeight: 500, lineHeight: 1.7, margin: 0 }}>
+                    <p className="text-lg text-slate-600 font-medium leading-relaxed">
                         Hear from real owners who stopped &ldquo;just having a website&rdquo; and started generating revenue.
                     </p>
                 </div>
 
-                <div className="testimonials-grid">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {testimonials.map((t) => (
                         <div
                             key={t.name}
-                            style={{
-                                backgroundColor: "#fff",
-                                padding: 40,
-                                borderRadius: 16,
-                                boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
-                                borderBottom: "4px solid #FF6B00",
-                            }}
+                            className="bg-white p-10 rounded-2xl shadow-lg border-b-4 border-accent"
                         >
-                            <div style={{ display: "flex", gap: 4, marginBottom: 24 }}>
+                            <div className="flex gap-1 mb-6">
                                 {[...Array(5)].map((_, i) => (
-                                    <span key={i} style={{ color: "#FF6B00", fontSize: 20 }}>★</span>
+                                    <span key={i} className="text-accent text-xl">★</span>
                                 ))}
                             </div>
-                            <p
-                                style={{
-                                    fontWeight: 700,
-                                    fontSize: 18,
-                                    color: "#0A192F",
-                                    lineHeight: 1.7,
-                                    marginBottom: 32,
-                                }}
-                            >
+                            <p className="font-bold text-lg text-navy leading-relaxed mb-8">
                                 {t.quote}
                             </p>
-                            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                                <div
-                                    style={{
-                                        width: 48,
-                                        height: 48,
-                                        borderRadius: "50%",
-                                        backgroundColor: "#0A192F",
-                                        color: "#fff",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontWeight: 900,
-                                        fontSize: 14,
-                                        flexShrink: 0,
-                                    }}
-                                >
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-navy text-white flex items-center justify-center font-black text-sm shrink-0">
                                     {t.initials}
                                 </div>
                                 <div>
-                                    <p style={{ fontWeight: 800, color: "#0A192F", margin: "0 0 4px" }}>{t.name}</p>
-                                    <p style={{ fontSize: 12, color: "#64748b", fontWeight: 700, textTransform: "uppercase", margin: 0 }}>
+                                    <p className="font-extrabold text-navy mb-1">{t.name}</p>
+                                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
                                         {t.role}
                                     </p>
                                 </div>
@@ -102,17 +64,6 @@ export default function Testimonials() {
                     ))}
                 </div>
             </div>
-
-            <style>{`
-        .testimonials-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 32px;
-        }
-        @media (max-width: 1024px) {
-          .testimonials-grid { grid-template-columns: 1fr; }
-        }
-      `}</style>
         </section>
     );
 }

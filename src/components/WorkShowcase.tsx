@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useLayoutEffect } from "react";
-import gsap from "gsap";
+import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 if (typeof window !== "undefined") {
@@ -33,152 +33,132 @@ const projects = [
         image: "/project_showcase_3.png",
         accent: "#10b981",
     },
+    {
+        title: "CloudSync Pro",
+        category: "SaaS / Tech",
+        result: "+240% Speed",
+        metrics: "System performance boost",
+        image: "/project_showcase_4.png",
+        accent: "#8b5cf6",
+    },
+    {
+        title: "Urban Eat",
+        category: "Food / Delivery",
+        result: "15k+ Orders",
+        metrics: "Monthly active volume",
+        image: "/project_showcase_5.png",
+        accent: "#f43f5e",
+    },
+    {
+        title: "Secure Vault",
+        category: "Fintech / Security",
+        result: "Bank Grade",
+        metrics: "Zero-breach encryption",
+        image: "/project_showcase_6.png",
+        accent: "#64748b",
+    },
 ];
 
 export default function WorkShowcase() {
     const containerRef = useRef<HTMLDivElement>(null);
-    const titleRef = useRef<HTMLHeadingElement>(null);
-    const gridRef = useRef<HTMLDivElement>(null);
+    const marqueeRef = useRef<HTMLDivElement>(null);
+    const timeline = useRef<gsap.core.Timeline | null>(null);
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
-            // Header animation
-            gsap.from(titleRef.current, {
-                y: 50,
-                opacity: 0,
-                duration: 1,
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: titleRef.current,
-                    start: "top 90%",
-                }
-            });
+            const marquee = marqueeRef.current;
+            if (!marquee) return;
 
-            // Grid cards animation
-            const cards = gridRef.current?.children;
-            if (cards) {
-                gsap.from(cards, {
-                    y: 100,
-                    opacity: 0,
-                    duration: 1,
-                    stagger: 0.2,
-                    ease: "power4.out",
-                    scrollTrigger: {
-                        trigger: gridRef.current,
-                        start: "top 85%",
+            // Simple infinite marquee effect
+            // We use two sets of project cards to ensure seamless loop
+            const totalWidth = marquee.scrollWidth / 2;
+
+            timeline.current = gsap.timeline({
+                repeat: -1,
+                defaults: { ease: "none" }
+            })
+                .to(marquee, {
+                    x: -totalWidth,
+                    duration: 40,
+                    onReverseComplete: () => {
+                        gsap.set(marquee, { x: 0 });
                     }
                 });
-            }
+
+            // Re-sync position to handle container width correctly
+            gsap.set(marquee, { x: 0 });
+
         }, containerRef);
 
         return () => ctx.revert();
     }, []);
 
+    const handleMouseEnter = () => timeline.current?.pause();
+    const handleMouseLeave = () => timeline.current?.play();
+
+    // Double the items for seamless loop
+    const displayProjects = [...projects, ...projects];
+
     return (
-        <section id="work" ref={containerRef} style={{ padding: "120px 0", backgroundColor: "#0A192F", color: "#fff", overflow: "hidden" }}>
-            <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
-                <div style={{ marginBottom: 80, textAlign: "center" }}>
-                    <h2
-                        ref={titleRef}
-                        style={{
-                            fontSize: "clamp(2.5rem, 5vw, 4rem)",
-                            fontFamily: "Montserrat, sans-serif",
-                            fontWeight: 800,
-                            lineHeight: 1.1,
-                            marginBottom: 24,
-                        }}
-                    >
-                        Real Work. <br />
-                        <span style={{ color: "#FF6B00" }}>Extraordinary Results.</span>
+        <section id="work" ref={containerRef} className="py-24 bg-navy text-white overflow-hidden">
+            <div className="max-w-7xl mx-auto px-6 mb-16">
+                <div className="text-center">
+                    <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold leading-[1.1] mb-6">
+                        Real Work. <span className="text-accent">Extraordinary Results.</span>
                     </h2>
-                    <p style={{ fontSize: 20, color: "#94a3b8", maxWidth: 700, margin: "0 auto", fontWeight: 500 }}>
-                        We don't just build websites. We build growth engines that consistently outperform the competition.
+                    <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium">
+                        Explore our latest high-performance builds. Hover to pause and inspect the results.
                     </p>
                 </div>
+            </div>
 
+            <div
+                className="relative flex cursor-grab active:cursor-grabbing"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
                 <div
-                    ref={gridRef}
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
-                        gap: 40
-                    }}
+                    ref={marqueeRef}
+                    className="flex gap-8 px-4"
+                    style={{ width: "fit-content" }}
                 >
-                    {projects.map((project, idx) => (
+                    {displayProjects.map((project, idx) => (
                         <div
-                            key={idx}
-                            className="group relative"
-                            style={{
-                                borderRadius: 24,
-                                overflow: "hidden",
-                                backgroundColor: "#112240",
-                                cursor: "pointer",
-                                transition: "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)",
-                            }}
-                            onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.transform = "translateY(-12px) scale(1.02)";
-                                const img = (e.currentTarget as HTMLElement).querySelector("img");
-                                if (img) img.style.transform = "scale(1.1)";
-                            }}
-                            onMouseLeave={(e) => {
-                                (e.currentTarget as HTMLElement).style.transform = "translateY(0) scale(1)";
-                                const img = (e.currentTarget as HTMLElement).querySelector("img");
-                                if (img) img.style.transform = "scale(1)";
-                            }}
+                            key={`${project.title}-${idx}`}
+                            className="w-[350px] md:w-[450px] flex-shrink-0 group relative rounded-[24px] overflow-hidden bg-[#112240] transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5)]"
                         >
-                            <div style={{ position: "relative", height: 400, overflow: "hidden" }}>
+                            <div className="relative h-[300px] md:h-[350px] overflow-hidden">
                                 <img
                                     src={project.image}
                                     alt={project.title}
-                                    style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                        transition: "transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)",
-                                    }}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
-                                <div style={{
-                                    position: "absolute",
-                                    inset: 0,
-                                    background: "linear-gradient(to top, #0A192F 0%, transparent 60%)",
-                                    opacity: 0.8
-                                }} />
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F] to-transparent opacity-80" />
 
-                                <div style={{
-                                    position: "absolute",
-                                    top: 24,
-                                    right: 24,
-                                    backgroundColor: project.accent,
-                                    padding: "8px 16px",
-                                    borderRadius: 999,
-                                    fontSize: 12,
-                                    fontWeight: 800,
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.05em"
-                                }}>
+                                <div
+                                    className="absolute top-6 right-6 px-4 py-2 rounded-full text-[10px] md:text-[12px] font-extrabold uppercase tracking-wider text-white"
+                                    style={{ backgroundColor: project.accent }}
+                                >
                                     {project.category}
                                 </div>
                             </div>
 
-                            <div style={{ padding: 40 }}>
-                                <div style={{ marginBottom: 32 }}>
-                                    <h3 style={{ fontFamily: "Montserrat, sans-serif", fontSize: 24, fontWeight: 800, marginBottom: 8 }}>
+                            <div className="p-8 md:p-10">
+                                <div className="mb-6">
+                                    <h3 className="font-display text-xl md:text-2xl font-extrabold mb-2 text-white">
                                         {project.title}
                                     </h3>
-                                    <div style={{ height: 2, width: 40, backgroundColor: project.accent }} />
+                                    <div className="h-0.5 w-10" style={{ backgroundColor: project.accent }} />
                                 </div>
 
-                                <div>
-                                    <div style={{
-                                        fontSize: 48,
-                                        fontWeight: 900,
-                                        color: project.accent,
-                                        fontFamily: "Montserrat, sans-serif",
-                                        lineHeight: 1
-                                    }}>
+                                <div className="mt-auto">
+                                    <div
+                                        className="text-4xl md:text-5xl font-black font-display leading-none"
+                                        style={{ color: project.accent }}
+                                    >
                                         {project.result}
                                     </div>
-                                    <div style={{ fontSize: 16, color: "#94a3b8", fontWeight: 600, marginTop: 4 }}>
+                                    <div className="text-sm md:text-base text-slate-400 font-semibold mt-1">
                                         {project.metrics}
                                     </div>
                                 </div>
@@ -187,12 +167,6 @@ export default function WorkShowcase() {
                     ))}
                 </div>
             </div>
-
-            <style jsx>{`
-                .group:hover {
-                    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.5);
-                }
-            `}</style>
         </section>
     );
 }

@@ -11,54 +11,19 @@ const stack = [
 
 export default function TechStack() {
     return (
-        <section
-            style={{
-                padding: "64px 0",
-                backgroundColor: "#0A192F",
-                color: "#fff",
-                overflow: "hidden",
-            }}
-        >
-            <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
-                <p
-                    style={{
-                        textAlign: "center",
-                        fontSize: 11,
-                        fontWeight: 900,
-                        color: "#FF6B00",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.3em",
-                        marginBottom: 48,
-                    }}
-                >
+        <section className="py-16 bg-navy text-white overflow-hidden">
+            <div className="max-w-7xl mx-auto px-6">
+                <p className="text-center text-[11px] font-black text-accent uppercase tracking-[0.3em] mb-12">
                     The Engine Behind Your Success
                 </p>
-                <div
-                    style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: 40,
-                        opacity: 0.7,
-                    }}
-                >
+                <div className="flex flex-wrap justify-center items-center gap-10 opacity-70">
                     {stack.map(({ icon, name }) => (
                         <div
                             key={name}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 12,
-                                filter: "grayscale(1)",
-                                transition: "filter 0.3s",
-                                cursor: "default",
-                            }}
-                            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.filter = "grayscale(0)")}
-                            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.filter = "grayscale(1)")}
+                            className="flex items-center gap-3 grayscale transition-all duration-300 hover:grayscale-0 cursor-default"
                         >
-                            <span style={{ fontSize: 28 }}>{icon}</span>
-                            <span style={{ fontWeight: 800, fontSize: 18 }}>{name}</span>
+                            <span className="text-3xl">{icon}</span>
+                            <span className="font-extrabold text-lg">{name}</span>
                         </div>
                     ))}
                 </div>

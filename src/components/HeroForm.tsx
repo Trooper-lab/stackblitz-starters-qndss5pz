@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import gsap from "gsap";
+import { Check } from "lucide-react";
 
 const steps = [
     {
@@ -87,38 +88,15 @@ export default function HeroForm() {
         return (
             <div
                 ref={formRef}
-                style={{
-                    backgroundColor: "rgba(17, 34, 64, 0.8)",
-                    backdropFilter: "blur(12px)",
-                    padding: 48,
-                    borderRadius: 24,
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    textAlign: "center",
-                    minHeight: 400,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    boxShadow: "0 40px 80px rgba(0,0,0,0.5)",
-                }}
+                className="relative flex min-h-[400px] flex-col items-center justify-center rounded-3xl border border-white/10 bg-navy-light/80 p-8 md:p-12 text-center shadow-[0_40px_80px_rgba(0,0,0,0.5)] backdrop-blur-xl"
             >
-                <div style={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: "50%",
-                    backgroundColor: "#FF6B00",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 24,
-                    fontSize: 40
-                }}>
-                    ✓
+                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary text-white">
+                    <Check className="h-10 w-10" />
                 </div>
-                <h3 style={{ fontSize: 28, fontFamily: "Montserrat, sans-serif", fontWeight: 800, marginBottom: 16 }}>
+                <h3 className="mb-4 font-display text-2xl md:text-3xl font-extrabold text-white">
                     Audit Requested!
                 </h3>
-                <p style={{ color: "#94a3b8", lineHeight: 1.6, maxWidth: 300 }}>
+                <p className="mx-auto max-w-[300px] leading-relaxed text-slate-400">
                     Our growth strategist will review your goals and reach out within 24 hours.
                 </p>
             </div>
@@ -128,135 +106,75 @@ export default function HeroForm() {
     return (
         <div
             ref={formRef}
-            style={{
-                backgroundColor: "rgba(17, 34, 64, 0.8)",
-                backdropFilter: "blur(12px)",
-                padding: 40,
-                borderRadius: 24,
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                minHeight: 450,
-                display: "flex",
-                flexDirection: "column",
-                boxShadow: "0 40px 80px rgba(0,0,0,0.5)",
-                position: "relative",
-            }}
+            className="relative flex min-h-[450px] flex-col rounded-3xl border border-white/10 bg-navy-light/80 p-6 md:p-10 shadow-[0_40px_80px_rgba(0,0,0,0.5)] backdrop-blur-xl"
         >
             {/* Progress Bar */}
-            <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 4, backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "24px 24px 0 0", overflow: "hidden" }}>
-                <div style={{
-                    width: `${((step + 1) / steps.length) * 100}%`,
-                    height: "100%",
-                    backgroundColor: "#FF6B00",
-                    transition: "width 0.4s ease"
-                }} />
+            <div className="absolute left-0 top-0 h-1 w-full overflow-hidden rounded-t-3xl bg-white/5">
+                <div
+                    className="h-full bg-primary transition-all duration-300 ease-out"
+                    style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                />
             </div>
 
-            <div ref={contentRef} style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-                <span style={{ fontSize: 12, fontWeight: 900, color: "#FF6B00", textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: 12 }}>
-                    Step {step + 1} of 3
+            <div ref={contentRef} className="flex flex-grow flex-col">
+                <span className="mb-3 text-[10px] md:text-xs font-black uppercase tracking-[0.15em] text-primary">
+                    Step {step + 1} of {steps.length}
                 </span>
-                <h3 style={{ fontSize: 24, fontFamily: "Montserrat, sans-serif", fontWeight: 800, marginBottom: 32, lineHeight: 1.3 }}>
+                <h3 className="mb-8 font-display text-xl md:text-2xl font-extrabold leading-tight text-white">
                     {steps[step].title}
                 </h3>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: 12, flexGrow: 1 }}>
+                <div className="flex flex-grow flex-col gap-3">
                     {steps[step].options ? (
-                        steps[step].options?.map((opt) => (
-                            <button
-                                key={opt}
-                                onClick={() => {
-                                    setFormData({ ...formData, [steps[step].id]: opt });
-                                    setTimeout(nextStep, 200);
-                                }}
-                                style={{
-                                    padding: "16px 20px",
-                                    borderRadius: 12,
-                                    border: formData[steps[step].id as keyof typeof formData] === opt
-                                        ? "2px solid #FF6B00"
-                                        : "2px solid rgba(255,255,255,0.1)",
-                                    backgroundColor: formData[steps[step].id as keyof typeof formData] === opt
-                                        ? "rgba(255,107,0,0.1)"
-                                        : "rgba(255,255,255,0.03)",
-                                    color: "#fff",
-                                    textAlign: "left",
-                                    fontSize: 15,
-                                    fontWeight: 600,
-                                    cursor: "pointer",
-                                    transition: "all 0.2s",
-                                }}
-                                onMouseEnter={(e) => {
-                                    if (formData[steps[step].id as keyof typeof formData] !== opt) {
-                                        e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.08)";
-                                        e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    if (formData[steps[step].id as keyof typeof formData] !== opt) {
-                                        e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)";
-                                        e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
-                                    }
-                                }}
-                            >
-                                {opt}
-                            </button>
-                        ))
+                        steps[step].options?.map((opt) => {
+                            const isSelected = formData[steps[step].id as keyof typeof formData] === opt;
+                            return (
+                                <button
+                                    key={opt}
+                                    onClick={() => {
+                                        setFormData({ ...formData, [steps[step].id]: opt });
+                                        setTimeout(nextStep, 200);
+                                    }}
+                                    className={`w-full rounded-xl border-2 px-5 py-4 text-left text-sm md:text-[15px] font-semibold transition-all duration-200 ${isSelected
+                                        ? "border-primary bg-primary/10 text-white"
+                                        : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10 hover:text-white"
+                                        }`}
+                                >
+                                    {opt}
+                                </button>
+                            );
+                        })
                     ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                                <label style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8" }}>Full Name</label>
+                        <div className="flex flex-col gap-5">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs md:text-[13px] font-bold text-slate-400">Full Name</label>
                                 <input
                                     type="text"
                                     placeholder="John Doe"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    style={{
-                                        padding: "16px",
-                                        borderRadius: 12,
-                                        backgroundColor: "rgba(255,255,255,0.05)",
-                                        border: "1px solid rgba(255,255,255,0.1)",
-                                        color: "#fff",
-                                        outline: "none",
-                                        fontSize: 15,
-                                    }}
+                                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 md:py-4 text-sm md:text-[15px] text-white outline-none transition-colors focus:border-primary focus:bg-white/10"
                                 />
                             </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                                <label style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8" }}>Work Email</label>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs md:text-[13px] font-bold text-slate-400">Work Email</label>
                                 <input
                                     type="email"
                                     placeholder="john@company.com"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    style={{
-                                        padding: "16px",
-                                        borderRadius: 12,
-                                        backgroundColor: "rgba(255,255,255,0.05)",
-                                        border: "1px solid rgba(255,255,255,0.1)",
-                                        color: "#fff",
-                                        outline: "none",
-                                        fontSize: 15,
-                                    }}
+                                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 md:py-4 text-sm md:text-[15px] text-white outline-none transition-colors focus:border-primary focus:bg-white/10"
                                 />
                             </div>
                         </div>
                     )}
                 </div>
 
-                <div style={{ display: "flex", gap: 16, marginTop: 40 }}>
+                <div className="mt-8 md:mt-10 flex gap-4">
                     {step > 0 && (
                         <button
                             onClick={prevStep}
-                            style={{
-                                flex: 1,
-                                padding: "16px 0",
-                                borderRadius: 12,
-                                border: "1px solid rgba(255,255,255,0.2)",
-                                backgroundColor: "transparent",
-                                color: "#fff",
-                                fontWeight: 700,
-                                cursor: "pointer",
-                                transition: "all 0.2s",
-                            }}
+                            className="flex-1 rounded-xl border border-white/20 bg-transparent py-4 font-bold text-white transition-colors hover:bg-white/5"
                         >
                             Back
                         </button>
@@ -265,19 +183,10 @@ export default function HeroForm() {
                         <button
                             onClick={nextStep}
                             disabled={!formData.name || !formData.email}
-                            style={{
-                                flex: 2,
-                                padding: "16px 0",
-                                borderRadius: 12,
-                                backgroundColor: formData.name && formData.email ? "#FF6B00" : "rgba(255,107,0,0.5)",
-                                color: "#fff",
-                                fontWeight: 900,
-                                textTransform: "uppercase",
-                                letterSpacing: "0.05em",
-                                border: "none",
-                                cursor: formData.name && formData.email ? "pointer" : "not-allowed",
-                                transition: "all 0.2s",
-                            }}
+                            className={`flex-[2] rounded-xl py-4 font-black uppercase tracking-[0.05em] text-white transition-all ${formData.name && formData.email
+                                ? "cursor-pointer bg-primary hover:bg-accent"
+                                : "cursor-not-allowed bg-primary/50"
+                                }`}
                         >
                             Finish Audit Request
                         </button>

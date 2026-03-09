@@ -2,28 +2,20 @@
 
 export default function CTA() {
     return (
-        <section style={{ padding: "96px 0", backgroundColor: "#fff" }}>
-            <div style={{ maxWidth: 1024, margin: "0 auto", padding: "0 1.5rem" }}>
-                <div style={{ position: "relative", borderRadius: 48, backgroundColor: "#0A192F", padding: "80px 48px", textAlign: "center", color: "#fff", overflow: "hidden" }}>
+        <section className="py-24 bg-white">
+            <div className="max-w-5xl mx-auto px-6">
+                <div className="relative rounded-[3rem] bg-navy py-20 px-12 text-center text-white overflow-hidden shadow-2xl">
                     {/* Radial gradient overlay */}
-                    <div style={{ position: "absolute", inset: 0, opacity: 0.2, pointerEvents: "none", background: "radial-gradient(circle at center, #FF6B00 0%, transparent 70%)" }} />
+                    <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent to-transparent" />
 
-                    <div style={{ position: "relative", zIndex: 10 }}>
-                        <h2 style={{ fontSize: "clamp(2rem, 6vw, 4rem)", fontWeight: 800, marginBottom: 32, fontFamily: "Montserrat, sans-serif", letterSpacing: "-0.04em" }}>
-                            Ready to Win Your <span style={{ color: "#FF6B00", fontStyle: "italic" }}>Market</span>?
+                    <div className="relative z-10">
+                        <h2 className="text-4xl md:text-5xl lg:text-7xl font-display font-extrabold mb-8 tracking-tighter leading-tight">
+                            Ready to Win Your <span className="text-accent italic">Market</span>?
                         </h2>
-                        <p style={{ fontSize: 20, color: "#cbd5e1", maxWidth: 640, margin: "0 auto 48px", lineHeight: 1.6, fontWeight: 500 }}>
+                        <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
                             Stop letting competitors steal your traffic. Build a high-performance website that converts visitors into profit today.
                         </p>
-                        <button style={{ backgroundColor: "#fff", color: "#0A192F", border: "none", borderRadius: 16, padding: "20px 48px", fontSize: 20, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", cursor: "pointer", transition: "all 0.2s" }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = "#FF6B00";
-                                e.currentTarget.style.color = "#fff";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = "#fff";
-                                e.currentTarget.style.color = "#0A192F";
-                            }}>
+                        <button className="bg-white text-navy px-12 py-5 rounded-2xl text-lg font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all duration-300 shadow-xl">
                             Start Your Project
                         </button>
                     </div>

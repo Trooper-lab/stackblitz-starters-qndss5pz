@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -11,91 +13,81 @@ export default function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const navLinks = [
+        { name: "Growth Solutions", href: "#pricing" },
+        { name: "Success Stories", href: "#work" },
+        { name: "Pricing", href: "#pricing" },
+    ];
+
     return (
-        <header
-            style={{
-                position: "sticky",
-                top: 0,
-                zIndex: 50,
-                width: "100%",
-                borderBottom: "1px solid #e2e8f0",
-                backgroundColor: "rgba(255,255,255,0.97)",
-                backdropFilter: "blur(12px)",
-                boxShadow: scrolled ? "0 2px 20px rgba(0,0,0,0.06)" : "none",
-                transition: "box-shadow 0.3s",
-            }}
-        >
-            <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
-                <div style={{ display: "flex", height: 80, alignItems: "center", justifyContent: "space-between" }}>
+        <header className="fixed top-0 z-50 w-full pt-4 px-4 sm:px-6 lg:px-8 pointer-events-none">
+            <div
+                className={`mx-auto max-w-7xl transition-all duration-500 pointer-events-auto
+                    ${scrolled
+                        ? "bg-white/80 backdrop-blur-lg shadow-xl shadow-navy/5 border border-white/40 py-3 px-6 rounded-2xl"
+                        : "bg-transparent py-4 px-8"
+                    }`}
+            >
+                <div className="flex items-center justify-between">
                     {/* Logo */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ fontSize: 36, color: "#FF6B00" }}>🚀</span>
-                        <span
-                            style={{
-                                fontSize: 22,
-                                fontFamily: "Montserrat, sans-serif",
-                                fontWeight: 800,
-                                letterSpacing: "-0.04em",
-                                color: "#0A192F",
-                                textTransform: "uppercase",
-                            }}
-                        >
-                            AIleadsite<span style={{ color: "#FF6B00" }}>.</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-3xl">🚀</span>
+                        <span className={`font-display text-xl lg:text-2xl font-black tracking-tighter uppercase transition-colors duration-500
+                            ${scrolled ? "text-navy" : "text-white"}`}>
+                            AIleadsite<span className="text-accent">.</span>
                         </span>
                     </div>
 
                     {/* Desktop Nav */}
-                    <nav style={{ display: "flex", alignItems: "center", gap: 40 }} className="hidden-mobile">
-                        {["Growth Solutions", "Success Stories", "Pricing"].map((item) => (
+                    <div className="hidden lg:flex items-center gap-8">
+                        {navLinks.map((link) => (
                             <a
-                                key={item}
-                                href="#"
-                                style={{
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.08em",
-                                    color: "#0A192F",
-                                    textDecoration: "none",
-                                    transition: "color 0.2s",
-                                }}
-                                onMouseEnter={(e) => (e.currentTarget.style.color = "#FF6B00")}
-                                onMouseLeave={(e) => (e.currentTarget.style.color = "#0A192F")}
+                                key={link.name}
+                                href={link.href}
+                                className={`text-[11px] font-black uppercase tracking-widest transition-colors duration-500
+                                    ${scrolled ? "text-navy/70 hover:text-accent" : "text-white/80 hover:text-white"}`}
                             >
-                                {item}
+                                {link.name}
                             </a>
                         ))}
-                    </nav>
+                        <button className={`px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 shadow-lg
+                            ${scrolled
+                                ? "bg-navy text-white hover:bg-navy-light shadow-navy/20"
+                                : "bg-white text-navy hover:bg-slate-100 shadow-white/10"
+                            }`}>
+                            Get My Free Audit
+                        </button>
+                    </div>
 
-                    {/* CTA Button */}
-                    <a
-                        href="#contact"
-                        style={{
-                            backgroundColor: "#0A192F",
-                            color: "#fff",
-                            padding: "12px 24px",
-                            borderRadius: 8,
-                            fontSize: 13,
-                            fontWeight: 800,
-                            textTransform: "uppercase",
-                            letterSpacing: "0.08em",
-                            textDecoration: "none",
-                            transition: "background 0.2s",
-                            display: "inline-block",
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#112240")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#0A192F")}
+                    {/* Mobile Menu Button */}
+                    <button
+                        className={`lg:hidden p-2 rounded-lg transition-colors duration-500
+                            ${scrolled ? "text-navy bg-white/50 hover:bg-white/80" : "text-white bg-white/10 hover:bg-white/20"}`}
+                        onClick={() => setIsOpen(!isOpen)}
                     >
-                        Get My Free Audit
-                    </a>
+                        {isOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
                 </div>
-            </div>
 
-            <style>{`
-        @media (max-width: 768px) {
-          .hidden-mobile { display: none !important; }
-        }
-      `}</style>
+                {/* Mobile Menu Overlay */}
+                {isOpen && (
+                    <div className="lg:hidden mt-4 bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl p-6 flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
+                        {navLinks.map((link) => (
+                            <a
+                                key={link.name}
+                                href={link.href}
+                                className="text-sm font-black uppercase tracking-widest text-navy p-4 hover:bg-slate-50 rounded-xl transition-colors"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                {link.name}
+                            </a>
+                        ))}
+                        <button className="bg-accent text-white py-5 rounded-xl text-sm font-black uppercase tracking-widest shadow-xl shadow-accent/20">
+                            Get My Free Audit
+                        </button>
+                    </div>
+                )}
+            </div>
         </header>
     );
 }

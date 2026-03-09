@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useLayoutEffect } from "react";
-import gsap from "gsap";
+import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 if (typeof window !== "undefined") {
@@ -94,14 +94,17 @@ export default function Pricing() {
             const cards = gridRef.current?.children;
             if (!cards || cards.length < 3) return;
 
-            if (window.innerWidth > 768) {
+            // Media query for desktop animations
+            const mm = gsap.matchMedia();
+
+            mm.add("(min-width: 1024px)", () => {
                 const cardLeft = cards[0];
                 const cardMiddle = cards[1];
                 const cardRight = cards[2];
 
                 gsap.set(cardLeft, { x: "100%", opacity: 0, zIndex: 1 });
                 gsap.set(cardRight, { x: "-100%", opacity: 0, zIndex: 1 });
-                gsap.set(cardMiddle, { zIndex: 10, scale: 1.05 });
+                gsap.set(cardMiddle, { zIndex: 10, scale: 1.05, opacity: 1 });
 
                 gsap.to([cardLeft, cardRight], {
                     x: 0,
@@ -114,69 +117,35 @@ export default function Pricing() {
                         toggleActions: "play none none reverse",
                     },
                 });
-            }
+            });
         }, containerRef);
 
         return () => ctx.revert();
     }, [mode]);
 
     return (
-        <section id="pricing" ref={containerRef} style={{ padding: "96px 0", overflow: "hidden" }}>
-            <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
-                <div
-                    style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        justifyContent: "space-between",
-                        alignItems: "flex-end",
-                        marginBottom: 64,
-                        gap: 24,
-                    }}
-                >
-                    <div style={{ maxWidth: 540 }}>
-                        <h2
-                            style={{
-                                fontSize: "clamp(2rem, 4vw, 3rem)",
-                                fontFamily: "Montserrat, sans-serif",
-                                fontWeight: 800,
-                                color: "#0A192F",
-                                marginBottom: 16,
-                                lineHeight: 1.2,
-                            }}
-                        >
+        <section id="pricing" ref={containerRef} className="py-24 overflow-hidden">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="flex flex-wrap justify-between items-end mb-16 gap-6">
+                    <div className="max-w-xl">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-navy mb-4 leading-tight">
                             Investment Options Built For{" "}
-                            <span style={{ color: "#FF6B00" }}>Scale</span>.
+                            <span className="text-accent">Scale</span>.
                         </h2>
-                        <p style={{ fontSize: 18, color: "#475569", fontWeight: 500, lineHeight: 1.7, margin: 0 }}>
+                        <p className="text-lg text-slate-600 font-medium leading-relaxed">
                             No fluff, no technical jargon. Just clear pricing for business owners who want to win online.
                         </p>
                     </div>
 
-                    <div
-                        style={{
-                            display: "flex",
-                            gap: 4,
-                            backgroundColor: "#f1f5f9",
-                            padding: 4,
-                            borderRadius: 8,
-                        }}
-                    >
+                    <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
                         {(["project", "monthly"] as const).map((m) => (
                             <button
                                 key={m}
                                 onClick={() => setMode(m)}
-                                style={{
-                                    padding: "8px 24px",
-                                    borderRadius: 6,
-                                    fontSize: 14,
-                                    fontWeight: 700,
-                                    border: "none",
-                                    cursor: "pointer",
-                                    transition: "all 0.2s",
-                                    backgroundColor: mode === m ? "#fff" : "transparent",
-                                    color: mode === m ? "#0A192F" : "#64748b",
-                                    boxShadow: mode === m ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
-                                }}
+                                className={`px-6 py-2 rounded-md text-sm font-bold transition-all ${mode === m
+                                    ? "bg-white text-navy shadow-sm"
+                                    : "bg-transparent text-slate-500 hover:text-navy"
+                                    }`}
                             >
                                 {m === "project" ? "One-Time Projects" : "Monthly Partners"}
                             </button>
@@ -184,105 +153,44 @@ export default function Pricing() {
                     </div>
                 </div>
 
-                <div className="pricing-grid" ref={gridRef}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center" ref={gridRef}>
                     {data.map((tier) => (
                         <div
                             key={tier.name}
-                            className="pricing-card"
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                padding: 40,
-                                borderRadius: 16,
-                                border: tier.featured ? "4px solid #FF6B00" : "2px solid #f1f5f9",
-                                backgroundColor: tier.featured ? "#fff" : "rgba(248,250,252,0.5)",
-                                position: "relative",
-                                transform: tier.featured ? "scale(1.05)" : "scale(1)",
-                                boxShadow: tier.featured ? "0 40px 80px rgba(0,0,0,0.1)" : "none",
-                                zIndex: tier.featured ? 10 : 1,
-                                transition: "border-color 0.3s, background 0.3s, transform 0.3s",
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!tier.featured) {
-                                    (e.currentTarget as HTMLElement).style.borderColor = "#FF6B00";
-                                    (e.currentTarget as HTMLElement).style.backgroundColor = "#fff";
-                                    (e.currentTarget as HTMLElement).style.transform = "translateY(-8px)";
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!tier.featured) {
-                                    (e.currentTarget as HTMLElement).style.borderColor = "#f1f5f9";
-                                    (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(248,250,252,0.5)";
-                                    (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-                                }
-                            }}
+                            className={`flex flex-col p-10 rounded-2xl transition-all duration-300 relative
+                                ${tier.featured
+                                    ? "border-4 border-accent bg-white shadow-2xl scale-105 z-10"
+                                    : "border-2 border-slate-100 bg-slate-50/50 z-1 hover:border-accent hover:bg-white hover:-translate-y-2 md:hover:scale-100 md:scale-100 scale-100"
+                                }`}
                         >
                             {tier.featured && (
-                                <div
-                                    style={{
-                                        position: "absolute",
-                                        top: -20,
-                                        left: "50%",
-                                        transform: "translateX(-50%)",
-                                        backgroundColor: "#FF6B00",
-                                        color: "#fff",
-                                        padding: "6px 24px",
-                                        borderRadius: 9999,
-                                        fontSize: 11,
-                                        fontWeight: 900,
-                                        textTransform: "uppercase",
-                                        letterSpacing: "0.15em",
-                                        boxShadow: "0 4px 12px rgba(255,107,0,0.4)",
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
+                                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-accent text-white px-6 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
                                     Our Best Value
                                 </div>
                             )}
 
-                            <div style={{ marginBottom: 40 }}>
-                                <h3
-                                    style={{
-                                        fontFamily: "Montserrat, sans-serif",
-                                        fontSize: 22,
-                                        fontWeight: 800,
-                                        marginBottom: 8,
-                                        color: "#0A192F",
-                                    }}
-                                >
+                            <div className="mb-10">
+                                <h3 className="font-display text-2xl font-extrabold mb-2 text-navy">
                                     {tier.name}
                                 </h3>
-                                <p style={{ fontSize: 14, color: "#64748b", fontWeight: 500, marginBottom: 24 }}>{tier.desc}</p>
-                                <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-                                    <span
-                                        style={{
-                                            fontFamily: "Montserrat, sans-serif",
-                                            fontSize: "clamp(2.5rem, 4vw, 3rem)",
-                                            fontWeight: 900,
-                                            color: tier.featured ? "#FF6B00" : "#0A192F",
-                                        }}
-                                    >
+                                <p className="text-sm text-slate-500 font-medium mb-6">{tier.desc}</p>
+                                <div className="flex items-baseline gap-1">
+                                    <span className={`font-display text-4xl sm:text-5xl font-black ${tier.featured ? "text-accent" : "text-navy"}`}>
                                         {tier.price}
                                     </span>
-                                    <span style={{ fontSize: 14, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" }}>
+                                    <span className="text-sm font-bold text-slate-400 uppercase">
                                         {tier.priceLabel}
                                     </span>
                                 </div>
                             </div>
 
-                            <ul style={{ flexGrow: 1, listStyle: "none", padding: 0, margin: "0 0 40px", display: "flex", flexDirection: "column", gap: 20 }}>
+                            <ul className="grow space-y-5 mb-10 list-none p-0">
                                 {tier.features.map((f: string) => (
                                     <li
                                         key={f}
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "flex-start",
-                                            gap: 12,
-                                            fontWeight: 600,
-                                            color: tier.featured ? "#0A192F" : "#475569",
-                                        }}
+                                        className={`flex items-start gap-4 font-semibold ${tier.featured ? "text-navy" : "text-slate-600"}`}
                                     >
-                                        <span style={{ color: "#FF6B00", fontSize: 20, lineHeight: 1.2, flexShrink: 0 }}>✓</span>
+                                        <span className="text-accent text-xl leading-none shrink-0 font-bold">✓</span>
                                         {f}
                                     </li>
                                 ))}
@@ -290,42 +198,11 @@ export default function Pricing() {
 
                             <a
                                 href="#contact"
-                                style={{
-                                    display: "block",
-                                    width: "100%",
-                                    padding: "16px 0",
-                                    borderRadius: 12,
-                                    textAlign: "center",
-                                    fontWeight: 900,
-                                    fontSize: 14,
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.1em",
-                                    textDecoration: "none",
-                                    cursor: "pointer",
-                                    transition: "all 0.2s",
-                                    backgroundColor: tier.featured ? "#FF6B00" : "transparent",
-                                    color: tier.featured ? "#fff" : "#0A192F",
-                                    border: tier.featured ? "none" : "2px solid #0A192F",
-                                    boxShadow: tier.featured ? "0 20px 40px rgba(255,107,0,0.3)" : "none",
-                                }}
-                                onMouseEnter={(e) => {
-                                    const el = e.currentTarget as HTMLElement;
-                                    if (tier.featured) {
-                                        el.style.backgroundColor = "#FF8533";
-                                    } else {
-                                        el.style.backgroundColor = "#0A192F";
-                                        el.style.color = "#fff";
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    const el = e.currentTarget as HTMLElement;
-                                    if (tier.featured) {
-                                        el.style.backgroundColor = "#FF6B00";
-                                    } else {
-                                        el.style.backgroundColor = "transparent";
-                                        el.style.color = "#0A192F";
-                                    }
-                                }}
+                                className={`block w-full py-4 rounded-xl text-center font-black text-sm uppercase tracking-wider transition-all duration-200
+                                    ${tier.featured
+                                        ? "bg-accent text-white shadow-xl hover:bg-orange-600"
+                                        : "border-2 border-navy text-navy hover:bg-navy hover:text-white"
+                                    }`}
                             >
                                 {tier.cta}
                             </a>
@@ -333,23 +210,6 @@ export default function Pricing() {
                     ))}
                 </div>
             </div>
-
-            <style>{`
-        .pricing-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 32px;
-          align-items: center;
-        }
-        @media (max-width: 768px) {
-          .pricing-grid {
-            grid-template-columns: 1fr;
-          }
-          .pricing-grid > div {
-            transform: scale(1) !important;
-          }
-        }
-      `}</style>
         </section>
     );
 }
