@@ -14,9 +14,9 @@ export default function Navbar() {
     }, []);
 
     const navLinks = [
-        { name: "Growth Solutions", href: "#pricing" },
-        { name: "Success Stories", href: "#work" },
-        { name: "Pricing", href: "#pricing" },
+        { name: "Groeioplossingen", href: "#pricing" },
+        { name: "Succesverhalen", href: "#work" },
+        { name: "Prijzen", href: "#pricing" },
     ];
 
     return (
@@ -55,7 +55,7 @@ export default function Navbar() {
                                 ? "bg-navy text-white hover:bg-navy-light shadow-navy/20"
                                 : "bg-white text-navy hover:bg-slate-100 shadow-white/10"
                             }`}>
-                            Get My Free Audit
+                            Krijg mijn gratis audit
                         </button>
                     </div>
 
@@ -83,7 +83,7 @@ export default function Navbar() {
                             </a>
                         ))}
                         <button className="bg-accent text-white py-5 rounded-xl text-sm font-black uppercase tracking-widest shadow-xl shadow-accent/20">
-                            Get My Free Audit
+                            Krijg mijn gratis audit
                         </button>
                     </div>
                 )}

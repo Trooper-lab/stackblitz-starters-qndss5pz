@@ -1,24 +1,24 @@
 const testimonials = [
     {
         initials: "JD",
-        name: "Jim Davidson",
-        role: "Owner, Davidson HVAC",
+        name: "Jim de Vries",
+        role: "🔧 Eigenaar, de Vries HVAC",
         quote:
-            '"My old site was just a business card. AIleadsite turned it into a 24/7 salesperson. Our phone hasn\'t stopped ringing."',
+            '"Mijn oude site was slechts een visitekaartje. AIleadsite veranderde het in een 24/7 verkoper. Onze telefoon is niet gestopt met rinkelen."',
     },
     {
         initials: "SR",
-        name: "Sarah Russo",
-        role: "Founder, Bloom & Vine",
+        name: "Sarah de Ruiter",
+        role: "💐 Oprichter, Bloom & Vine",
         quote:
-            '"They promised a site in 48 hours and delivered. The speed and professionalism is unmatched in this industry."',
+            '"Ze beloofden een site in 48 uur en hebben geleverd. De snelheid en professionaliteit is ongeëvenaard in deze branche."',
     },
     {
         initials: "MK",
-        name: "Mark Knight",
-        role: "Director, Zenith Auto",
+        name: "Mark de Ridder",
+        role: "🚗 Directeur, Zenith Auto",
         quote:
-            '"Finally, a tech company that speaks \'business\'. No confusing jargon, just clear ROI and a massive boost in leads."',
+            '"Eindelijk een techbedrijf dat \'zaken\' spreekt. Geen verwarrend jargon, gewoon duidelijke ROI en een enorme toename in leads."',
     },
 ];
 
@@ -28,10 +28,10 @@ export default function Testimonials() {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="text-center max-w-2xl mx-auto mb-20">
                     <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold text-navy uppercase tracking-tight mb-4">
-                        Voices of <span className="text-accent">Growth</span>
+                        📣 Stemmen van <span className="text-accent">Groei</span>
                     </h2>
                     <p className="text-lg text-slate-600 font-medium leading-relaxed">
-                        Hear from real owners who stopped &ldquo;just having a website&rdquo; and started generating revenue.
+                        Hoor van echte ondernemers die stopten met "gewoon een website hebben" en begonnen met het genereren van inkomsten.
                     </p>
                 </div>
 
@@ -43,7 +43,7 @@ export default function Testimonials() {
                         >
                             <div className="flex gap-1 mb-6">
                                 {[...Array(5)].map((_, i) => (
-                                    <span key={i} className="text-accent text-xl">★</span>
+                                    <span key={i} className="text-accent text-xl">⭐</span>
                                 ))}
                             </div>
                             <p className="font-bold text-lg text-navy leading-relaxed mb-8">

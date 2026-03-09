@@ -4,16 +4,16 @@ import { useState } from "react";
 
 const faqs = [
     {
-        q: "How long until I see more leads?",
-        a: "Our sites are built for conversion from day one. While SEO takes 30–90 days to fully ramp up, many clients see increased lead flow within the first 14 days of launch due to better site performance and professional design.",
+        q: "📈 Hoe lang duurt het voordat ik meer leads zie?",
+        a: "Onze sites zijn vanaf dag één gebouwd voor conversie. Hoewel het 30-90 dagen duurt voordat SEO volledig is opgestart, zien veel klanten een verhoogde leadstroom binnen de eerste 14 dagen na de lancering dankzij betere siteprestaties en een professioneel ontwerp.",
     },
     {
-        q: "Is this going to take up all my time?",
-        a: "No. We built this process for busy people. We only need two 30-minute calls: one to start and one to hand over the keys. We handle all the heavy lifting in between.",
+        q: "⏳ Gaat dit al mijn tijd in beslag nemen?",
+        a: "Nee. We hebben dit proces gebouwd voor drukke mensen. We hebben slechts twee gesprekken van 30 minuten nodig: één om te beginnen en één om de sleutels te overhandigen. Wij doen al het zware werk tussendoor.",
     },
     {
-        q: "What happens after the site is launched?",
-        a: "You own it. 100%. We offer optional monthly growth plans to handle hosting and ongoing SEO, but you are never locked in or held hostage by your website provider.",
+        q: "🚀 Wat gebeurt er nadat de site is gelanceerd?",
+        a: "Jij bent de eigenaar. 100%. We bieden optionele maandelijkse groeiplannen om hosting en doorlopende SEO af te handelen, maar je zit nooit vast aan je websiteprovider.",
     },
 ];
 
@@ -25,9 +25,9 @@ export default function FAQ() {
             <div className="max-w-3xl mx-auto px-6">
                 <div className="text-center mb-16">
                     <h2 className="font-display text-3xl md:text-4xl font-extrabold text-navy mb-3">
-                        You Ask, We Answer
+                        🤔 U vraagt, wij antwoorden
                     </h2>
-                    <p className="text-slate-500 font-medium">Clear answers for busy entrepreneurs.</p>
+                    <p className="text-slate-500 font-medium">Duidelijke antwoorden voor drukke ondernemers.</p>
                 </div>
 
                 <div className="flex flex-col gap-4">

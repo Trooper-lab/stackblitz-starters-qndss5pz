@@ -1,8 +1,8 @@
 export default function Stats() {
     const stats = [
-        { value: "24h", label: "Response Time", desc: "We know you're busy. We act fast." },
-        { value: "98%", label: "Client Retention", desc: "Proven results that keep businesses growing." },
-        { value: "5 Days", label: "Average Delivery", desc: "Your custom built website, delivered fast." },
+        { value: "⏱️ 24 uur", label: "Responstijd", desc: "We weten dat je het druk hebt. We handelen snel." },
+        { value: "🤝 98%", label: "Klantbehoud", desc: "Bewezen resultaten die bedrijven laten groeien." },
+        { value: "🚀 5 dagen", label: "Gemiddelde Levering", desc: "Jouw op maat gemaakte website, snel geleverd." },
     ];
 
     return (

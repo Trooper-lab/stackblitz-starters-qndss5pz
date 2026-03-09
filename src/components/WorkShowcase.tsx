@@ -11,49 +11,49 @@ if (typeof window !== "undefined") {
 const projects = [
     {
         title: "SolarEdge Tech",
-        category: "Industrial / B2B",
+        category: "🏭 Industrieel / B2B",
         result: "+185% Leads",
-        metrics: "In 3 months post-launch",
+        metrics: "In 3 maanden na lancering",
         image: "/project_showcase_1.png",
         accent: "#FF6B00",
     },
     {
         title: "Nova Health",
-        category: "Medical / Healthcare",
-        result: "$2.4M Revenue",
-        metrics: "Tracked from new booking system",
+        category: "🏥 Medisch / Gezondheid",
+        result: "€2.4M Omzet",
+        metrics: "Gevolgd via nieuw boekingssysteem",
         image: "/project_showcase_2.png",
         accent: "#0ea5e9",
     },
     {
         title: "Apex Logistics",
-        category: "Supply Chain",
-        result: "42% Faster",
-        metrics: "User conversion rate increase",
+        category: "🚚 Logistiek",
+        result: "42% Sneller",
+        metrics: "Toename conversieratio gebruikers",
         image: "/project_showcase_3.png",
         accent: "#10b981",
     },
     {
         title: "CloudSync Pro",
-        category: "SaaS / Tech",
-        result: "+240% Speed",
-        metrics: "System performance boost",
+        category: "💻 SaaS / Tech",
+        result: "+240% Snelheid",
+        metrics: "Boost in systeemprestaties",
         image: "/project_showcase_4.png",
         accent: "#8b5cf6",
     },
     {
-        title: "Urban Eat",
-        category: "Food / Delivery",
-        result: "15k+ Orders",
-        metrics: "Monthly active volume",
+        title: "StadsLekkers",
+        category: "🍔 Eten / Bezorging",
+        result: "15k+ Bestellingen",
+        metrics: "Maandelijks actief volume",
         image: "/project_showcase_5.png",
         accent: "#f43f5e",
     },
     {
-        title: "Secure Vault",
-        category: "Fintech / Security",
-        result: "Bank Grade",
-        metrics: "Zero-breach encryption",
+        title: "Veilige Kluis",
+        category: "🔒 Fintech / Beveiliging",
+        result: "Bankniveau",
+        metrics: "Nul-inbraak encryptie",
         image: "/project_showcase_6.png",
         accent: "#64748b",
     },
@@ -104,10 +104,10 @@ export default function WorkShowcase() {
             <div className="max-w-7xl mx-auto px-6 mb-16">
                 <div className="text-center">
                     <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold leading-[1.1] mb-6">
-                        Real Work. <span className="text-accent">Extraordinary Results.</span>
+                        Echt Werk. <span className="text-accent">Buitengewone Resultaten.</span>
                     </h2>
                     <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium">
-                        Explore our latest high-performance builds. Hover to pause and inspect the results.
+                        Ontdek onze nieuwste high-performance builds. Beweeg de muis erover om te pauzeren en de resultaten te bekijken.
                     </p>
                 </div>
             </div>

@@ -10,13 +10,13 @@ export default function CTA() {
 
                     <div className="relative z-10">
                         <h2 className="text-4xl md:text-5xl lg:text-7xl font-display font-extrabold mb-8 tracking-tighter leading-tight">
-                            Ready to Win Your <span className="text-accent italic">Market</span>?
+                            Klaar om de <span className="text-accent italic">markt</span> te veroveren?
                         </h2>
                         <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
-                            Stop letting competitors steal your traffic. Build a high-performance website that converts visitors into profit today.
+                            Laat concurrenten niet langer je bezoekers stelen. Bouw vandaag nog een krachtige website die bezoekers omzet in winst.
                         </p>
                         <button className="bg-white text-navy px-12 py-5 rounded-2xl text-lg font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all duration-300 shadow-xl">
-                            Start Your Project
+                            Start je project
                         </button>
                     </div>
                 </div>

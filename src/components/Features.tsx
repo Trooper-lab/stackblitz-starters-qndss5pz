@@ -5,21 +5,21 @@ import { motion } from "framer-motion";
 
 const features = [
     {
-        title: "5-Day Delivery",
-        description: "Fully complete, custom-designed websites delivered in just 5 working days. No excuses.",
-        icon: <Clock className="w-8 h-8 text-purple-400" />,
+        title: "⚡ Levering in 5 dagen",
+        description: "Volledig complete, op maat ontworpen websites geleverd in slechts 5 werkdagen. Geen excuses.",
+        icon: <span className="text-4xl">⏱️</span>,
         gradient: "from-purple-500/10 to-transparent",
     },
     {
-        title: "Agency Quality",
-        description: "High-end design and performance that rivals the world&apos;s top digital agencies.",
-        icon: <Rocket className="w-8 h-8 text-blue-400" />,
+        title: "🏆 Kwaliteit van een bureau",
+        description: "Hoogwaardig ontwerp en prestaties die wedijveren met 's werelds beste digitale bureaus.",
+        icon: <span className="text-4xl">🏢</span>,
         gradient: "from-blue-500/10 to-transparent",
     },
     {
-        title: "Affordable Price",
-        description: "Premium results without the premium agency tax. Transparent pricing for every scale.",
-        icon: <Banknote className="w-8 h-8 text-emerald-400" />,
+        title: "💰 Betaalbare prijs",
+        description: "Eersteklas resultaten zonder de premium bureaukosten. Transparante prijzen voor elke schaal.",
+        icon: <span className="text-4xl">💎</span>,
         gradient: "from-emerald-500/10 to-transparent",
     },
 ];
@@ -29,9 +29,9 @@ export default function Features() {
         <section id="services" className="py-32 relative overflow-hidden">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-20">
-                    <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">Our Core Focus</h2>
+                    <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">🎯 Onze kernfocus</h2>
                     <p className="text-white/60 text-lg max-w-2xl mx-auto">
-                        We&apos;ve distilled the traditional agency model into three essential pillars to give you the best results in record time.
+                        We hebben het traditionele bureaumodel gedestilleerd in drie essentiële pijlers om u in recordtijd de beste resultaten te geven.
                     </p>
                 </div>
 

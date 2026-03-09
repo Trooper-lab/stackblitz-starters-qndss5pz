@@ -11,32 +11,32 @@ export default function Footer() {
                             <span className="text-2xl font-black font-display uppercase tracking-tighter">AIleadsite</span>
                         </div>
                         <p className="text-sm text-slate-400 font-medium leading-relaxed max-w-sm">
-                            Direct-response web design for the ambitious small business owner. Built for ROI, engineered for speed.
+                            Direct-response webdesign voor de ambitieuze MKB-eigenaar. Gebouwd voor ROI, ontworpen voor snelheid.
                         </p>
                     </div>
 
                     <div>
-                        <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-6">Company</h4>
+                        <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-6">Bedrijf</h4>
                         <ul className="flex flex-col gap-4">
-                            {["About Our Process", "Growth Partners", "ROI Case Studies"].map(item => (
+                            {["Over Ons Proces", "Groeipartners", "ROI-casestudy's"].map(item => (
                                 <li key={item}><a href="#" className="text-sm text-slate-400 hover:text-accent font-bold transition-colors">{item}</a></li>
                             ))}
                         </ul>
                     </div>
 
                     <div>
-                        <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-6">Growth Plans</h4>
+                        <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-6">Groeiplannen</h4>
                         <ul className="flex flex-col gap-4">
-                            {["Essential Launch", "Market Dominator", "Enterprise Custom"].map(item => (
+                            {["Essentiële Lancering", "Marktdominator", "Zakelijk Maatwerk"].map(item => (
                                 <li key={item}><a href="#" className="text-sm text-slate-400 hover:text-accent font-bold transition-colors">{item}</a></li>
                             ))}
                         </ul>
                     </div>
 
                     <div>
-                        <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-6">Legal</h4>
+                        <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-6">Juridisch</h4>
                         <ul className="flex flex-col gap-4">
-                            {["Privacy Terms", "Service Agreement", "Lead Guarantee"].map(item => (
+                            {["Privacyvoorwaarden", "Serviceovereenkomst", "Leadgarantie"].map(item => (
                                 <li key={item}><a href="#" className="text-sm text-slate-400 hover:text-accent font-bold transition-colors">{item}</a></li>
                             ))}
                         </ul>
@@ -45,7 +45,7 @@ export default function Footer() {
 
                 <div className="pt-10 border-t border-navy-light text-center">
                     <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
-                        © 2026 AIleadsite.com. Engineered for growth.
+                        © 2026 AIleadsite.com. Ontworpen voor groei.
                     </p>
                 </div>
             </div>

@@ -10,76 +10,76 @@ if (typeof window !== "undefined") {
 
 const tiers = [
     {
-        name: "Growth Starter",
-        desc: "Perfect for small local businesses",
-        price: "$1,500",
-        priceLabel: "flat fee",
+        name: "🌱 Groei Starter",
+        desc: "Perfect voor kleine lokale bedrijven",
+        price: "€1.000",
+        priceLabel: "eenmalig",
         featured: false,
         features: [
-            "High-Conversion Landing Page",
-            "Local SEO Foundation",
-            "Fast Mobile Loading",
-            "Google Business Sync",
+            "Hoog-converterende Landingspagina",
+            "Sterke SEO Fundering",
+            "GDPR complient",
+            "Custom lead formulier",
         ],
-        cta: "Claim This Plan",
+        cta: "Claim Dit Plan",
     },
     {
-        name: "Market Leader",
-        desc: "Dominate your local competition",
-        price: "$3,500",
-        priceLabel: "flat fee",
+        name: "👑 Marktleider",
+        desc: "Domineer je lokale concurrentie",
+        price: "€3.000",
+        priceLabel: "eenmalig",
         featured: true,
         features: [
-            "Up to 10 SEO-Optimized Pages",
-            "AI-Powered Lead Capture Chat",
-            "Full Conversion Funnel Setup",
-            "Competitor Rank Analysis",
+            "Tot 8 geoptimaliseerde pagina soorten",
+            "Meerdere Lead Formulier",
+            "Volledige Conversie Funnel Opzet",
+            "Onbeperkt aantal pagina's",
         ],
-        cta: "Start Growing Now",
+        cta: "Begin Nu Met Groeien",
     },
     {
-        name: "Custom Power",
-        desc: "For high-volume established firms",
-        price: "$7K+",
-        priceLabel: "custom",
+        name: "⚡ Kracht op Maat",
+        desc: "Voor gevestigde bedrijven met hoog volume",
+        price: "€7K+",
+        priceLabel: "maatwerk",
         featured: false,
         features: [
-            "Unlimited Page Architecture",
-            "Advanced CRM Integrations",
-            "Professional Video Integration",
-            "Dedicated Growth Strategist",
+            "Onbeperkte Pagina-architectuur",
+            "Geavanceerde CRM-integraties",
+            "Professionele Video-integratie",
+            "Toegewijde Groeistrateeg",
         ],
-        cta: "Speak to a Pro",
+        cta: "Spreek met een Pro",
     },
 ];
 
 const monthly = [
     {
-        name: "Basic Maintenance",
-        desc: "For teams that need site upkeep",
-        price: "$90",
-        priceLabel: "/mo",
+        name: "📄 Landingspagina",
+        desc: "Gehost op onze adpagina.nl subdomein",
+        price: "€50",
+        priceLabel: "/maand",
         featured: false,
-        features: ["Hosting & SSL", "Weekly Backups", "Uptime Monitoring", "Security Patches"],
-        cta: "Get Basic",
+        features: ["Hosting & SSL", "Wekelijkse Backups", "Uptime Monitoring", "Beveiligingspatches", "Mandelijke pagina optimalisatie"],
+        cta: "Neem Basis",
     },
     {
-        name: "AI Evolution",
-        desc: "Unlimited changes via AI",
-        price: "$150",
-        priceLabel: "/mo",
+        name: "🤖 AI Evolutie",
+        desc: "Onbeperkte wijzigingen via AI",
+        price: "€150",
+        priceLabel: "/maand",
         featured: true,
-        features: ["Everything in Basic", "Unlimited AI Changes", "Design Refreshes", "Priority Support"],
-        cta: "Start Evolving",
+        features: ["Alles in Basis", "Toegang tot AI voor aanpssingen", "Design Vernieuwingen", "Prioritaire Ondersteuning"],
+        cta: "Begin met Evolueren",
     },
     {
-        name: "Growth Engine",
-        desc: "SEO & visibility domination",
-        price: "$400",
-        priceLabel: "/mo",
+        name: "🚀 Groei Motor",
+        desc: "SEO & zichtbaarheidsdominantie",
+        price: "€400",
+        priceLabel: "/maand",
         featured: false,
-        features: ["Everything in AI Plan", "Monthly SEO Reports", "Content Strategy", "Advanced Analytics"],
-        cta: "Dominate Now",
+        features: ["Alles in AI Plan", "Maandelijkse SEO optimalisaties", "Contentstrategie", "Linkbuilding*"],
+        cta: "Domineer Nu",
     },
 ];
 
@@ -124,30 +124,30 @@ export default function Pricing() {
     }, [mode]);
 
     return (
-        <section id="pricing" ref={containerRef} className="py-24 overflow-hidden">
+        <section id="pricing" ref={containerRef} className="py-24 overflow-hidden relative z-10 bg-slate-50">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-wrap justify-between items-end mb-16 gap-6">
                     <div className="max-w-xl">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-navy mb-4 leading-tight">
-                            Investment Options Built For{" "}
-                            <span className="text-accent">Scale</span>.
+                            💼 Investeringsopties gebouwd voor{" "}
+                            <span className="text-accent">schaal</span>.
                         </h2>
                         <p className="text-lg text-slate-600 font-medium leading-relaxed">
-                            No fluff, no technical jargon. Just clear pricing for business owners who want to win online.
+                            Geen poespas, geen technisch jargon. Gewoon duidelijke prijzen voor ondernemers die online willen winnen.
                         </p>
                     </div>
 
-                    <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+                    <div className="flex gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         {(["project", "monthly"] as const).map((m) => (
                             <button
                                 key={m}
                                 onClick={() => setMode(m)}
                                 className={`px-6 py-2 rounded-md text-sm font-bold transition-all ${mode === m
-                                    ? "bg-white text-navy shadow-sm"
+                                    ? "bg-navy text-white shadow-sm"
                                     : "bg-transparent text-slate-500 hover:text-navy"
                                     }`}
                             >
-                                {m === "project" ? "One-Time Projects" : "Monthly Partners"}
+                                {m === "project" ? "🎯 Eenmalige Projecten" : "🤝 Maandelijkse Partners"}
                             </button>
                         ))}
                     </div>
@@ -160,12 +160,12 @@ export default function Pricing() {
                             className={`flex flex-col p-10 rounded-2xl transition-all duration-300 relative
                                 ${tier.featured
                                     ? "border-4 border-accent bg-white shadow-2xl scale-105 z-10"
-                                    : "border-2 border-slate-100 bg-slate-50/50 z-1 hover:border-accent hover:bg-white hover:-translate-y-2 md:hover:scale-100 md:scale-100 scale-100"
+                                    : "border-2 border-slate-200 bg-white/50 z-1 hover:border-accent hover:bg-white hover:-translate-y-2 md:hover:scale-100 md:scale-100 scale-100"
                                 }`}
                         >
                             {tier.featured && (
                                 <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-accent text-white px-6 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
-                                    Our Best Value
+                                    ⭐ Onze Beste Keuze
                                 </div>
                             )}
 
