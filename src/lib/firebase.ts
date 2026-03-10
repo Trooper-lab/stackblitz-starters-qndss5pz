@@ -13,10 +13,25 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+let app;
+try {
+    if (!firebaseConfig.apiKey) {
+        if (typeof window !== "undefined") {
+            console.warn("Firebase API key is missing. Check your environment variables.");
+        }
+        // Provide a dummy app or handle missing config gracefully
+        app = getApps().length > 0 ? getApp() : null;
+    } else {
+        app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    }
+} catch (error) {
+    console.error("Firebase initialization failed:", error);
+    app = null;
+}
+
+const auth = app ? getAuth(app) : null;
+const db = app ? getFirestore(app) : null;
+const storage = app ? getStorage(app) : null;
 const googleProvider = new GoogleAuthProvider();
 
 export { app, auth, db, storage, googleProvider };
