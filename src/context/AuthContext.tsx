@@ -5,7 +5,8 @@ import {
     onAuthStateChanged,
     signInWithPopup,
     signOut as firebaseSignOut,
-    User
+    User,
+    GoogleAuthProvider
 } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db, googleProvider } from "@/lib/firebase";
@@ -16,7 +17,7 @@ interface AuthContextType {
     userData: UserData | null;
     loading: boolean;
     role: UserRole | null;
-    signInWithGoogle: () => Promise<void>;
+    signInWithGoogle: () => Promise<User | null>;
     signOut: () => Promise<void>;
 }
 
@@ -42,9 +43,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     } else {
                         const newUser: UserData = {
                             uid: currentUser.uid,
-                            email: currentUser.email,
-                            displayName: currentUser.displayName,
-                            photoURL: currentUser.photoURL,
+                            email: currentUser.email || "",
+                            displayName: currentUser.displayName || "",
+                            photoURL: currentUser.photoURL || "",
                             role: "client",
                             createdAt: serverTimestamp(),
                         };
@@ -69,9 +70,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const signInWithGoogle = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
-        } catch (error) {
-            console.error("Error signing in with Google:", error);
+            // Force account selection even if logged in
+            googleProvider.setCustomParameters({
+                prompt: 'select_account'
+            });
+            const result = await signInWithPopup(auth, googleProvider);
+            return result.user;
+        } catch (error: any) {
+            console.error("Error signing in with Google:", error.message);
+            if (error.code === 'auth/popup-blocked') {
+                alert('De pop-up is geblokkeerd door je browser. Sta pop-ups toe voor deze website.');
+            } else if (error.code === 'auth/popup-closed-by-user') {
+                // User closed the popup, no need to alert
+            } else {
+                alert('Er is een fout opgetreden bij het inloggen met Google. Probeer het later opnieuw.');
+            }
+            return null;
         }
     };
 

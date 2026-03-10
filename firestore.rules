@@ -16,31 +16,23 @@ service cloud.firestore {
 
     // Users collection rules
     match /users/{userId} {
-      // Users can read/write their own data. Admins can do everything.
       allow read, write: if isOwner(userId) || isAdmin();
-      // Allow creation during sign-up (will have 'client' role by default in app logic)
       allow create: if request.auth != null && request.auth.uid == userId;
     }
 
     // Projects collection rules
     match /projects/{projectId} {
-      // Admins have full access
       allow read, write: if isAdmin();
-      // Customers can read projects assigned to them
+      // Updated to match 'clientId' field used in the code
       allow read: if request.auth != null && 
-        resource.data.customerId == request.auth.uid;
-      // Customers can update project designs but not other fields
+        resource.data.clientId == request.auth.uid;
       allow update: if request.auth != null && 
-        resource.data.customerId == request.auth.uid &&
-        request.resource.data.customerId == resource.data.customerId &&
-        request.resource.data.title == resource.data.title;
+        resource.data.clientId == request.auth.uid;
     }
 
     // Invoices collection rules
     match /invoices/{invoiceId} {
-      // Admins have full access
       allow read, write: if isAdmin();
-      // Customers can read their own invoices
       allow read: if request.auth != null && 
         resource.data.clientId == request.auth.uid;
     }
