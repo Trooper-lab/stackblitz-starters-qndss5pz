@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { InvoiceData } from "@/types/database";
 import { getProjectInvoices } from "@/lib/services/invoiceService";
 import { Receipt, Clock, CheckCircle2, AlertCircle, ExternalLink, Loader2 } from "lucide-react";
+import { Timestamp, FieldValue } from "firebase/firestore";
 
 interface ClientInvoiceListProps {
     projectId: string;
@@ -38,6 +39,20 @@ export default function ClientInvoiceList({ projectId }: ClientInvoiceListProps)
             default:
                 return { label: 'Concept', icon: Receipt, color: 'text-white/30 bg-white/5 border-white/10' };
         }
+    };
+
+    const formatDate = (date: Timestamp | FieldValue) => {
+        if (!date) return "";
+        if (date instanceof Timestamp) {
+            return date.toDate().toLocaleDateString('nl-NL');
+        }
+        
+        // Handle FieldValue or plain object from serialization
+        const d = date as unknown as { seconds?: number; nanoseconds?: number };
+        if (d && typeof d.seconds === 'number') {
+            return new Timestamp(d.seconds, d.nanoseconds || 0).toDate().toLocaleDateString('nl-NL');
+        }
+        return "";
     };
 
     if (loading) {
@@ -75,7 +90,7 @@ export default function ClientInvoiceList({ projectId }: ClientInvoiceListProps)
                                             <status.icon className="w-3 h-3" />
                                             {status.label}
                                         </span>
-                                        <span className="text-xs opacity-40">Verzonden op {new Date(invoice.createdAt.seconds * 1000).toLocaleDateString('nl-NL')}</span>
+                                        <span className="text-xs opacity-40">Verzonden op {formatDate(invoice.createdAt)}</span>
                                     </div>
                                 </div>
                             </div>

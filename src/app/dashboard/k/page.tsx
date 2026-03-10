@@ -24,7 +24,7 @@ import {
     FileText,
     ShieldCheck
 } from "lucide-react";
-import { doc, updateDoc, serverTimestamp, Timestamp } from "firebase/firestore";
+import { doc, updateDoc, serverTimestamp, Timestamp, FieldValue } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -113,6 +113,19 @@ export default function CustomerDashboard() {
         } finally {
             setIsSaving(false);
         }
+    };
+
+    const formatDate = (date: Timestamp | FieldValue | undefined) => {
+        if (!date) return "Recent";
+        if (date instanceof Timestamp) {
+            return date.toDate().toLocaleDateString('nl-NL');
+        }
+        
+        const d = date as unknown as { seconds?: number; nanoseconds?: number };
+        if (d && typeof d.seconds === 'number') {
+            return new Timestamp(d.seconds, d.nanoseconds || 0).toDate().toLocaleDateString('nl-NL');
+        }
+        return "Recent";
     };
 
     // Render Onboarding Step 1: Extended Intake
@@ -476,7 +489,7 @@ export default function CustomerDashboard() {
                                                             <div className="flex flex-wrap items-center gap-6 text-xs font-bold text-slate-400">
                                                                 <span className="flex items-center gap-2">
                                                                     <Clock className="w-4 h-4 text-accent" />
-                                                                    Update: {project.updatedAt instanceof Timestamp ? project.updatedAt.toDate().toLocaleDateString('nl-NL') : 'Recent'}
+                                                                    Update: {formatDate(project.updatedAt)}
                                                                 </span>
                                                                 <span className="flex items-center gap-2">
                                                                     <CheckCircle2 className="w-4 h-4 text-accent" />

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getClients } from "@/lib/services/clientService";
 import { UserData } from "@/types/database";
+import { Timestamp, FieldValue } from "firebase/firestore";
 
 interface ClientListProps {
     onSelectClient: (client: UserData) => void;
@@ -26,6 +27,19 @@ export default function ClientList({ onSelectClient }: ClientListProps) {
 
         fetchClients();
     }, []);
+
+    const formatDate = (date: Timestamp | FieldValue | undefined) => {
+        if (!date) return "-";
+        if (date instanceof Timestamp) {
+            return date.toDate().toLocaleDateString();
+        }
+        
+        const d = date as unknown as { seconds?: number; nanoseconds?: number };
+        if (d && typeof d.seconds === 'number') {
+            return new Timestamp(d.seconds, d.nanoseconds || 0).toDate().toLocaleDateString();
+        }
+        return "-";
+    };
 
     if (loading) {
         return <div className="p-8 text-center opacity-50">Laden...</div>;
@@ -61,7 +75,7 @@ export default function ClientList({ onSelectClient }: ClientListProps) {
                             <td className="p-4 opacity-70">{client.email}</td>
                             <td className="p-4 opacity-70">{client.companyDetails?.name || "-"}</td>
                             <td className="p-4 opacity-70 text-sm border-0">
-                                {client.createdAt?.toDate ? client.createdAt.toDate().toLocaleDateString() : "-"}
+                                {formatDate(client.createdAt)}
                             </td>
                         </tr>
                     ))}

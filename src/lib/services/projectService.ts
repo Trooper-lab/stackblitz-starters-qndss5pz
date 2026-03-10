@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, orderBy, serverTimestamp } from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, orderBy, serverTimestamp, Timestamp, FieldValue } from "firebase/firestore";
 import { ProjectData } from "@/types/database";
 
 // Fetch all projects (for admin)
@@ -41,9 +41,13 @@ export const getClientProjects = async (uid: string): Promise<ProjectData[]> => 
 
             // Handmatige sortering om index-error te voorkomen totdat de index is aangemaakt
             return legacyProjects.sort((a, b) => {
-                const dateA = a.createdAt?.toDate?.()?.getTime() || 0;
-                const dateB = b.createdAt?.toDate?.()?.getTime() || 0;
-                return dateB - dateA;
+                const getTime = (date: Timestamp | FieldValue | undefined) => {
+                    if (date instanceof Timestamp) return date.toMillis();
+                    const d = date as unknown as { seconds?: number };
+                    if (d && typeof d.seconds === 'number') return d.seconds * 1000;
+                    return 0;
+                };
+                return getTime(b.createdAt) - getTime(a.createdAt);
             });
         }
 

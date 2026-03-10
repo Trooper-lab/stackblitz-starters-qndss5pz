@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getAllProjects } from "@/lib/services/projectService";
 import { ProjectData, ProjectStatus } from "@/types/database";
+import { Timestamp, FieldValue } from "firebase/firestore";
 
 interface ProjectListProps {
     onSelectProject: (project: ProjectData) => void;
@@ -37,6 +38,19 @@ export default function ProjectList({ onSelectProject }: ProjectListProps) {
         }
     };
 
+    const formatDate = (date: Timestamp | FieldValue | undefined) => {
+        if (!date) return "-";
+        if (date instanceof Timestamp) {
+            return date.toDate().toLocaleDateString();
+        }
+        
+        const d = date as unknown as { seconds?: number; nanoseconds?: number };
+        if (d && typeof d.seconds === 'number') {
+            return new Timestamp(d.seconds, d.nanoseconds || 0).toDate().toLocaleDateString();
+        }
+        return "-";
+    };
+
     if (loading) {
         return <div className="p-8 text-center opacity-50">Laden...</div>;
     }
@@ -64,7 +78,7 @@ export default function ProjectList({ onSelectProject }: ProjectListProps) {
                             {project.status.replace("_", " ")}
                         </span>
                         <span className="text-[10px] opacity-30">
-                            {project.createdAt?.toDate ? project.createdAt.toDate().toLocaleDateString() : "-"}
+                            {formatDate(project.createdAt)}
                         </span>
                     </div>
 
