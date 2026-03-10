@@ -43,6 +43,14 @@ export default function HeroForm() {
     
     const formRef = useRef<HTMLDivElement>(null);
 
+    // Dutch phone number validation regex
+    // Supports: 0612345678, 06 12345678, +31612345678, 0031612345678
+    const validateDutchPhone = (number: string) => {
+        const regex = /^((\+31|0031|0)6[1-9][0-9]{7})$/;
+        const cleaned = number.replace(/\s/g, '');
+        return regex.test(cleaned);
+    };
+
     const handleGoogleSignIn = async () => {
         setIsProcessing(true);
         setError("");
@@ -81,27 +89,27 @@ export default function HeroForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!agreeToPrivacy) return;
+        
+        if (!validateDutchPhone(formData.phone)) {
+            setError("Voer een geldig Nederlands 06-nummer in.");
+            return;
+        }
+
         setIsProcessing(true);
         setError("");
 
         try {
-            // 1. Create User
             const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
             const user = userCredential.user;
-
-            // 2. Update Auth Profile
             await updateProfile(user, { displayName: formData.name });
-
-            // 3. Create Firestore Document
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 email: formData.email,
                 displayName: formData.name,
-                phone: formData.phone,
+                phone: formData.phone.replace(/\s/g, ''),
                 role: "client",
                 createdAt: serverTimestamp(),
             });
-
             setIsProcessing(false);
             showSuccessState();
         } catch (err: any) {
@@ -121,13 +129,18 @@ export default function HeroForm() {
         e.preventDefault();
         if (!authUser) return;
         
+        if (!validateDutchPhone(formData.phone)) {
+            setError("Voer een geldig Nederlands 06-nummer in.");
+            return;
+        }
+
         setIsProcessing(true);
         setError("");
 
         try {
             const userRef = doc(db, "users", authUser.uid);
             await updateDoc(userRef, {
-                phone: formData.phone
+                phone: formData.phone.replace(/\s/g, '')
             });
             setIsProcessing(false);
             showSuccessState();
@@ -151,8 +164,8 @@ export default function HeroForm() {
                         <Check className="h-12 w-12" strokeWidth={3} />
                     </div>
                 </div>
-                <h3 className="mb-4 font-display text-3xl font-extrabold text-white tracking-tight">Account Aangemaakt!</h3>
-                <p className="text-slate-300 leading-relaxed font-medium mb-8">Welkom bij AI Lead Site. Je account is succesvol aangemaakt.</p>
+                <h3 className="mb-4 font-display text-3xl font-extrabold text-white tracking-tight text-center">Account Aangemaakt!</h3>
+                <p className="text-slate-300 leading-relaxed font-medium mb-8 text-center">Welkom bij AI Lead Site. Je account is succesvol aangemaakt.</p>
                 <button 
                     onClick={() => router.push("/dashboard/k")}
                     className="inline-flex items-center justify-center rounded-full bg-accent px-8 py-4 text-sm font-bold tracking-wide text-white transition-all hover:bg-orange-600 shadow-[0_10px_20px_-10px_rgba(255,125,41,0.5)] hover:-translate-y-1"
