@@ -129,8 +129,8 @@ export default function Pricing() {
                 <div className="flex flex-wrap justify-between items-end mb-16 gap-6">
                     <div className="max-w-xl">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-navy mb-4 leading-tight">
-                            💼 Investeringsopties gebouwd voor{" "}
-                            <span className="text-accent">schaal</span>.
+                            💼 <span className="text-accent italic">Investeringsopties</span> gebouwd voor{" "}
+                            schaal<span className="text-accent">.</span>
                         </h2>
                         <p className="text-lg text-slate-600 font-medium leading-relaxed">
                             Geen poespas, geen technisch jargon. Gewoon duidelijke prijzen voor ondernemers die online willen winnen.

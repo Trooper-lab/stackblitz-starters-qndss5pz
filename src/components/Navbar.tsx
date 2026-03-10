@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -14,9 +15,10 @@ export default function Navbar() {
     }, []);
 
     const navLinks = [
-        { name: "Groeioplossingen", href: "#pricing" },
-        { name: "Succesverhalen", href: "#work" },
-        { name: "Prijzen", href: "#pricing" },
+        { name: "Over Ons", href: "/over-ons" },
+        { name: "Groeioplossingen", href: "/#pricing" },
+        { name: "Succesverhalen", href: "/#work" },
+        { name: "Prijzen", href: "/#pricing" },
     ];
 
     return (
@@ -32,31 +34,35 @@ export default function Navbar() {
                     {/* Logo */}
                     <div className="flex items-center gap-2">
                         <span className="text-3xl">🚀</span>
-                        <span className={`font-display text-xl lg:text-2xl font-black tracking-tighter uppercase transition-colors duration-500
-                            ${scrolled ? "text-navy" : "text-white"}`}>
-                            AIleadsite<span className="text-accent">.</span>
-                        </span>
+                        <Link href="/">
+                            <span className={`font-display text-xl lg:text-2xl font-black tracking-tighter uppercase transition-colors duration-500 cursor-pointer
+                                ${scrolled ? "text-navy" : "text-white"}`}>
+                                AIleadsite<span className="text-accent">.</span>
+                            </span>
+                        </Link>
                     </div>
 
                     {/* Desktop Nav */}
                     <div className="hidden lg:flex items-center gap-8">
                         {navLinks.map((link) => (
-                            <a
+                            <Link
                                 key={link.name}
                                 href={link.href}
                                 className={`text-[11px] font-black uppercase tracking-widest transition-colors duration-500
                                     ${scrolled ? "text-navy/70 hover:text-accent" : "text-white/80 hover:text-white"}`}
                             >
                                 {link.name}
-                            </a>
+                            </Link>
                         ))}
-                        <button className={`px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 shadow-lg
-                            ${scrolled
-                                ? "bg-navy text-white hover:bg-navy-light shadow-navy/20"
-                                : "bg-white text-navy hover:bg-slate-100 shadow-white/10"
-                            }`}>
-                            Krijg mijn gratis audit
-                        </button>
+                        <Link href="/#contact">
+                            <button className={`px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 shadow-lg
+                                ${scrolled
+                                    ? "bg-navy text-white hover:bg-navy-light shadow-navy/20"
+                                    : "bg-white text-navy hover:bg-slate-100 shadow-white/10"
+                                }`}>
+                                Krijg mijn gratis audit
+                            </button>
+                        </Link>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -71,20 +77,22 @@ export default function Navbar() {
 
                 {/* Mobile Menu Overlay */}
                 {isOpen && (
-                    <div className="lg:hidden mt-4 bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl p-6 flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
+                    <div className="lg:hidden mt-4 bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl p-6 flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300 pointer-events-auto">
                         {navLinks.map((link) => (
-                            <a
+                            <Link
                                 key={link.name}
                                 href={link.href}
                                 className="text-sm font-black uppercase tracking-widest text-navy p-4 hover:bg-slate-50 rounded-xl transition-colors"
                                 onClick={() => setIsOpen(false)}
                             >
                                 {link.name}
-                            </a>
+                            </Link>
                         ))}
-                        <button className="bg-accent text-white py-5 rounded-xl text-sm font-black uppercase tracking-widest shadow-xl shadow-accent/20">
-                            Krijg mijn gratis audit
-                        </button>
+                        <Link href="/#contact" onClick={() => setIsOpen(false)}>
+                            <button className="w-full bg-accent text-white py-5 rounded-xl text-sm font-black uppercase tracking-widest shadow-xl shadow-accent/20">
+                                Krijg mijn gratis audit
+                            </button>
+                        </Link>
                     </div>
                 )}
             </div>

@@ -70,8 +70,8 @@ export default function WhatIsAILeadSite() {
                             <div className="w-20 h-1 bg-accent mb-8"></div>
                             <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-8 text-navy font-display">
                                 🤖 Wat is een <br />
-                                <span className="text-accent">AI Lead Site</span> <br />
-                                Precies?
+                                <span className="text-accent italic">AI Lead Site</span> <br />
+                                precies<span className="text-accent">?</span>
                             </h2>
                             <p className="text-xl md:text-2xl text-slate-600 max-w-xl leading-relaxed font-light italic border-l-4 border-accent/20 pl-6">
                                 "De perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie,

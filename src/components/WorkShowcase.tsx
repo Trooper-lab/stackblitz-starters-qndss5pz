@@ -104,7 +104,7 @@ export default function WorkShowcase() {
             <div className="max-w-7xl mx-auto px-6 mb-16">
                 <div className="text-center">
                     <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold leading-[1.1] mb-6">
-                        Echt Werk. <span className="text-accent">Buitengewone Resultaten.</span>
+                    <span className="text-accent">Echt</span> Werk<span className="text-accent">.</span> Buitengewone Resultaten<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium">
                         Ontdek onze nieuwste high-performance builds. Beweeg de muis erover om te pauzeren en de resultaten te bekijken.

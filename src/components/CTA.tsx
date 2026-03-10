@@ -10,7 +10,7 @@ export default function CTA() {
 
                     <div className="relative z-10">
                         <h2 className="text-4xl md:text-5xl lg:text-7xl font-display font-extrabold mb-8 tracking-tighter leading-tight">
-                            Klaar om de <span className="text-accent italic">markt</span> te veroveren?
+                            Klaar om de <span className="text-accent italic">markt</span> te veroveren<span className="text-accent">?</span>
                         </h2>
                         <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
                             Laat concurrenten niet langer je bezoekers stelen. Bouw vandaag nog een krachtige website die bezoekers omzet in winst.

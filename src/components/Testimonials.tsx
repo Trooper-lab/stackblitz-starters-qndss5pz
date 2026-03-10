@@ -28,7 +28,7 @@ export default function Testimonials() {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="text-center max-w-2xl mx-auto mb-20">
                     <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold text-navy uppercase tracking-tight mb-4">
-                        📣 Stemmen van <span className="text-accent">Groei</span>
+                        📣 Stemmen van Groei<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-slate-600 font-medium leading-relaxed">
                         Hoor van echte ondernemers die stopten met "gewoon een website hebben" en begonnen met het genereren van inkomsten.

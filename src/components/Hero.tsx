@@ -1,12 +1,39 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import HeroForm from "./HeroForm";
 import gsap from "gsap";
 
 export default function Hero() {
     const containerRef = useRef<HTMLElement>(null);
+    const titleContainerRef = useRef<HTMLDivElement>(null);
+    const [titleFontSize, setTitleFontSize] = useState("10vw"); // Initial fallback
+
+    // Dynamic Font Sizing Logic
+    useEffect(() => {
+        const calculateFontSize = () => {
+            if (!titleContainerRef.current) return;
+            
+            const containerWidth = titleContainerRef.current.clientWidth;
+            // The longest string in the title is "Stop met klanten te verliezen"
+            // Increased the divisor from 15.5 to 17.5 to make the text smaller 
+            // and guarantee it fits within the container without clipping.
+            const newFontSize = (containerWidth / 15.5); 
+            
+            // Apply a minimum and maximum to prevent it from getting absurdly small or large
+            const clampedSize = Math.max(26, Math.min(newFontSize, 110)); 
+            
+            setTitleFontSize(`${clampedSize}px`);
+        };
+
+        // Calculate initially
+        calculateFontSize();
+
+        // Recalculate on resize
+        window.addEventListener("resize", calculateFontSize);
+        return () => window.removeEventListener("resize", calculateFontSize);
+    }, []);
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
@@ -54,30 +81,30 @@ export default function Hero() {
                 "-=0.5"
             );
 
-            // 7. Rechter Formulier (Komt tegelijk met de linker content binnen, maar vanaf rechts/onder diagonaal)
+            // 7. Rechter Formulier
             tl.fromTo(
                 ".hero-form-wrapper",
                 { opacity: 0, filter: "blur(30px)", y: 50, x: 30 },
                 { opacity: 1, filter: "blur(0px)", y: 0, x: 0, duration: 1.2, ease: "power3.out" },
-                0.4 // Start op 0.4 seconden in de timeline, synchroon met de rest
+                0.4 
             );
 
-            // 8. Oneindige achtergrond animatie (Slow Pan)
+            // 8. Oneindige achtergrond animatie
             gsap.to(".bg-shape-1", {
-                x: "-5%", // Beweeg langzaam naar links
+                x: "-5%",
                 y: "2%",
-                rotation: "+=2", // Draai heel subtiel
+                rotation: "+=2",
                 duration: 20,
                 repeat: -1,
-                yoyo: true, // Speel animatie heen en terug
+                yoyo: true,
                 ease: "sine.inOut"
             });
 
             gsap.to(".bg-shape-2", {
-                x: "5%", // Beweeg langzaam naar rechts
+                x: "5%",
                 y: "-2%",
-                rotation: "-=2", // Draai heel subtiel tegenovergesteld
-                duration: 25, // Iets andere snelheid voor asymmetrisch effect
+                rotation: "-=2",
+                duration: 25,
                 repeat: -1,
                 yoyo: true,
                 ease: "sine.inOut"
@@ -89,7 +116,7 @@ export default function Hero() {
     }, []);
 
     return (
-        <section ref={containerRef} className="relative overflow-hidden bg-navy pt-32 pb-16 md:pt-40 md:pb-24 text-white min-h-[90vh] flex items-center">
+        <section ref={containerRef} className="relative overflow-hidden bg-navy pt-32 pb-16 md:pt-40 md:pb-24 text-white min-h-[90vh] flex items-center w-full">
             {/* Background geometric shapes */}
             <div className="absolute top-0 right-0 h-full w-full pointer-events-none overflow-hidden">
                 <div className="bg-shape-1 absolute -top-[10%] -right-[5%] w-[60%] h-[120%] bg-slate-800/20 rotate-12 origin-top-right transform -skew-x-12" />
@@ -98,13 +125,17 @@ export default function Hero() {
 
             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
                 {/* Headline Spans across the top */}
-                <div className="mb-12 max-w-5xl">
-                    <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-extrabold leading-[1.05] tracking-tight text-white flex flex-col items-start gap-1">
-                        <span className="whitespace-nowrap opacity-0 hero-title-line">Stop met klanten te verliezen</span>
-                        <span className="opacity-0 hero-title-line">
-                            door <span className="text-accent italic">verouderde</span>
+                <div className="mb-12 w-full" ref={titleContainerRef}>
+                    <h1 
+                        className="font-display font-extrabold leading-[1.05] tracking-tight text-white flex flex-col items-start gap-1 w-full"
+                        style={{ fontSize: titleFontSize, transition: 'font-size 0.1s ease-out' }}
+                    >
+                        {/* Increased right padding slightly just to be absolutely sure */}
+                        <span className="opacity-0 hero-title-line whitespace-nowrap pr-4">Stop met klanten te verliezen</span>
+                        <span className="opacity-0 hero-title-line whitespace-nowrap pr-4">
+                            door <span className="text-accent italic">verouderde </span><span className="opacity-0 hero-title-line whitespace-nowrap pr-4">websites<span className="text-accent">.</span></span>
                         </span>
-                        <span className="opacity-0 hero-title-line">websites.</span>
+                        
                     </h1>
                 </div>
 
@@ -146,7 +177,7 @@ export default function Hero() {
                             </div>
                         </div>
 
-                        {/* Buttons (Always side-by-side using flex-row) */}
+                        {/* Buttons */}
                         <div className="flex flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-2">
                             <a
                                 href="#contact"
@@ -177,7 +208,7 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    {/* Right Visual (Lead Form) - Spans 7 columns */}
+                    {/* Right Visual (Lead Form) */}
                     <div className="relative w-full max-w-xl mx-auto lg:max-w-none lg:col-span-7 lg:pl-10 opacity-0 hero-form-wrapper">
                         <HeroForm />
                     </div>

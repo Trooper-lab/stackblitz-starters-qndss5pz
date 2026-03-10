@@ -7,7 +7,7 @@ export default function ContactForm() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     <div>
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold mb-8 leading-tight">
-                            Vraag je gratis <span className="text-accent">groei-audit</span> aan.
+                            Vraag je <span className="text-accent italic">gratis</span> groei-audit aan<span className="text-accent">.</span>
                         </h2>
                         <p className="text-xl text-slate-300 mb-10 leading-relaxed font-medium">
                             We nemen een video van 5 minuten op waarin we je huidige site analyseren en laten je precies zien waar je geld verliest en hoe je dit kunt oplossen. Geheel vrijblijvend.

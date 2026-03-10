@@ -115,7 +115,7 @@ export default function Process() {
                 {/* Header Sectie */}
                 <div className="text-center max-w-3xl mx-auto mb-20 relative z-10">
                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-navy mb-6 leading-tight">
-                        🗺️ Onze <span className="text-accent">Werkwijze</span>
+                        🗺️ Onze Werkwijze<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-slate-600 font-medium leading-relaxed mb-8">
                         Geen eindeloze vergaderingen of onduidelijke trajecten. Een strak en transparant stappenplan van visie tot lancering.
