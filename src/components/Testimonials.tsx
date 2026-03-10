@@ -31,7 +31,7 @@ export default function Testimonials() {
                         📣 Stemmen van Groei<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-slate-600 font-medium leading-relaxed">
-                        Hoor van echte ondernemers die stopten met "gewoon een website hebben" en begonnen met het genereren van inkomsten.
+                        Hoor van echte ondernemers die stopten met &quot;gewoon een website hebben&quot; en begonnen met het genereren van inkomsten.
                     </p>
                 </div>
 

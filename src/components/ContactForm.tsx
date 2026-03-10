@@ -5,9 +5,9 @@ import Link from "next/link";
 import { Eye, EyeOff, Phone, User, Mail, Lock, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-    createUserWithEmailAndPassword, 
-    updateProfile 
+import {
+    createUserWithEmailAndPassword,
+    updateProfile
 } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, serverTimestamp, updateDoc } from "firebase/firestore";
@@ -79,10 +79,11 @@ export default function ContactForm() {
             });
             setIsProcessing(false);
             setIsSubmitted(true);
-        } catch (err: any) {
+        } catch (err: unknown) {
+            const error = err as { code?: string };
             console.error("Sign up error:", err);
             setIsProcessing(false);
-            if (err.code === 'auth/email-already-in-use') {
+            if (error.code === 'auth/email-already-in-use') {
                 setError("Dit e-mailadres is al in gebruik.");
             } else {
                 setError("Er is iets misgegaan.");
@@ -109,7 +110,7 @@ export default function ContactForm() {
             });
             setIsProcessing(false);
             setIsSubmitted(true);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error updating phone:", err);
             setIsProcessing(false);
             setError("Kon telefoonnummer niet opslaan.");
@@ -127,7 +128,7 @@ export default function ContactForm() {
                         <p className="text-slate-300 leading-relaxed font-medium mb-8 text-center">
                             Welkom bij AI Lead Site. Je account is succesvol aangemaakt.
                         </p>
-                        <button 
+                        <button
                             onClick={() => router.push("/dashboard/k")}
                             className="inline-flex items-center justify-center rounded-xl bg-accent px-8 py-4 text-lg font-black uppercase tracking-wider text-white transition-all hover:bg-orange-600 shadow-xl shadow-accent/30 hover:translate-y-[-2px]"
                         >
@@ -268,7 +269,7 @@ export default function ContactForm() {
                                             </>
                                         )}
                                     </button>
-                                    
+
                                     <div className="relative flex items-center py-2">
                                         <div className="flex-grow border-t border-slate-200"></div>
                                         <span className="flex-shrink-0 mx-4 text-slate-400 text-[11px] font-black uppercase tracking-widest">of</span>
@@ -281,19 +282,19 @@ export default function ContactForm() {
                                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                                                     <User size={18} />
                                                 </div>
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     name="name"
                                                     autoComplete="name"
-                                                    placeholder="Voor- & achternaam" 
+                                                    placeholder="Voor- & achternaam"
                                                     required
                                                     value={formData.name}
                                                     onFocus={() => setIsExpanded(true)}
                                                     onChange={(e) => {
-                                                        setFormData({...formData, name: e.target.value});
+                                                        setFormData({ ...formData, name: e.target.value });
                                                         if (e.target.value.length > 0) setIsExpanded(true);
                                                     }}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pl-11 text-navy font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all" 
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pl-11 text-navy font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                 />
                                             </div>
                                         </div>
@@ -313,54 +314,54 @@ export default function ContactForm() {
                                                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                                                                 <Mail size={18} />
                                                             </div>
-                                                            <input 
-                                                                type="email" 
+                                                            <input
+                                                                type="email"
                                                                 name="email"
                                                                 autoComplete="email"
-                                                                placeholder="naam@bedrijf.com" 
+                                                                placeholder="naam@bedrijf.com"
                                                                 required
                                                                 value={formData.email}
-                                                                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pl-11 text-navy font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all" 
+                                                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pl-11 text-navy font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                             />
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div className="flex flex-col gap-2 text-left">
                                                         <label className="text-[10px] font-black uppercase tracking-widest text-navy ml-1">Telefoonnummer</label>
                                                         <div className="relative">
                                                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                                                                 <Phone size={18} />
                                                             </div>
-                                                            <input 
-                                                                type="tel" 
+                                                            <input
+                                                                type="tel"
                                                                 name="tel"
                                                                 autoComplete="tel"
-                                                                placeholder="06 12345678" 
+                                                                placeholder="06 12345678"
                                                                 required
                                                                 value={formData.phone}
-                                                                onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pl-11 text-navy font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all" 
+                                                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pl-11 text-navy font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                             />
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div className="flex flex-col gap-2 text-left">
                                                         <label className="text-[10px] font-black uppercase tracking-widest text-navy ml-1">Wachtwoord</label>
                                                         <div className="relative">
                                                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                                                                 <Lock size={18} />
                                                             </div>
-                                                            <input 
-                                                                type={showPassword ? "text" : "password"} 
+                                                            <input
+                                                                type={showPassword ? "text" : "password"}
                                                                 name="new-password"
                                                                 autoComplete="new-password"
-                                                                placeholder="Wachtwoord" 
+                                                                placeholder="Wachtwoord"
                                                                 required
                                                                 minLength={6}
                                                                 value={formData.password}
-                                                                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pl-11 pr-12 text-navy font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all" 
+                                                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pl-11 pr-12 text-navy font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                             />
                                                             <button
                                                                 type="button"
@@ -374,8 +375,8 @@ export default function ContactForm() {
 
                                                     <div className="flex items-start gap-3 py-2 group cursor-pointer text-left">
                                                         <div className="pt-0.5">
-                                                            <input 
-                                                                type="checkbox" 
+                                                            <input
+                                                                type="checkbox"
                                                                 id="privacy-agree"
                                                                 required
                                                                 checked={agreeToPrivacy}
@@ -387,9 +388,9 @@ export default function ContactForm() {
                                                             Ik ga akkoord met de verwerking van mijn gegevens zoals beschreven in het <Link href="/privacybeleid" className="text-accent hover:underline font-bold">Privacybeleid</Link>.
                                                         </label>
                                                     </div>
-                                                    
-                                                    <button 
-                                                        type="submit" 
+
+                                                    <button
+                                                        type="submit"
                                                         disabled={isProcessing || !formData.name || !formData.email || !formData.email.includes('@') || formData.password.length < 6 || !formData.phone || !agreeToPrivacy}
                                                         className="w-full bg-accent text-white rounded-xl p-5 text-lg font-black uppercase tracking-wider cursor-pointer shadow-xl shadow-accent/30 hover:bg-orange-600 transition-all hover:translate-y-[-2px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex justify-center items-center"
                                                     >

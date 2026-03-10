@@ -2,8 +2,8 @@
 
 import { useState, useRef } from "react";
 import gsap from "gsap";
-import { 
-    Check, 
+import {
+    Check,
     User,
     Mail,
     Lock,
@@ -16,9 +16,9 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { 
-    createUserWithEmailAndPassword, 
-    updateProfile 
+import {
+    createUserWithEmailAndPassword,
+    updateProfile
 } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, serverTimestamp, updateDoc } from "firebase/firestore";
@@ -40,7 +40,7 @@ export default function HeroForm() {
     const [agreeToPrivacy, setAgreeToPrivacy] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState("");
-    
+
     const formRef = useRef<HTMLDivElement>(null);
 
     // Dutch phone number validation regex
@@ -58,8 +58,8 @@ export default function HeroForm() {
             if (user) {
                 setShowPhoneStep(true);
             }
-        } catch (error: any) {
-            console.error("Google sign in failed:", error);
+        } catch (err: unknown) {
+            console.error("Google sign in failed:", err);
             setError("Google inloggen mislukt. Probeer het opnieuw.");
         } finally {
             setIsProcessing(false);
@@ -67,7 +67,7 @@ export default function HeroForm() {
     };
 
     const showSuccessState = () => {
-         if (isAnimating) return;
+        if (isAnimating) return;
         setIsAnimating(true);
         gsap.to(formRef.current, {
             opacity: 0,
@@ -88,7 +88,7 @@ export default function HeroForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!agreeToPrivacy) return;
-        
+
         if (!validateDutchPhone(formData.phone)) {
             setError("Voer een geldig Nederlands 06-nummer in.");
             return;
@@ -111,12 +111,13 @@ export default function HeroForm() {
             });
             setIsProcessing(false);
             showSuccessState();
-        } catch (err: any) {
+        } catch (err: unknown) {
+            const error = err as { code?: string };
             console.error("Sign up error:", err);
             setIsProcessing(false);
-            if (err.code === 'auth/email-already-in-use') {
+            if (error.code === 'auth/email-already-in-use') {
                 setError("Dit e-mailadres is al in gebruik.");
-            } else if (err.code === 'auth/weak-password') {
+            } else if (error.code === 'auth/weak-password') {
                 setError("Wachtwoord is te zwak.");
             } else {
                 setError("Er is iets misgegaan. Probeer het opnieuw.");
@@ -127,7 +128,7 @@ export default function HeroForm() {
     const handlePhoneSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!authUser) return;
-        
+
         if (!validateDutchPhone(formData.phone)) {
             setError("Voer een geldig Nederlands 06-nummer in.");
             return;
@@ -143,7 +144,7 @@ export default function HeroForm() {
             });
             setIsProcessing(false);
             showSuccessState();
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error updating phone:", err);
             setIsProcessing(false);
             setError("Kon telefoonnummer niet opslaan. Probeer het opnieuw.");
@@ -165,7 +166,7 @@ export default function HeroForm() {
                 </div>
                 <h3 className="mb-4 font-display text-3xl font-extrabold text-white tracking-tight text-center">Account Aangemaakt!</h3>
                 <p className="text-slate-300 leading-relaxed font-medium mb-8 text-center">Welkom bij AI Lead Site. Je account is succesvol aangemaakt.</p>
-                <button 
+                <button
                     onClick={() => router.push("/dashboard/k")}
                     className="inline-flex items-center justify-center rounded-full bg-accent px-8 py-4 text-sm font-bold tracking-wide text-white transition-all hover:bg-orange-600 shadow-[0_10px_20px_-10px_rgba(255,125,41,0.5)] hover:-translate-y-1"
                 >
@@ -213,8 +214,8 @@ export default function HeroForm() {
                                 className="w-full rounded-2xl bg-white/5 border border-white/10 pl-11 pr-4 py-4 text-[15px] font-medium text-white placeholder:text-slate-500 outline-none transition-all focus:bg-white/10 focus:border-accent focus:ring-1 focus:ring-accent"
                             />
                         </div>
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             disabled={isProcessing}
                             className="group relative flex w-full items-center justify-center gap-2 rounded-2xl bg-accent py-4 px-6 font-bold uppercase tracking-wider text-white transition-all hover:bg-orange-600 shadow-[0_10px_20px_-10px_rgba(255,125,41,0.5)] overflow-hidden disabled:opacity-70"
                         >
@@ -253,9 +254,9 @@ export default function HeroForm() {
                     )}
 
                     <div className="space-y-4">
-                        <button 
+                        <button
                             type="button"
-                            onClick={handleGoogleSignIn} 
+                            onClick={handleGoogleSignIn}
                             disabled={isProcessing}
                             className="flex items-center justify-center gap-3 w-full rounded-2xl bg-white text-navy font-bold py-4 px-4 transition-all hover:bg-slate-100 shadow-sm active:scale-[0.98] disabled:opacity-70"
                         >

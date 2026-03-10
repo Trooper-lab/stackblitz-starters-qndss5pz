@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { Timestamp } from "firebase/firestore";
 import { storage } from "@/lib/firebase";
-import { Upload, X, Check, Loader2 } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import { ProjectAsset } from "@/types/database";
 
 interface FileUploadProps {
@@ -41,7 +42,7 @@ export default function FileUpload({ projectId, onUploadComplete }: FileUploadPr
                     name: file.name,
                     url: downloadURL,
                     type: file.type.startsWith("image/") ? "photo" : "document",
-                    uploadedAt: new Date()
+                    uploadedAt: Timestamp.fromDate(new Date())
                 };
                 onUploadComplete(asset);
                 setUploading(false);

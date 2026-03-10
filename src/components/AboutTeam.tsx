@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { User, Zap, Code, Palette, Rocket, Target } from "lucide-react";
+import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -115,21 +116,21 @@ export default function AboutTeam() {
         </div>
 
         <div className="mt-24 bg-navy rounded-3xl p-10 md:p-16 text-center shadow-2xl relative overflow-hidden group">
-            <div className="absolute inset-0 bg-accent/5 transform -skew-y-3 group-hover:skew-y-0 transition-transform duration-700 ease-out" />
-            <div className="relative z-10 max-w-2xl mx-auto">
-                <h3 className="text-2xl md:text-4xl font-display font-bold text-white mb-6">
-                    Klaar om snelheid te maken?
-                </h3>
-                <p className="text-slate-300 mb-8 text-lg">
-                    We staan klaar om onze expertise in te zetten voor jouw doelen. Geen verborgen agenda's, gewoon hard werken en resultaat boeken.
-                </p>
-                <a
-                    href="/#contact"
-                    className="inline-flex justify-center items-center rounded-xl bg-accent px-8 py-4 text-sm md:text-base font-black uppercase tracking-widest text-white shadow-[0_0_40px_-10px_rgba(255,125,41,0.5)] transition-all hover:bg-orange-600 hover:-translate-y-1"
-                >
-                    Start een project
-                </a>
-            </div>
+          <div className="absolute inset-0 bg-accent/5 transform -skew-y-3 group-hover:skew-y-0 transition-transform duration-700 ease-out" />
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <h3 className="text-2xl md:text-4xl font-display font-bold text-white mb-6">
+              Klaar om snelheid te maken?
+            </h3>
+            <p className="text-slate-300 mb-8 text-lg">
+              We staan klaar om onze expertise in te zetten voor jouw doelen. Geen verborgen agenda&apos;s, gewoon hard werken en resultaat boeken.
+            </p>
+            <Link
+              href="/#contact"
+              className="inline-flex justify-center items-center rounded-xl bg-accent px-8 py-4 text-sm md:text-base font-black uppercase tracking-widest text-white shadow-[0_0_40px_-10px_rgba(255,125,41,0.5)] transition-all hover:bg-orange-600 hover:-translate-y-1"
+            >
+              Start een project
+            </Link>
+          </div>
         </div>
       </div>
     </section>

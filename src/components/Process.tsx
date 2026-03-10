@@ -43,15 +43,15 @@ export default function Process() {
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
             // Animeer elke stap naar binnen wanneer je erheen scrolt
-            gsap.utils.toArray(".process-step").forEach((step: any, i) => {
+            gsap.utils.toArray<HTMLElement>(".process-step").forEach((step, i) => {
                 const isEven = i % 2 === 0;
                 gsap.fromTo(
                     step,
-                    { 
-                        opacity: 0, 
-                        y: 50, 
+                    {
+                        opacity: 0,
+                        y: 50,
                         x: isEven ? -30 : 30, // Schuif in vanaf de zijkanten
-                        filter: "blur(10px)" 
+                        filter: "blur(10px)"
                     },
                     {
                         opacity: 1,
@@ -86,7 +86,7 @@ export default function Process() {
             );
 
             // Animeer de bolletjes in de tijdlijn
-            gsap.utils.toArray(".process-dot").forEach((dot: any) => {
+            gsap.utils.toArray<HTMLElement>(".process-dot").forEach((dot) => {
                 gsap.fromTo(dot,
                     { scale: 0, backgroundColor: "#e2e8f0" },
                     {
@@ -111,7 +111,7 @@ export default function Process() {
     return (
         <section ref={containerRef} className="py-24 bg-white relative overflow-hidden" id="werkwijze">
             <div className="max-w-7xl mx-auto px-6">
-                
+
                 {/* Header Sectie */}
                 <div className="text-center max-w-3xl mx-auto mb-20 relative z-10">
                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-navy mb-6 leading-tight">
@@ -120,7 +120,7 @@ export default function Process() {
                     <p className="text-lg text-slate-600 font-medium leading-relaxed mb-8">
                         Geen eindeloze vergaderingen of onduidelijke trajecten. Een strak en transparant stappenplan van visie tot lancering.
                     </p>
-                    
+
                     {/* Gemiddelde Tijd Badge */}
                     <div className="inline-flex items-center gap-3 bg-slate-50 border border-slate-200 shadow-md px-8 py-4 rounded-full hover:border-accent/50 transition-colors">
                         <div className="bg-accent/10 p-2 rounded-full">
@@ -134,10 +134,10 @@ export default function Process() {
 
                 {/* Tijdlijn Sectie */}
                 <div className="relative max-w-5xl mx-auto process-line-container pb-12">
-                    
+
                     {/* De centrale lijn (Grijze basislijn) */}
                     <div className="absolute left-[38px] md:left-1/2 top-4 bottom-0 w-1 bg-slate-100 -translate-x-1/2 rounded-full" />
-                    
+
                     {/* De geanimeerde Oranje (Accent) Lijn die groeit bij het scrollen */}
                     <div className="absolute left-[38px] md:left-1/2 top-4 w-1 bg-gradient-to-b from-accent to-orange-400 -translate-x-1/2 rounded-full process-line z-0" style={{ height: '0%' }} />
 
@@ -148,13 +148,13 @@ export default function Process() {
 
                             return (
                                 <div key={step.num} className="process-step relative flex flex-col md:flex-row items-start md:items-center w-full">
-                                    
+
                                     {/* Desktop: Linker of Rechter Kant positionering */}
                                     <div className={`md:w-1/2 w-full pl-20 md:pl-0 ${isEven ? "md:pr-16 md:text-right" : "md:order-2 md:pl-16"}`}>
-                                        
+
                                         {/* De Inhoud Kaart */}
                                         <div className="bg-white p-8 md:p-10 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-slate-100 hover:border-accent/30 hover:shadow-[0_20px_60px_-15px_rgba(255,125,41,0.15)] transition-all duration-300 group relative overflow-hidden">
-                                            
+
                                             {/* Groot achtergrond getal */}
                                             <div className={`absolute top-4 ${isEven ? "right-6" : "left-6"} text-7xl font-display font-black text-slate-50 group-hover:text-accent/5 transition-colors select-none pointer-events-none`}>
                                                 {step.num}

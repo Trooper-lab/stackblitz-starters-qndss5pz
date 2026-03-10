@@ -1,22 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { getClientProjects } from "@/lib/services/projectService";
-import { ProjectData, UserData, CompanyDetails, DomainInfo, ProjectContext } from "@/types/database";
+import { ProjectData, CompanyDetails, DomainInfo, ProjectContext } from "@/types/database";
 import ClientProjectDetail from "@/components/dashboard/ClientProjectDetail";
-import { 
-    LayoutDashboard, 
-    FolderKanban, 
-    ChevronRight, 
-    Loader2, 
-    Sparkles, 
-    Building2, 
-    Globe, 
-    Mail, 
-    Phone, 
-    User,
+import {
+    LayoutDashboard,
+    FolderKanban,
+    ChevronRight,
+    Loader2,
+    Sparkles,
+    Building2,
+    Globe,
     ArrowRight,
     Clock,
     CheckCircle2,
@@ -27,9 +24,9 @@ import {
     FileText,
     ShieldCheck
 } from "lucide-react";
-import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, updateDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function CustomerDashboard() {
@@ -39,7 +36,7 @@ export default function CustomerDashboard() {
     const [loading, setLoading] = useState(true);
     const [onboardingStep, setOnboardingStep] = useState(1);
     const [isSaving, setIsSaving] = useState(false);
-    
+
     // Onboarding form state
     const [companyDetails, setCompanyDetails] = useState<CompanyDetails>({
         name: "",
@@ -67,14 +64,14 @@ export default function CustomerDashboard() {
             setCompanyDetails(userData.companyDetails);
             if (userData.domainInfo) setDomainInfo(userData.domainInfo);
             if (userData.projectContext) setProjectContext(userData.projectContext);
-            
+
             if (projects.length === 0) {
                 setOnboardingStep(2);
             }
         }
     }, [userData, projects.length]);
 
-    const loadProjects = async () => {
+    const loadProjects = useCallback(async () => {
         if (!user) return;
         try {
             const data = await getClientProjects(user.uid);
@@ -91,11 +88,11 @@ export default function CustomerDashboard() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, selectedProject]);
 
     useEffect(() => {
         loadProjects();
-    }, [user]);
+    }, [loadProjects]);
 
     const handleOnboardingSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -138,7 +135,7 @@ export default function CustomerDashboard() {
                     </nav>
 
                     <main className="flex-grow p-6 py-12 max-w-4xl mx-auto w-full">
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="w-full"
@@ -171,7 +168,7 @@ export default function CustomerDashboard() {
                                                 type="text"
                                                 required
                                                 value={companyDetails.name}
-                                                onChange={(e) => setCompanyDetails({...companyDetails, name: e.target.value})}
+                                                onChange={(e) => setCompanyDetails({ ...companyDetails, name: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                 placeholder="Bijv. AI Lead Site BV"
                                             />
@@ -182,7 +179,7 @@ export default function CustomerDashboard() {
                                                 type="text"
                                                 required
                                                 value={companyDetails.address}
-                                                onChange={(e) => setCompanyDetails({...companyDetails, address: e.target.value})}
+                                                onChange={(e) => setCompanyDetails({ ...companyDetails, address: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                 placeholder="Straat 123, 1234 AB Plaats"
                                             />
@@ -193,7 +190,7 @@ export default function CustomerDashboard() {
                                                 type="text"
                                                 required
                                                 value={companyDetails.kvk}
-                                                onChange={(e) => setCompanyDetails({...companyDetails, kvk: e.target.value})}
+                                                onChange={(e) => setCompanyDetails({ ...companyDetails, kvk: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                 placeholder="8 cijfers"
                                             />
@@ -204,7 +201,7 @@ export default function CustomerDashboard() {
                                                 type="text"
                                                 required
                                                 value={companyDetails.vat}
-                                                onChange={(e) => setCompanyDetails({...companyDetails, vat: e.target.value})}
+                                                onChange={(e) => setCompanyDetails({ ...companyDetails, vat: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                 placeholder="NL001234567B01"
                                             />
@@ -230,7 +227,7 @@ export default function CustomerDashboard() {
                                             <input
                                                 type="text"
                                                 value={domainInfo.currentDomain}
-                                                onChange={(e) => setDomainInfo({...domainInfo, currentDomain: e.target.value})}
+                                                onChange={(e) => setDomainInfo({ ...domainInfo, currentDomain: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                 placeholder="www.jouwbedrijf.nl"
                                             />
@@ -240,7 +237,7 @@ export default function CustomerDashboard() {
                                             <input
                                                 type="text"
                                                 value={domainInfo.provider}
-                                                onChange={(e) => setDomainInfo({...domainInfo, provider: e.target.value})}
+                                                onChange={(e) => setDomainInfo({ ...domainInfo, provider: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                                 placeholder="Bijv. Hostnet, TransIP, etc."
                                             />
@@ -273,7 +270,7 @@ export default function CustomerDashboard() {
                                                 required
                                                 rows={3}
                                                 value={projectContext.goals}
-                                                onChange={(e) => setProjectContext({...projectContext, goals: e.target.value})}
+                                                onChange={(e) => setProjectContext({ ...projectContext, goals: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all resize-none"
                                                 placeholder="Wat wil je bereiken? Bijv. Meer offerte aanvragen, online verkoop, etc."
                                             />
@@ -286,7 +283,7 @@ export default function CustomerDashboard() {
                                                 required
                                                 rows={2}
                                                 value={projectContext.targetAudience}
-                                                onChange={(e) => setProjectContext({...projectContext, targetAudience: e.target.value})}
+                                                onChange={(e) => setProjectContext({ ...projectContext, targetAudience: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all resize-none"
                                                 placeholder="Wie is je ideale klant?"
                                             />
@@ -298,7 +295,7 @@ export default function CustomerDashboard() {
                                             <textarea
                                                 rows={2}
                                                 value={projectContext.currentWebsiteContent}
-                                                onChange={(e) => setProjectContext({...projectContext, currentWebsiteContent: e.target.value})}
+                                                onChange={(e) => setProjectContext({ ...projectContext, currentWebsiteContent: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all resize-none"
                                                 placeholder="Heb je al teksten of foto's? Of moeten wij dit verzorgen?"
                                             />
@@ -310,7 +307,7 @@ export default function CustomerDashboard() {
                                             <textarea
                                                 rows={2}
                                                 value={projectContext.competitors}
-                                                onChange={(e) => setProjectContext({...projectContext, competitors: e.target.value})}
+                                                onChange={(e) => setProjectContext({ ...projectContext, competitors: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold focus:outline-none focus:ring-2 focus:ring-accent transition-all resize-none"
                                                 placeholder="Welke bedrijven in jouw branche bewonder je?"
                                             />
@@ -357,7 +354,7 @@ export default function CustomerDashboard() {
                     </nav>
 
                     <main className="flex-grow flex items-center justify-center p-6">
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             className="max-w-3xl w-full text-center"
@@ -366,7 +363,7 @@ export default function CustomerDashboard() {
                                 <Clock size={40} className="text-accent animate-pulse" />
                                 <div className="absolute inset-0 bg-accent rounded-full animate-ping opacity-20" />
                             </div>
-                            
+
                             <h1 className="text-4xl md:text-6xl font-display font-black mb-6 uppercase tracking-tight italic">Intake ontvangen<span className="text-accent">!</span></h1>
                             <p className="text-slate-300 text-xl font-medium leading-relaxed mb-12">
                                 Bedankt {user?.displayName?.split(' ')[0]}! Je hebt de intake succesvol afgerond. Onze strategen bekijken je gegevens en nemen binnen <span className="text-white font-black italic underline decoration-accent underline-offset-4">1 werkdag</span> contact met je op voor de kickoff.
@@ -479,7 +476,7 @@ export default function CustomerDashboard() {
                                                             <div className="flex flex-wrap items-center gap-6 text-xs font-bold text-slate-400">
                                                                 <span className="flex items-center gap-2">
                                                                     <Clock className="w-4 h-4 text-accent" />
-                                                                    Update: {new Date(project.updatedAt?.toDate()).toLocaleDateString('nl-NL')}
+                                                                    Update: {project.updatedAt instanceof Timestamp ? project.updatedAt.toDate().toLocaleDateString('nl-NL') : 'Recent'}
                                                                 </span>
                                                                 <span className="flex items-center gap-2">
                                                                     <CheckCircle2 className="w-4 h-4 text-accent" />

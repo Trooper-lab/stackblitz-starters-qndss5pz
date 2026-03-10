@@ -7,19 +7,19 @@ const features = [
     {
         title: "⚡ Levering in 5 dagen",
         description: "Volledig complete, op maat ontworpen websites geleverd in slechts 5 werkdagen. Geen excuses.",
-        icon: <span className="text-4xl">⏱️</span>,
+        icon: <Clock className="w-10 h-10 text-purple-400" />,
         gradient: "from-purple-500/10 to-transparent",
     },
     {
         title: "🏆 Kwaliteit van een bureau",
         description: "Hoogwaardig ontwerp en prestaties die wedijveren met 's werelds beste digitale bureaus.",
-        icon: <span className="text-4xl">🏢</span>,
+        icon: <Rocket className="w-10 h-10 text-blue-400" />,
         gradient: "from-blue-500/10 to-transparent",
     },
     {
         title: "💰 Betaalbare prijs",
         description: "Eersteklas resultaten zonder de premium bureaukosten. Transparante prijzen voor elke schaal.",
-        icon: <span className="text-4xl">💎</span>,
+        icon: <Banknote className="w-10 h-10 text-emerald-400" />,
         gradient: "from-emerald-500/10 to-transparent",
     },
 ];

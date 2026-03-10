@@ -1,3 +1,5 @@
+import { Timestamp, FieldValue } from "firebase/firestore";
+
 export type UserRole = "admin" | "client";
 
 export interface CompanyDetails {
@@ -30,8 +32,8 @@ export interface UserData {
     companyDetails?: CompanyDetails;
     domainInfo?: DomainInfo;
     projectContext?: ProjectContext;
-    createdAt: any; // Firestore Timestamp
-    updatedAt?: any; // Firestore Timestamp
+    createdAt: Timestamp | FieldValue;
+    updatedAt?: Timestamp | FieldValue;
 }
 
 export interface ProjectAsset {
@@ -39,7 +41,7 @@ export interface ProjectAsset {
     name: string;
     url: string;
     type: "logo" | "photo" | "document" | "other";
-    uploadedAt: any;
+    uploadedAt: Timestamp | FieldValue;
 }
 
 export interface ProjectDesign {
@@ -49,7 +51,7 @@ export interface ProjectDesign {
     htmlUrl: string; // URL to the hosted HTML design
     status: "pending" | "approved" | "rejected";
     feedback?: string;
-    createdAt: any;
+    createdAt: Timestamp | FieldValue;
 }
 
 export type ProjectStatus = "intake" | "design_review" | "development" | "delivered";
@@ -61,8 +63,8 @@ export interface ProjectData {
     status: ProjectStatus;
     assets: ProjectAsset[];
     designs: ProjectDesign[];
-    createdAt: any;
-    updatedAt: any;
+    createdAt: Timestamp | FieldValue;
+    updatedAt: Timestamp | FieldValue;
 }
 
 export interface InvoiceData {
@@ -74,8 +76,8 @@ export interface InvoiceData {
     description: string;
     status: "draft" | "sent" | "paid" | "overdue";
     pdfUrl?: string; // Firebase storage URL
-    issuedAt?: any;
-    dueDate?: any;
-    paidAt?: any;
-    createdAt: any;
+    issuedAt?: Timestamp | FieldValue;
+    dueDate?: Timestamp | FieldValue;
+    paidAt?: Timestamp | FieldValue;
+    createdAt: Timestamp | FieldValue;
 }

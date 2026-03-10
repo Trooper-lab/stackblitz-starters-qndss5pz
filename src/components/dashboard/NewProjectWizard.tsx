@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Search, User, FolderOpen, Check, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, Search, FolderOpen, Check, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Timestamp } from "firebase/firestore";
 import { UserData, ProjectData } from "@/types/database";
 import { getClients } from "@/lib/services/clientService";
 import { createProject } from "@/lib/services/projectService";
@@ -58,8 +59,8 @@ export default function NewProjectWizard({ onClose, onCreated }: NewProjectWizar
                 status: "intake",
                 assets: [],
                 designs: [],
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                createdAt: Timestamp.fromDate(new Date()),
+                updatedAt: Timestamp.fromDate(new Date()),
             };
             onCreated(newProject);
         } catch {

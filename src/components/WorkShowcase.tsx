@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useLayoutEffect, useState, useEffect } from "react";
+import { useRef, useLayoutEffect } from "react";
+import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -112,7 +113,7 @@ export default function WorkShowcase() {
             <div className="max-w-7xl mx-auto px-6 mb-16">
                 <div className="text-center">
                     <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold leading-[1.1] mb-6">
-                    <span className="text-accent">Echte</span> Projecten<span className="text-accent">.</span> Snelle Oplevering<span className="text-accent">.</span>
+                        <span className="text-accent">Echte</span> Projecten<span className="text-accent">.</span> Snelle Oplevering<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium">
                         Ontdek onze recente projecten. Beweeg de muis erover om te pauzeren en de details te bekijken.
@@ -139,14 +140,14 @@ export default function WorkShowcase() {
                             className="w-[350px] md:w-[450px] flex-shrink-0 group relative rounded-[24px] overflow-hidden bg-[#112240] transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5)] block"
                         >
                             <div className="relative h-[300px] md:h-[350px] overflow-hidden bg-slate-900 flex justify-center items-center">
-                                {/* Use Microlink API to generate solid screenshot */}
-                                <img
+                                <Image
                                     src={`https://api.microlink.io/?url=${encodeURIComponent(project.url)}&screenshot=true&meta=false&embed=screenshot.url`}
                                     alt={`Screenshot van ${project.title}`}
                                     className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-                                    loading="lazy"
+                                    fill
+                                    unoptimized
                                 />
-                                
+
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F] to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-500 z-10" />
 
                                 <div

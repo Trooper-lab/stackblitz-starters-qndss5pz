@@ -8,8 +8,9 @@ import InvoiceManager from "./InvoiceManager";
 import AddDesignModal from "./AddDesignModal";
 import {
     FileText, Layout, Wrench, CheckCircle, ExternalLink, MessageSquare,
-    Plus, Check, ArrowRight, Clock, Upload, Receipt, ChevronLeft
+    Plus, Check, ArrowRight, Upload, Receipt, ChevronLeft
 } from "lucide-react";
+import Image from "next/image";
 
 interface ProjectDetailProps {
     project: ProjectData;
@@ -99,10 +100,10 @@ export default function ProjectDetail({ project, clientId, onBack, onUpdate }: P
                                 onClick={() => !saving && advanceToStep(step.key)}
                                 disabled={saving}
                                 className={`relative flex flex-col gap-3 p-4 rounded-2xl border text-left transition-all ${isActive
-                                        ? `${sc.border} ${sc.bg} ring-2 ${sc.ring}/20`
-                                        : isDone
-                                            ? "border-white/10 bg-white/5 opacity-60 hover:opacity-100"
-                                            : "border-white/5 bg-white/2 opacity-30 hover:opacity-60"
+                                    ? `${sc.border} ${sc.bg} ring-2 ${sc.ring}/20`
+                                    : isDone
+                                        ? "border-white/10 bg-white/5 opacity-60 hover:opacity-100"
+                                        : "border-white/5 bg-white/2 opacity-30 hover:opacity-60"
                                     }`}
                             >
                                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isActive || isDone ? sc.bg : "bg-white/5"}`}>
@@ -135,7 +136,7 @@ export default function ProjectDetail({ project, clientId, onBack, onUpdate }: P
                                         <div className="p-2.5 bg-blue-500/20 rounded-xl"><FileText className="w-5 h-5 text-blue-400" /></div>
                                         <div>
                                             <h3 className="font-bold text-lg">Intake & Assets</h3>
-                                            <p className="text-xs opacity-40">Upload logo's, foto's en documenten van de klant</p>
+                                            <p className="text-xs opacity-40">Upload logo&apos;s, foto&apos;s en documenten van de klant</p>
                                         </div>
                                     </div>
                                     <FileUpload projectId={project.id} onUploadComplete={handleAssetUpload} />
@@ -151,7 +152,7 @@ export default function ProjectDetail({ project, clientId, onBack, onUpdate }: P
                                         assets.map((asset, i) => (
                                             <div key={i} className="group relative bg-white/5 border border-white/10 rounded-xl overflow-hidden aspect-square hover:border-blue-500/50 transition-all">
                                                 {asset.type === "photo" || asset.type === "logo" ? (
-                                                    <img src={asset.url} alt={asset.name} className="w-full h-full object-cover" />
+                                                    <Image src={asset.url} alt={asset.name} width={200} height={200} className="w-full h-full object-cover" />
                                                 ) : (
                                                     <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center">
                                                         <FileText className="w-7 h-7 opacity-20 mb-2" />

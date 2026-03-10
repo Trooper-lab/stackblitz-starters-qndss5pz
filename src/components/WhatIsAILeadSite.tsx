@@ -63,7 +63,7 @@ export default function WhatIsAILeadSite() {
 
             <div className="max-w-7xl mx-auto w-full relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-                    
+
                     {/* Left Column */}
                     <div className="lg:sticky lg:top-32 flex flex-col gap-12">
                         <div>
@@ -74,15 +74,15 @@ export default function WhatIsAILeadSite() {
                                 precies<span className="text-accent">?</span>
                             </h2>
                             <p className="text-xl md:text-2xl text-slate-600 max-w-xl leading-relaxed font-light italic border-l-4 border-accent/20 pl-6">
-                                "De perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie,
-                                geformuleerd als een strategisch instrument om uw bedrijfsgroei te accelereren."
+                                &quot;De perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie,
+                                geformuleerd als een strategisch instrument om uw bedrijfsgroei te accelereren.&quot;
                             </p>
                         </div>
-                        
+
                         {/* Custom SVG Graphic built to match brand */}
                         <div className="hidden lg:block relative w-full h-64 overflow-hidden rounded-2xl shadow-xl bg-navy border-t-2 border-accent/30 group">
-                            <Image 
-                                src="/ai_abstract_graphic.svg" 
+                            <Image
+                                src="/ai_abstract_graphic.svg"
                                 alt="AI Network Abstraction"
                                 fill
                                 className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -114,14 +114,14 @@ export default function WhatIsAILeadSite() {
 
             {/* GSAP SVG Section Transition */}
             <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 pointer-events-none">
-                <svg 
-                    className="w-full h-16 md:h-24 lg:h-32 text-slate-50" 
-                    viewBox="0 0 1440 100" 
+                <svg
+                    className="w-full h-16 md:h-24 lg:h-32 text-slate-50"
+                    viewBox="0 0 1440 100"
                     preserveAspectRatio="none"
                 >
-                    <path 
+                    <path
                         ref={pathRef}
-                        fill="currentColor" 
+                        fill="currentColor"
                         d="M0,100 Q720,100 1440,100 L1440,150 L0,150 Z"
                     />
                 </svg>

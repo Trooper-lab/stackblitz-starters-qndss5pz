@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, Layout, Link, FileText, Plus } from "lucide-react";
+import { Timestamp } from "firebase/firestore";
 import { ProjectDesign } from "@/types/database";
 
 interface AddDesignModalProps {
@@ -36,7 +37,7 @@ export default function AddDesignModal({ onClose, onAdd }: AddDesignModalProps) 
             htmlUrl: url.trim(),
             description: description.trim() || undefined,
             status: "pending",
-            createdAt: new Date()
+            createdAt: Timestamp.fromDate(new Date())
         };
         onAdd(newDesign);
     };

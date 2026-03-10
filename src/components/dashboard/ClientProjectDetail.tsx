@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ProjectData, ProjectDesign, ProjectAsset } from "@/types/database";
 import { updateDesignStatus } from "@/lib/services/projectService";
 import { CheckCircle2, XCircle, ExternalLink, Download, FileText, ImageIcon, Loader2, Layout, Receipt } from "lucide-react";
+import Image from "next/image";
 import ClientInvoiceList from "./ClientInvoiceList";
 
 interface ClientProjectDetailProps {
@@ -125,7 +126,7 @@ export default function ClientProjectDetail({ project, onUpdate, onBack }: Clien
                                     Nog geen ontwerpen beschikbaar.
                                 </div>
                             ) : (
-                                project.designs.map((design) => (
+                                project.designs.map((design: ProjectDesign) => (
                                     <div key={design.id} className="bg-white/5 border border-white/10 rounded-xl p-6 transition-all hover:border-white/20">
                                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                             <div className="space-y-2">
@@ -224,10 +225,10 @@ export default function ClientProjectDetail({ project, onUpdate, onBack }: Clien
                                     Nog geen assets geüpload.
                                 </div>
                             ) : (
-                                project.assets.map((asset) => (
+                                project.assets.map((asset: ProjectAsset) => (
                                     <div key={asset.id} className="group relative bg-white/5 border border-white/10 rounded-xl overflow-hidden aspect-square">
                                         {asset.type === "photo" ? (
-                                            <img src={asset.url} alt={asset.name} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all" />
+                                            <Image src={asset.url} alt={asset.name} fill className="object-cover opacity-60 group-hover:opacity-100 transition-all" />
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center p-4">
                                                 <FileText className="w-10 h-10 text-white/20 mb-2" />

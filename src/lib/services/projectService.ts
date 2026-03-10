@@ -29,16 +29,22 @@ export const getClientProjects = async (uid: string): Promise<ProjectData[]> => 
         );
         const snapshot = await getDocs(q);
         const projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
-        
+
         // Fallback: Als er geen projecten zijn met clientId, check legacy customerId
         if (projects.length === 0) {
             const qLegacy = query(
                 collection(db, "projects"),
-                where("customerId", "==", uid),
-                orderBy("createdAt", "desc")
+                where("customerId", "==", uid)
             );
             const legacySnapshot = await getDocs(qLegacy);
-            return legacySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
+            const legacyProjects = legacySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
+
+            // Handmatige sortering om index-error te voorkomen totdat de index is aangemaakt
+            return legacyProjects.sort((a, b) => {
+                const dateA = a.createdAt?.toDate?.()?.getTime() || 0;
+                const dateB = b.createdAt?.toDate?.()?.getTime() || 0;
+                return dateB - dateA;
+            });
         }
 
         return projects;

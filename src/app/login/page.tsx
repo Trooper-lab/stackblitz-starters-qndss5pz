@@ -12,6 +12,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+import Image from "next/image";
+
 export default function LoginPage() {
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState("");
@@ -56,8 +58,9 @@ export default function LoginPage() {
                     createdAt: serverTimestamp(),
                 }, { merge: true });
             }
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            const error = err as Error;
+            setError(error.message || "An error occurred");
         }
     };
 
@@ -127,7 +130,7 @@ export default function LoginPage() {
                     onClick={signInWithGoogle}
                     className="w-full bg-white text-black font-bold py-3 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-100 transition-all"
                 >
-                    <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
+                    <Image src="https://www.google.com/favicon.ico" width={20} height={20} alt="Google" />
                     Google
                 </button>
 

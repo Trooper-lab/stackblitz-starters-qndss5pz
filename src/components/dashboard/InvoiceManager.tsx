@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { InvoiceData, ProjectData } from "@/types/database";
 import { createInvoice, updateInvoice, getClientInvoices } from "@/lib/services/invoiceService";
 import { Plus, Receipt, Send, CheckCircle, Clock, Download, Loader2 } from "lucide-react";
+import { Timestamp } from "firebase/firestore";
 
 interface InvoiceManagerProps {
     project: ProjectData;
@@ -15,7 +16,7 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
     const [loading, setLoading] = useState(true);
     const [creating, setCreating] = useState(false);
 
-    const loadInvoices = async () => {
+    const loadInvoices = useCallback(async () => {
         try {
             const data = await getClientInvoices(clientId);
             setInvoices(data.filter(inv => inv.projectId === project.id));
@@ -24,11 +25,11 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
         } finally {
             setLoading(false);
         }
-    };
+    }, [clientId, project.id]);
 
     useEffect(() => {
         loadInvoices();
-    }, [project.id, clientId]);
+    }, [project.id, clientId, loadInvoices]);
 
     const handleCreateInvoice = async () => {
         setCreating(true);
@@ -41,7 +42,7 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
                 amount: 0,
                 description: `Factuur voor project: ${project.title}`,
                 status: "draft",
-                createdAt: new Date() // This will be overwritten by serverTimestamp in the service, but needed for type safety if Omit is used
+                createdAt: Timestamp.fromDate(new Date()) // This will be overwritten by serverTimestamp in the service, but needed for type safety if Omit is used
             });
             await loadInvoices();
         } catch (error) {
@@ -55,8 +56,8 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
         try {
             await updateInvoice(id, {
                 status,
-                issuedAt: status === "sent" ? new Date() : undefined,
-                paidAt: status === "paid" ? new Date() : undefined
+                issuedAt: status === "sent" ? Timestamp.fromDate(new Date()) : undefined,
+                paidAt: status === "paid" ? Timestamp.fromDate(new Date()) : undefined
             });
             await loadInvoices();
         } catch (error) {
@@ -160,7 +161,7 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
                                         )}
                                         <button
                                             className="p-2 bg-white/5 text-white/50 hover:bg-white/10 rounded-lg transition-all"
-                                            title="Download PDF (Nog niet geïmplementeerd)"
+                                            title="Download PDF (Nog niet ge&iuml;mplementeerd)"
                                         >
                                             <Download className="w-5 h-5" />
                                         </button>

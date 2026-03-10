@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { X, User, Mail, Building, Plus, Loader2, Check } from "lucide-react";
+import { X, User, Mail, Building, Loader2, Check } from "lucide-react";
+import { Timestamp } from "firebase/firestore";
 import { UserData } from "@/types/database";
 import { createClient } from "@/lib/services/clientService";
 
@@ -53,8 +54,8 @@ export default function NewClientModal({ onClose, onCreated }: NewClientModalPro
                 photoURL: null,
                 role: "client",
                 companyDetails: clientData.companyDetails,
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                createdAt: Timestamp.fromDate(new Date()),
+                updatedAt: Timestamp.fromDate(new Date()),
             };
             onCreated(newClient);
         } catch (err) {

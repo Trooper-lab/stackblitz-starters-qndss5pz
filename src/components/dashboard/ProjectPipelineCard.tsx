@@ -1,7 +1,8 @@
 "use client";
 
 import { ProjectData, UserData } from "@/types/database";
-import { ArrowRight, Calendar, CheckCircle, FileText, Receipt, Wrench } from "lucide-react";
+import { Calendar, CheckCircle, FileText, Wrench } from "lucide-react";
+import { Timestamp } from "firebase/firestore";
 
 const STEPS = [
     { key: "intake", label: "Intake", icon: FileText, color: "blue" },
@@ -34,7 +35,7 @@ export default function ProjectPipelineCard({ project, client, onClick }: Projec
     const pendingDesigns = project.designs.filter(d => d.status === "pending").length;
     const approvedDesigns = project.designs.filter(d => d.status === "approved").length;
 
-    const daysAgo = project.updatedAt?.toDate
+    const daysAgo = (project.updatedAt instanceof Timestamp)
         ? Math.floor((Date.now() - project.updatedAt.toDate().getTime()) / 86400000)
         : null;
 

@@ -38,8 +38,8 @@ export default function CookieBanner() {
               <div className="flex-grow">
                 <h3 className="text-navy font-bold text-lg mb-2">Wij gebruiken cookies 🍪</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  We gebruiken cookies om uw ervaring te verbeteren, onze website te analyseren en gepersonaliseerde advertenties te tonen. 
-                  Door op "Accepteren" te klikken, gaat u akkoord met ons gebruik van cookies. Lees meer in ons{" "}
+                  We gebruiken cookies om uw ervaring te verbeteren, onze website te analyseren en gepersonaliseerde advertenties te tonen.
+                  Door op &quot;Accepteren&quot; te klikken, gaat u akkoord met ons gebruik van cookies. Lees meer in ons{" "}
                   <Link href="/cookiebeleid" className="text-accent hover:underline font-semibold">
                     Cookiebeleid
                   </Link>{" "}

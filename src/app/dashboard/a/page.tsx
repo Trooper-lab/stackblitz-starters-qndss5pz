@@ -27,7 +27,7 @@ const STEPS = [
 ];
 
 export default function AdminDashboard() {
-    const { user, signOut } = useAuth();
+    const { signOut } = useAuth();
     const [view, setView] = useState<View>("pipeline");
     const [projects, setProjects] = useState<ProjectData[]>([]);
     const [clients, setClients] = useState<UserData[]>([]);

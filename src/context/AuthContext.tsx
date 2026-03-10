@@ -5,8 +5,7 @@ import {
     onAuthStateChanged,
     signInWithPopup,
     signOut as firebaseSignOut,
-    User,
-    GoogleAuthProvider
+    User
 } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db, googleProvider } from "@/lib/firebase";
@@ -76,7 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             });
             const result = await signInWithPopup(auth, googleProvider);
             return result.user;
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const error = err as { code?: string; message?: string };
             console.error("Error signing in with Google:", error.message);
             if (error.code === 'auth/popup-blocked') {
                 alert('De pop-up is geblokkeerd door je browser. Sta pop-ups toe voor deze website.');

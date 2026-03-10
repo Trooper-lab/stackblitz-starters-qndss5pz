@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-    const { user, role, signOut } = useAuth();
+    const { user, role } = useAuth();
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
