@@ -16,38 +16,36 @@ service cloud.firestore {
 
     // Users collection rules
     match /users/{userId} {
-      // Clients can read and update their own profile (essential for onboarding)
-      // Admins can manage all user profiles
       allow read, write: if isOwner(userId) || isAdmin();
-      
-      // Allow initial creation during sign-up
       allow create: if request.auth != null && request.auth.uid == userId;
     }
 
     // Projects collection rules
     match /projects/{projectId} {
-      // Admins have full control (create, read, update, delete)
+      // Admins have full access
       allow read, write: if isAdmin();
       
-      // Clients can view and update projects where they are the assigned client
-      // We use 'clientId' as the identifier in the project document
-      allow read: if request.auth != null && 
-        (resource == null || resource.data.clientId == request.auth.uid);
+      // Allow reading projects for both 'clientId' and 'customerId' to maintain compatibility
+      allow read: if request.auth != null && (
+        resource == null || 
+        resource.data.clientId == request.auth.uid || 
+        resource.data.customerId == request.auth.uid
+      );
         
-      allow update: if request.auth != null && 
-        resource.data.clientId == request.auth.uid;
+      // Allow updates for clients to interact with designs/assets
+      allow update: if request.auth != null && (
+        resource.data.clientId == request.auth.uid || 
+        resource.data.customerId == request.auth.uid
+      );
     }
 
     // Invoices collection rules
     match /invoices/{invoiceId} {
-      // Admins have full control
       allow read, write: if isAdmin();
-      
-      // Clients can only read invoices assigned to them
-      allow read: if request.auth != null && 
-        resource.data.clientId == request.auth.uid;
-        
-      // Clients should not be able to update or delete invoices
+      allow read: if request.auth != null && (
+        resource.data.clientId == request.auth.uid || 
+        resource.data.customerId == request.auth.uid
+      );
       allow write: if isAdmin();
     }
   }

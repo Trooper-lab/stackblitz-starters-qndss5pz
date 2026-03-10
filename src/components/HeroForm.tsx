@@ -44,7 +44,6 @@ export default function HeroForm() {
     const formRef = useRef<HTMLDivElement>(null);
 
     // Dutch phone number validation regex
-    // Supports: 0612345678, 06 12345678, +31612345678, 0031612345678
     const validateDutchPhone = (number: string) => {
         const regex = /^((\+31|0031|0)6[1-9][0-9]{7})$/;
         const cleaned = number.replace(/\s/g, '');
@@ -205,6 +204,8 @@ export default function HeroForm() {
                             </div>
                             <input
                                 type="tel"
+                                name="tel"
+                                autoComplete="tel"
                                 placeholder="06 12345678"
                                 required
                                 value={formData.phone}
@@ -284,6 +285,8 @@ export default function HeroForm() {
                                 </div>
                                 <input
                                     type="text"
+                                    name="name"
+                                    autoComplete="name"
                                     placeholder="Je volledige naam"
                                     required
                                     value={formData.name}
@@ -310,6 +313,8 @@ export default function HeroForm() {
                                             </div>
                                             <input
                                                 type="email"
+                                                name="email"
+                                                autoComplete="email"
                                                 placeholder="jouw@bedrijf.com"
                                                 required
                                                 value={formData.email}
@@ -323,6 +328,8 @@ export default function HeroForm() {
                                             </div>
                                             <input
                                                 type="tel"
+                                                name="tel"
+                                                autoComplete="tel"
                                                 placeholder="Telefoonnummer"
                                                 required
                                                 value={formData.phone}
@@ -336,6 +343,8 @@ export default function HeroForm() {
                                             </div>
                                             <input
                                                 type={showPassword ? "text" : "password"}
+                                                name="new-password"
+                                                autoComplete="new-password"
                                                 placeholder="Wachtwoord"
                                                 required
                                                 value={formData.password}

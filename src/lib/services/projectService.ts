@@ -18,15 +18,30 @@ export const getAllProjects = async (): Promise<ProjectData[]> => {
 };
 
 // Fetch projects for a specific client
-export const getClientProjects = async (clientId: string): Promise<ProjectData[]> => {
+// We standardise on 'clientId' but the rules now support both for safety
+export const getClientProjects = async (uid: string): Promise<ProjectData[]> => {
+    if (!uid) return [];
     try {
         const q = query(
             collection(db, "projects"),
-            where("clientId", "==", clientId),
+            where("clientId", "==", uid),
             orderBy("createdAt", "desc")
         );
         const snapshot = await getDocs(q);
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
+        const projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
+        
+        // Fallback: Als er geen projecten zijn met clientId, check legacy customerId
+        if (projects.length === 0) {
+            const qLegacy = query(
+                collection(db, "projects"),
+                where("customerId", "==", uid),
+                orderBy("createdAt", "desc")
+            );
+            const legacySnapshot = await getDocs(qLegacy);
+            return legacySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
+        }
+
+        return projects;
     } catch (error) {
         console.error("Error fetching client projects:", error);
         throw error;
