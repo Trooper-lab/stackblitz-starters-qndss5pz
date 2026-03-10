@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@microlink/react": "^5.5.24",
     "clsx": "^2.1.1",
     "firebase": "^12.10.0",
     "framer-motion": "^12.35.1",
