@@ -16,9 +16,7 @@ service cloud.firestore {
 
     // Users collection rules
     match /users/{userId} {
-      // Users can read/write their own data. Admins can do everything.
       allow read, write: if isOwner(userId) || isAdmin();
-      // Allow creation during sign-up (will have 'client' role by default in app logic)
       allow create: if request.auth != null && request.auth.uid == userId;
     }
 
@@ -26,23 +24,29 @@ service cloud.firestore {
     match /projects/{projectId} {
       // Admins have full access
       allow read, write: if isAdmin();
-      // Customers can read projects assigned to them
-      allow read: if request.auth != null && 
-        resource.data.customerId == request.auth.uid;
-      // Customers can update project designs but not other fields
-      allow update: if request.auth != null && 
-        resource.data.customerId == request.auth.uid &&
-        request.resource.data.customerId == resource.data.customerId &&
-        request.resource.data.title == resource.data.title;
+      
+      // Allow reading projects for both 'clientId' and 'customerId' to maintain compatibility
+      allow read: if request.auth != null && (
+        resource == null || 
+        resource.data.clientId == request.auth.uid || 
+        resource.data.customerId == request.auth.uid
+      );
+        
+      // Allow updates for clients to interact with designs/assets
+      allow update: if request.auth != null && (
+        resource.data.clientId == request.auth.uid || 
+        resource.data.customerId == request.auth.uid
+      );
     }
 
     // Invoices collection rules
     match /invoices/{invoiceId} {
-      // Admins have full access
       allow read, write: if isAdmin();
-      // Customers can read their own invoices
-      allow read: if request.auth != null && 
-        resource.data.clientId == request.auth.uid;
+      allow read: if request.auth != null && (
+        resource.data.clientId == request.auth.uid || 
+        resource.data.customerId == request.auth.uid
+      );
+      allow write: if isAdmin();
     }
   }
 }
