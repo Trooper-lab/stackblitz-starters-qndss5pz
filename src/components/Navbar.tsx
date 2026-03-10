@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const { user, role, signOut } = useAuth();
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -54,15 +56,27 @@ export default function Navbar() {
                                 {link.name}
                             </Link>
                         ))}
-                        <Link href="/#contact">
-                            <button className={`px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 shadow-lg
-                                ${scrolled
-                                    ? "bg-navy text-white hover:bg-navy-light shadow-navy/20"
-                                    : "bg-white text-navy hover:bg-slate-100 shadow-white/10"
-                                }`}>
-                                Krijg mijn gratis audit
-                            </button>
-                        </Link>
+                        {user ? (
+                            <Link href={role === "admin" ? "/dashboard/a" : "/dashboard/k"}>
+                                <button className={`px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 shadow-lg
+                                    ${scrolled
+                                        ? "bg-navy text-white hover:bg-navy-light shadow-navy/20"
+                                        : "bg-white text-navy hover:bg-slate-100 shadow-white/10"
+                                    }`}>
+                                    Dashboard
+                                </button>
+                            </Link>
+                        ) : (
+                            <Link href="/login">
+                                <button className={`px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 shadow-lg
+                                    ${scrolled
+                                        ? "bg-navy text-white hover:bg-navy-light shadow-navy/20"
+                                        : "bg-white text-navy hover:bg-slate-100 shadow-white/10"
+                                    }`}>
+                                    Login
+                                </button>
+                            </Link>
+                        )}
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -88,11 +102,19 @@ export default function Navbar() {
                                 {link.name}
                             </Link>
                         ))}
-                        <Link href="/#contact" onClick={() => setIsOpen(false)}>
-                            <button className="w-full bg-accent text-white py-5 rounded-xl text-sm font-black uppercase tracking-widest shadow-xl shadow-accent/20">
-                                Krijg mijn gratis audit
-                            </button>
-                        </Link>
+                        {user ? (
+                            <Link href={role === "admin" ? "/dashboard/a" : "/dashboard/k"} onClick={() => setIsOpen(false)}>
+                                <button className="w-full bg-accent text-white py-5 rounded-xl text-sm font-black uppercase tracking-widest shadow-xl shadow-accent/20">
+                                    Naar Dashboard
+                                </button>
+                            </Link>
+                        ) : (
+                            <Link href="/login" onClick={() => setIsOpen(false)}>
+                                <button className="w-full bg-accent text-white py-5 rounded-xl text-sm font-black uppercase tracking-widest shadow-xl shadow-accent/20">
+                                    Login
+                                </button>
+                            </Link>
+                        )}
                     </div>
                 )}
             </div>

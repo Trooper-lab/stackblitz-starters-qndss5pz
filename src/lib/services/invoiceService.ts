@@ -1,0 +1,76 @@
+import { db } from "@/lib/firebase";
+import { collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, orderBy, serverTimestamp } from "firebase/firestore";
+import { InvoiceData } from "@/types/database";
+
+// Fetch all invoices (for admin)
+export const getAllInvoices = async (): Promise<InvoiceData[]> => {
+    try {
+        const q = query(
+            collection(db, "invoices"),
+            orderBy("issuedAt", "desc")
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
+    } catch (error) {
+        console.error("Error fetching invoices:", error);
+        throw error;
+    }
+};
+
+// Fetch invoices for a specific client
+export const getClientInvoices = async (clientId: string): Promise<InvoiceData[]> => {
+    try {
+        const q = query(
+            collection(db, "invoices"),
+            where("clientId", "==", clientId),
+            orderBy("issuedAt", "desc")
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
+    } catch (error) {
+        console.error("Error fetching client invoices:", error);
+        throw error;
+    }
+};
+
+// Fetch invoices for a specific project
+export const getProjectInvoices = async (projectId: string): Promise<InvoiceData[]> => {
+    try {
+        const q = query(
+            collection(db, "invoices"),
+            where("projectId", "==", projectId),
+            orderBy("createdAt", "desc")
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
+    } catch (error) {
+        console.error("Error fetching project invoices:", error);
+        throw error;
+    }
+};
+
+// Create a new invoice
+export const createInvoice = async (data: Omit<InvoiceData, "id">): Promise<string> => {
+    try {
+        const docRef = await addDoc(collection(db, "invoices"), {
+            ...data,
+            createdAt: serverTimestamp(),
+            status: data.status || "draft"
+        });
+        return docRef.id;
+    } catch (error) {
+        console.error("Error creating invoice:", error);
+        throw error;
+    }
+};
+
+// Update invoice
+export const updateInvoice = async (invoiceId: string, data: Partial<InvoiceData>): Promise<void> => {
+    try {
+        const docRef = doc(db, "invoices", invoiceId);
+        await updateDoc(docRef, data);
+    } catch (error) {
+        console.error("Error updating invoice:", error);
+        throw error;
+    }
+};
