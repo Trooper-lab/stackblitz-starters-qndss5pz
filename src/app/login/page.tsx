@@ -10,7 +10,7 @@ import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+
 import Link from "next/link";
 import { Loader2, Mail, Lock, User, ArrowLeft } from "lucide-react";
 
@@ -133,7 +133,7 @@ export default function LoginPage() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-lg mb-1">Jouw Persoonlijke AI</h3>
-                                <p className="text-slate-400 text-sm">Vraag AI om nieuwe pagina's te maken, tekst te schrijven of het design aan te passen in real-time.</p>
+                                <p className="text-slate-400 text-sm">Vraag AI om nieuwe pagina&apos;s te maken, tekst te schrijven of het design aan te passen in real-time.</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">

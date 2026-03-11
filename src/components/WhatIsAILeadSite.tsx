@@ -74,8 +74,8 @@ export default function WhatIsAILeadSite() {
                                 precies<span className="text-accent">?</span>
                             </h2>
                             <p className="text-xl md:text-2xl text-slate-600 max-w-xl leading-relaxed font-light italic border-l-4 border-accent/20 pl-6 mb-8">
-                                "De perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie,
-                                geformuleerd als een strategisch instrument om uw bedrijfsgroei te accelereren."
+                                &quot;De perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie,
+                                geformuleerd als een strategisch instrument om uw bedrijfsgroei te accelereren.&quot;
                             </p>
                             <p className="text-lg text-slate-600 max-w-xl leading-relaxed font-medium">
                                 Wij geloven in de kracht van overtuiging. Daarom bieden we je een gratis, op maat gemaakt homepage design aan. Ervaar zelf de impact van onze aanpak, zonder verplichtingen.
