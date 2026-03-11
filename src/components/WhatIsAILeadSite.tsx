@@ -12,13 +12,13 @@ const features = [
     {
         emoji: "🧠",
         title: "Ontworpen door Experts",
-        description: "Uw digitale aanwezigheid verdient meer dan een sjabloon. Onze senior marketeers en SEO-strategen leggen het fundament. Wij gebruiken AI niet om na te denken, maar om onze hoogwaardige strategieën met chirurgische precisie en snelheid tot leven te wekken.",
+        description: "Uw digitale aanwezigheid verdient meer dan een sjabloon. Onze senior marketeers en SEO-strategen leggen het fundament. Wij gebruiken AI niet om na te denken, maar om onze hoogwaardige strategieën met chirurgische precisie en snelheid tot leven te wekken. Geen AI auto-generated website, maar een 'wat als je een marketing expert ongeremd te werk kan laten gaan' ervaring.",
         subtitle: "Strategische Meesterschap"
     },
     {
         emoji: "⚡",
         title: "Gebouwd voor Snelheid",
-        description: "In de moderne economie is traagheid fataal. Wij elimineren de traditionele bottlenecks van logge CMS-systemen. Door AI-gedreven workflows implementeren we complexe wijzigingen en updates in real-time, waardoor uw site altijd voorop loopt in de markt.",
+        description: "In de moderne economie is traagheid fataal. Door onze 15+ jaar ervaring te combineren met AI technologie elimineren we de traditionele bottlenecks. We optimaliseren alles tot in de puntjes zonder hoge technische kosten of tijdverlies door trage communicatie met ontwikkelingsbureaus.",
         subtitle: "Technologische Voorsprong"
     },
     {
@@ -73,9 +73,12 @@ export default function WhatIsAILeadSite() {
                                 <span className="text-accent italic">AI Lead Site</span> <br />
                                 precies<span className="text-accent">?</span>
                             </h2>
-                            <p className="text-xl md:text-2xl text-slate-600 max-w-xl leading-relaxed font-light italic border-l-4 border-accent/20 pl-6">
-                                &quot;De perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie,
-                                geformuleerd als een strategisch instrument om uw bedrijfsgroei te accelereren.&quot;
+                            <p className="text-xl md:text-2xl text-slate-600 max-w-xl leading-relaxed font-light italic border-l-4 border-accent/20 pl-6 mb-8">
+                                "De perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie,
+                                geformuleerd als een strategisch instrument om uw bedrijfsgroei te accelereren."
+                            </p>
+                            <p className="text-lg text-slate-600 max-w-xl leading-relaxed font-medium">
+                                Wij geloven in de kracht van overtuiging. Daarom bieden we je een gratis, op maat gemaakt homepage design aan. Ervaar zelf de impact van onze aanpak, zonder verplichtingen.
                             </p>
                         </div>
 

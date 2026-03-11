@@ -12,18 +12,18 @@ if (typeof window !== "undefined") {
 const steps = [
     {
         num: "00",
-        title: "🔍 Het Voorwerk",
-        desc: "We brengen je bedrijf in kaart. Wat zijn de kernwaarden, wie is de doelgroep en wat is de visie?",
+        title: "🔍 Het Voorwerk (Gratis)",
+        desc: "Jij maakt een gratis account aan en wij brengen je bedrijf in kaart. Wat zijn de kernwaarden, wie is de doelgroep en wat is de visie?",
     },
     {
         num: "01",
-        title: "🎨 Drie Ontwerpen",
-        desc: "We maken 3 unieke ontwerpen. Jij kiest vervolgens de stijl die het allerbeste aansluit bij jou.",
+        title: "🎨 Het Design (Gratis)",
+        desc: "We maken 1 uniek design voor je homepage. Dit is geen AI auto-generated design, maar mensenwerk ondersteund door AI. Bij akkoord sturen we nog 2 variaties.",
     },
     {
         num: "02",
         title: "🛠️ Live Ontwikkeling",
-        desc: "We bouwen de website op een afgeschermde testlocatie zodat jij de ontwikkeling 'live' kunt bijhouden.",
+        desc: "Na akkoord op het design, bouwen we de website op een afgeschermde testlocatie zodat jij de ontwikkeling 'live' kunt bijhouden.",
     },
     {
         num: "03",
@@ -32,8 +32,8 @@ const steps = [
     },
     {
         num: "04",
-        title: "🚀 Publiceren",
-        desc: "We lanceren de website, stellen de SEO in en verzorgen nette doorverwijzingen (redirects) vanaf de oude website etc.",
+        title: "🚀 Publiceren of Testen",
+        desc: "We lanceren de site op je eigen domein, of eerst op een beveiligd adpagina.nl subdomein (bijv. jouwbedrijf.adpagina.nl) om eerst veilig te testen met advertentieverkeer.",
     },
 ];
 
@@ -118,7 +118,7 @@ export default function Process() {
                         🗺️ Onze Werkwijze<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-slate-600 font-medium leading-relaxed mb-8">
-                        Geen eindeloze vergaderingen of onduidelijke trajecten. Een strak en transparant stappenplan van visie tot lancering.
+                        Geen eindeloze vergaderingen of onduidelijke trajecten. Een strak en transparant stappenplan van gratis visie tot lancering.
                     </p>
 
                     {/* Gemiddelde Tijd Badge */}

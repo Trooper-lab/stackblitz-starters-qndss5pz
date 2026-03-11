@@ -32,8 +32,8 @@ export default function ContactForm() {
 
     // Dutch phone number validation regex
     const validateDutchPhone = (number: string) => {
-        const regex = /^((\+31|0031|0)6[1-9][0-9]{7})$/;
-        const cleaned = number.replace(/\s/g, '');
+        const regex = /^((\\+31|0031|0)6[1-9][0-9]{7})$/;
+        const cleaned = number.replace(/\\s/g, '');
         return regex.test(cleaned);
     };
 
@@ -73,7 +73,7 @@ export default function ContactForm() {
                 uid: user.uid,
                 email: formData.email,
                 displayName: formData.name,
-                phone: formData.phone.replace(/\s/g, ''),
+                phone: formData.phone.replace(/\\s/g, ''),
                 role: "client",
                 createdAt: serverTimestamp(),
             });
@@ -106,7 +106,7 @@ export default function ContactForm() {
         try {
             const userRef = doc(db, "users", authUser.uid);
             await updateDoc(userRef, {
-                phone: formData.phone.replace(/\s/g, '')
+                phone: formData.phone.replace(/\\s/g, '')
             });
             setIsProcessing(false);
             setIsSubmitted(true);
@@ -146,10 +146,10 @@ export default function ContactForm() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     <div>
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold mb-8 leading-tight">
-                            Maak je <span className="text-accent italic">gratis</span> account aan<span className="text-accent">.</span>
+                            Ontvang je <span className="text-accent italic">gratis</span> design<span className="text-accent">.</span>
                         </h2>
                         <p className="text-xl text-slate-300 mb-10 leading-relaxed font-medium">
-                            Start vandaag nog met het genereren van leads. Krijg direct toegang tot ons platform en begin met het bouwen van hoog converterende websites.
+                           Maak een gratis account aan en ontvang een uniek design voor je homepage. Ons team maakt samen met AI een design dat is afgestemd op jouw bedrijf.
                         </p>
 
                         <div className="flex flex-col gap-8">
@@ -368,7 +368,7 @@ export default function ContactForm() {
                                                                 onClick={() => setShowPassword(!showPassword)}
                                                                 className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-navy transition-colors"
                                                             >
-                                                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}\
                                                             </button>
                                                         </div>
                                                     </div>

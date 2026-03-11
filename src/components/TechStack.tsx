@@ -1,12 +1,11 @@
 "use client";
 
 const stack = [
-    { icon: "⚛️", name: "ReactJS" },
-    { icon: "⚡", name: "Bolt.new" },
-    { icon: "🗄️", name: "Supabase" },
-    { icon: "🚀", name: "Antizwaartekracht" },
-    { icon: "🧠", name: "Claude" },
-    { icon: "✨", name: "Gemini" },
+    { icon: "🧠", name: "AI Strategie" },
+    { icon: "🤖", name: "AI Assistent" },
+    { icon: "🎯", name: "Conversie Optimalisatie" },
+    { icon: "📈", name: "Data Gedreven Resultaat" },
+    { icon: "⚡", name: "Supersnelle Hosting" },
 ];
 
 export default function TechStack() {

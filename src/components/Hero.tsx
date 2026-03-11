@@ -98,15 +98,15 @@ export default function Hero() {
 
             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
                 <div className="mb-12 w-full" ref={titleContainerRef}>
-                    <h1 
+                <h1 
                         className="font-display font-extrabold leading-[1.05] tracking-tight text-white flex flex-col items-start gap-1 w-full"
                         style={{ fontSize: titleFontSize, transition: 'font-size 0.1s ease-out' }}
-                    >
+                >
                         <span className="opacity-0 hero-title-line whitespace-nowrap pr-4">Stop met klanten te verliezen</span>
                         <span className="opacity-0 hero-title-line whitespace-nowrap pr-4">
                             door <span className="text-accent italic">verouderde </span><span className="opacity-0 hero-title-line whitespace-nowrap pr-4">websites<span className="text-accent">.</span></span>
                         </span>
-                    </h1>
+                </h1>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">

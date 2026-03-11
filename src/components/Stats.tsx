@@ -1,7 +1,7 @@
 export default function Stats() {
     const stats = [
-        { value: "⏱️ 24 uur", label: "Responstijd", desc: "We weten dat je het druk hebt. We handelen snel." },
-        { value: "🤝 98%", label: "Klantbehoud", desc: "Bewezen resultaten die bedrijven laten groeien." },
+        { value: "💸 €0", label: "Startkosten", desc: "Start met een gratis, op maat gemaakt design." },
+        { value: "🤖 100%", label: "Controle", desc: "Beheer alles zelf, zonder technische kennis." },
         { value: "🚀 5 dagen", label: "Gemiddelde Levering", desc: "Jouw op maat gemaakte website, snel geleverd." },
     ];
 
