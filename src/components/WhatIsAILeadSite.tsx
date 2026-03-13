@@ -11,21 +11,21 @@ if (typeof window !== 'undefined') {
 const features = [
     {
         emoji: "🧠",
-        title: "Ontworpen door Experts",
-        description: "Uw digitale aanwezigheid verdient meer dan een sjabloon. Onze senior marketeers en SEO-strategen leggen het fundament. Wij gebruiken AI niet om na te denken, maar om onze hoogwaardige strategieën met chirurgische precisie en snelheid tot leven te wekken. Geen AI auto-generated website, maar een 'wat als je een marketing expert ongeremd te werk kan laten gaan' ervaring.",
-        subtitle: "Strategische Meesterschap"
+        title: "Strategisch Meesterschap",
+        description: "Je digitale aanwezigheid verdient meer dan een sjabloon. Onze senior marketeers leggen het fundament. Geen blinde AI-generatie, maar een doordachte marketingstrategie gericht op conversie.",
+        subtitle: "Mensenwerk"
     },
     {
         emoji: "⚡",
-        title: "Gebouwd voor Snelheid",
-        description: "In de moderne economie is traagheid fataal. Door onze 15+ jaar ervaring te combineren met AI technologie elimineren we de traditionele bottlenecks. We optimaliseren alles tot in de puntjes zonder hoge technische kosten of tijdverlies door trage communicatie met ontwikkelingsbureaus.",
-        subtitle: "Technologische Voorsprong"
+        title: "Technologische Voorsprong",
+        description: "Wij gebruiken AI om onze hoogwaardige strategieën met chirurgische precisie razendsnel tot leven te wekken. Hierdoor elimineren we de traditionele bottlenecks van ontwikkelingsbureaus.",
+        subtitle: "AI-Snelheid"
     },
     {
-        emoji: "🎯",
-        title: "Gemaakt voor Resultaat",
-        description: "Data is de brandstof van groei. Onze systemen analyseren continu gebruikersgedrag en komen proactief met optimalisaties. Het is geen statisch visitekaartje, maar een dynamische leadmachine die zichzelf elke dag verbetert voor een maximale ROI.",
-        subtitle: "Rendement Gedreven"
+        emoji: "📈",
+        title: "Rendement Gedreven",
+        description: "Dit is geen statisch visitekaartje. Het is een dynamische leadmachine die is geoptimaliseerd voor Google (SEO) en maximale conversie.",
+        subtitle: "ROI"
     }
 ];
 
@@ -74,12 +74,22 @@ export default function WhatIsAILeadSite() {
                                 precies<span className="text-accent">?</span>
                             </h2>
                             <p className="text-xl md:text-2xl text-slate-600 max-w-xl leading-relaxed font-light italic border-l-4 border-accent/20 pl-6 mb-8">
-                                &quot;De perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie,
-                                geformuleerd als een strategisch instrument om uw bedrijfsgroei te accelereren.&quot;
+                                &quot;Wij bieden de perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie. Een strategisch instrument om je bedrijfsgroei te accelereren, zonder de nadelen van de oude methodes.&quot;
                             </p>
-                            <p className="text-lg text-slate-600 max-w-xl leading-relaxed font-medium">
-                                Wij geloven in de kracht van overtuiging. Daarom bieden we je een gratis, op maat gemaakt homepage design aan. Ervaar zelf de impact van onze aanpak, zonder verplichtingen.
-                            </p>
+                            <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl mb-8">
+                                <h3 className="font-display font-bold text-navy text-xl mb-3">🛑 Het Probleem met Traditionele Websites</h3>
+                                <p className="text-slate-600 mb-4 font-medium">Je hebt op dit moment twee keuzes als je een website wilt, en ze kosten je allebei geld:</p>
+                                <ul className="space-y-4">
+                                    <li className="flex items-start gap-3">
+                                        <span className="text-red-500 font-bold mt-1">✕</span>
+                                        <p className="text-slate-600 text-sm"><strong>Zelf knutselen met AI of templates:</strong> Kost je 40+ uur frustratie, ziet er goedkoop uit, en het ergste: het levert geen betalende klanten op. Het is een digitaal spookhuis.</p>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <span className="text-red-500 font-bold mt-1">✕</span>
+                                        <p className="text-slate-600 text-sm"><strong>Een traditioneel bureau inhuren:</strong> Je bent €5.000 tot €10.000+ kwijt, je moet 3 maanden wachten op de lancering, en je betaalt voor elke kleine wijziging €120 per uur.</p>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
 
                         {/* Custom SVG Graphic built to match brand */}

@@ -86,13 +86,13 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <Receipt className="w-5 h-5 text-purple-400" />
-                    <h3 className="text-xl font-bold font-montserrat">Facturen</h3>
+                    <Receipt className="w-5 h-5 text-navy" />
+                    <h3 className="text-xl font-bold font-montserrat text-slate-900">Facturen</h3>
                 </div>
                 <button
                     disabled={creating}
                     onClick={handleCreateInvoice}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg text-sm font-medium transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-navy hover:bg-navy-light text-white rounded-lg text-sm font-bold transition-all shadow-sm"
                 >
                     {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                     Nieuwe Factuur
@@ -102,40 +102,40 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
             <div className="space-y-4">
                 {loading ? (
                     <div className="flex justify-center py-8">
-                        <Loader2 className="w-6 h-6 text-purple-500 animate-spin" />
+                        <Loader2 className="w-6 h-6 text-navy animate-spin" />
                     </div>
                 ) : invoices.length === 0 ? (
-                    <div className="p-8 text-center border border-dashed border-white/10 rounded-xl opacity-40">
+                    <div className="p-8 text-center border border-dashed border-slate-200 rounded-xl text-slate-500 font-medium">
                         Nog geen facturen aangemaakt voor dit project.
                     </div>
                 ) : (
                     invoices.map((invoice) => (
-                        <div key={invoice.id} className="bg-white/5 border border-white/10 rounded-xl p-6 transition-all hover:bg-white/10">
+                        <div key={invoice.id} className="bg-white border border-slate-200 rounded-xl p-6 transition-all hover:border-slate-300 hover:shadow-sm">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                 <div className="space-y-2 flex-1">
                                     <div className="flex items-center gap-3">
-                                        <span className="text-sm font-bold text-white/50">{invoice.invoiceNumber}</span>
-                                        <div className={`px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase flex items-center gap-1.5 ${invoice.status === 'paid' ? 'text-green-400 border-green-400/20 bg-green-400/5' :
-                                            invoice.status === 'sent' ? 'text-blue-400 border-blue-400/20 bg-blue-400/5' :
-                                                'text-gray-400 border-white/10 bg-white/5'
+                                        <span className="text-sm font-bold text-slate-700">{invoice.invoiceNumber}</span>
+                                        <div className={`px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase flex items-center gap-1.5 ${invoice.status === 'paid' ? 'text-green-700 border-green-200 bg-green-50' :
+                                            invoice.status === 'sent' ? 'text-blue-700 border-blue-200 bg-blue-50' :
+                                                'text-slate-600 border-slate-200 bg-slate-50'
                                             }`}>
                                             {getStatusIcon(invoice.status)}
                                             {invoice.status}
                                         </div>
                                     </div>
-                                    <p className="font-medium">{invoice.description}</p>
+                                    <p className="font-medium text-slate-900">{invoice.description}</p>
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-6">
                                     <div className="flex flex-col items-end">
-                                        <span className="text-[10px] uppercase opacity-40 mb-1">Bedrag (ex BTW)</span>
+                                        <span className="text-[10px] uppercase font-bold text-slate-500 mb-1 tracking-wider">Bedrag (ex BTW)</span>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm opacity-40">€</span>
+                                            <span className="text-sm text-slate-400 font-medium">€</span>
                                             <input
                                                 type="number"
                                                 defaultValue={invoice.amount}
                                                 onBlur={(e) => handleUpdateAmount(invoice.id, parseFloat(e.target.value))}
-                                                className="bg-black/20 border border-white/10 rounded px-2 py-1 text-sm w-24 text-right outline-none focus:border-purple-500 transition-all"
+                                                className="bg-white border border-slate-200 rounded px-2 py-1 text-sm w-24 text-right outline-none focus:border-navy focus:ring-1 focus:ring-navy transition-all shadow-sm"
                                             />
                                         </div>
                                     </div>
@@ -144,7 +144,7 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
                                         {invoice.status === "draft" && (
                                             <button
                                                 onClick={() => handleUpdateStatus(invoice.id, "sent")}
-                                                className="p-2 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 rounded-lg transition-all"
+                                                className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-all"
                                                 title="Markeer als Verzonden"
                                             >
                                                 <Send className="w-5 h-5" />
@@ -153,14 +153,14 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
                                         {invoice.status === "sent" && (
                                             <button
                                                 onClick={() => handleUpdateStatus(invoice.id, "paid")}
-                                                className="p-2 bg-green-500/20 text-green-400 hover:bg-green-500/30 rounded-lg transition-all"
+                                                className="p-2 bg-green-50 text-green-600 hover:bg-green-100 rounded-lg transition-all"
                                                 title="Markeer als Betaald"
                                             >
                                                 <CheckCircle className="w-5 h-5" />
                                             </button>
                                         )}
                                         <button
-                                            className="p-2 bg-white/5 text-white/50 hover:bg-white/10 rounded-lg transition-all"
+                                            className="p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-all"
                                             title="Download PDF (Nog niet ge&iuml;mplementeerd)"
                                         >
                                             <Download className="w-5 h-5" />

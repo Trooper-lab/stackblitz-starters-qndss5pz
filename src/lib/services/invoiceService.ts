@@ -50,7 +50,7 @@ export const getProjectInvoices = async (projectId: string): Promise<InvoiceData
 };
 
 // Create a new invoice
-export const createInvoice = async (data: Omit<InvoiceData, "id">): Promise<string> => {
+export const createInvoice = async (data: Omit<InvoiceData, "id" | "createdAt">): Promise<string> => {
     try {
         const docRef = await addDoc(collection(db, "invoices"), {
             ...data,
@@ -71,6 +71,32 @@ export const updateInvoice = async (invoiceId: string, data: Partial<InvoiceData
         await updateDoc(docRef, data);
     } catch (error) {
         console.error("Error updating invoice:", error);
+        throw error;
+    }
+};
+
+// Generate commitment fee invoice
+export const generateCommitmentFeeInvoice = async (
+    projectId: string,
+    clientId: string,
+    amount: number
+): Promise<string> => {
+    try {
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 14); // 14 days payment term
+
+        const invoiceId = await createInvoice({
+            projectId,
+            clientId,
+            invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
+            amount,
+            description: "50% Commitment Fee - Investering voor start project",
+            status: "draft",
+            dueDate: dueDate as any, // In MVP we let Firestore auto-convert or store Date
+        });
+        return invoiceId;
+    } catch (error) {
+        console.error("Error generating commitment fee invoice:", error);
         throw error;
     }
 };

@@ -10,7 +10,7 @@ import ClientList from "@/components/dashboard/ClientList";
 import ClientDetail from "@/components/dashboard/ClientDetail";
 import NewClientModal from "@/components/dashboard/NewClientModal";
 import { UserData, ProjectData } from "@/types/database";
-import { getAllProjects } from "@/lib/services/projectService";
+import { getAllProjects, createProject } from "@/lib/services/projectService";
 import { getClients } from "@/lib/services/clientService";
 import {
     Plus, FolderOpen, Users, LogOut, LayoutDashboard,
@@ -20,10 +20,10 @@ import {
 type View = "pipeline" | "clients";
 
 const STEPS = [
-    { key: "intake", label: "Intake", icon: FileText, color: "text-blue-400", bg: "bg-blue-400/10" },
-    { key: "design_review", label: "Design Review", icon: Layout, color: "text-purple-400", bg: "bg-purple-400/10" },
-    { key: "development", label: "Development", icon: Wrench, color: "text-yellow-400", bg: "bg-yellow-400/10" },
-    { key: "delivered", label: "Opgeleverd", icon: CheckCircle, color: "text-green-400", bg: "bg-green-400/10" },
+    { key: "intake", label: "Intake", icon: FileText, color: "text-blue-600", bg: "bg-blue-50 border-blue-200" },
+    { key: "design_review", label: "Design Review", icon: Layout, color: "text-purple-600", bg: "bg-purple-50 border-purple-200" },
+    { key: "development", label: "Development", icon: Wrench, color: "text-yellow-600", bg: "bg-yellow-50 border-yellow-200" },
+    { key: "delivered", label: "Opgeleverd", icon: CheckCircle, color: "text-green-600", bg: "bg-green-50 border-green-200" },
 ];
 
 export default function AdminDashboard() {
@@ -69,6 +69,31 @@ export default function AdminDashboard() {
         setSelectedClient(newClient);
     };
 
+    const handleStartFreeDesign = async (clientId: string) => {
+        try {
+            const id = await createProject({
+                clientId,
+                title: "Free HTML Design",
+                status: "design_review",
+                assets: [],
+                designs: [],
+            });
+            // We need to reload projects to get this new one, then select it
+            const p = await getAllProjects();
+            setProjects(p);
+            const newProj = p.find(proj => proj.id === id);
+            
+            if (newProj) {
+                setSelectedClient(null);
+                setSelectedProject(newProj);
+                setView("pipeline");
+            }
+        } catch (error) {
+            console.error("Error creating free design project:", error);
+            alert("Er is iets misgegaan bij het aanmaken van het project.");
+        }
+    };
+
     const inProgress = projects.filter(p => p.status !== "delivered").length;
     const pendingDesigns = projects.reduce((acc, p) => acc + p.designs.filter(d => d.status === "pending").length, 0);
 
@@ -88,16 +113,14 @@ export default function AdminDashboard() {
                 />
             )}
 
-            <div className="min-h-screen bg-[#060d1a] text-white flex font-inter">
+            <div className="min-h-screen bg-slate-50 text-slate-800 flex font-inter">
                 {/* ── SIDEBAR ── */}
-                <aside className="w-64 border-r border-white/8 flex flex-col fixed h-full bg-[#060d1a]">
+                <aside className="w-64 border-r border-navy-light flex flex-col fixed h-full bg-navy text-white">
                     {/* Brand */}
-                    <div className="p-6 border-b border-white/8">
+                    <div className="p-6 border-b border-navy-light/50">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                <span className="text-xs font-extrabold">A</span>
-                            </div>
-                            <span className="font-extrabold font-montserrat text-sm tracking-wide">AILEADSITE</span>
+                            <span className="text-3xl">🚀</span>
+                            <span className="font-extrabold font-display text-lg tracking-tight uppercase">AIleadsite<span className="text-accent">.</span></span>
                         </div>
                     </div>
 
@@ -105,21 +128,21 @@ export default function AdminDashboard() {
                     <nav className="flex-1 p-4 space-y-1">
                         <button
                             onClick={() => { setView("pipeline"); setSelectedProject(null); setSelectedClient(null); }}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "pipeline" && !selectedProject ? "bg-white/10 text-white" : "opacity-40 hover:opacity-80 hover:bg-white/5"}`}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "pipeline" && !selectedProject ? "bg-white/10 text-white shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
                         >
                             <LayoutDashboard className="w-4 h-4" />
                             Pipeline
                             {inProgress > 0 && (
-                                <span className="ml-auto text-xs bg-blue-500/20 text-blue-400 font-bold px-2 py-0.5 rounded-full">{inProgress}</span>
+                                <span className="ml-auto text-[10px] uppercase tracking-wider bg-accent/20 text-accent font-black px-2 py-0.5 rounded-full">{inProgress}</span>
                             )}
                         </button>
                         <button
                             onClick={() => { setView("clients"); setSelectedProject(null); setSelectedClient(null); }}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "clients" ? "bg-white/10 text-white" : "opacity-40 hover:opacity-80 hover:bg-white/5"}`}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "clients" ? "bg-white/10 text-white shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
                         >
                             <Users className="w-4 h-4" />
                             Klanten
-                            <span className="ml-auto text-xs opacity-30 font-medium">{clients.length}</span>
+                            <span className="ml-auto text-xs opacity-50 font-medium">{clients.length}</span>
                         </button>
                     </nav>
 
@@ -132,16 +155,16 @@ export default function AdminDashboard() {
                     )}
 
                     {/* New project CTA */}
-                    <div className="p-4 border-t border-white/8">
+                    <div className="p-4 border-t border-navy-light/50">
                         <button
                             onClick={() => setShowWizard(true)}
-                            className="w-full flex items-center gap-2 justify-center py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-bold transition-all shadow-lg shadow-blue-500/20"
+                            className="w-full flex items-center gap-2 justify-center py-3 rounded-xl bg-accent hover:bg-orange-600 text-white text-sm font-black uppercase tracking-wider transition-all shadow-lg shadow-accent/20"
                         >
                             <Plus className="w-4 h-4" /> Nieuw Project
                         </button>
                         <button
                             onClick={signOut}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 mt-2 rounded-xl text-sm opacity-30 hover:opacity-70 hover:bg-white/5 transition-all"
+                            className="w-full flex items-center gap-2 px-4 py-2.5 mt-2 rounded-xl text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-all"
                         >
                             <LogOut className="w-4 h-4" /> Uitloggen
                         </button>
@@ -155,13 +178,13 @@ export default function AdminDashboard() {
                             {/* Header */}
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h1 className="text-3xl font-extrabold font-montserrat">Project Pipeline</h1>
-                                    <p className="text-sm opacity-40 mt-1">{projects.length} projecten totaal · {inProgress} lopend</p>
+                                    <h1 className="text-3xl font-extrabold font-display text-navy mb-1">Project Pipeline</h1>
+                                    <p className="text-sm text-slate-500 font-medium">{projects.length} projecten totaal · {inProgress} lopend</p>
                                 </div>
                                 <button
                                     onClick={load}
                                     disabled={loading}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm opacity-40 hover:opacity-100 hover:bg-white/5 transition-all"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-slate-500 hover:text-navy hover:bg-slate-200 transition-all border border-slate-200 bg-white shadow-sm"
                                 >
                                     <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
                                 </button>
@@ -171,7 +194,7 @@ export default function AdminDashboard() {
                             <div className="flex items-center gap-2 flex-wrap">
                                 <button
                                     onClick={() => setActiveFilter(null)}
-                                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${!activeFilter ? "bg-white text-black" : "bg-white/5 hover:bg-white/10 opacity-60"}`}
+                                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${!activeFilter ? "bg-navy text-white border-navy shadow-md" : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"}`}
                                 >
                                     Alle ({projects.length})
                                 </button>
@@ -181,7 +204,7 @@ export default function AdminDashboard() {
                                         <button
                                             key={step.key}
                                             onClick={() => setActiveFilter(activeFilter === step.key ? null : step.key)}
-                                            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${activeFilter === step.key ? `${step.bg} ${step.color}` : "bg-white/5 hover:bg-white/10 opacity-60"}`}
+                                            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all border ${activeFilter === step.key ? `${step.bg} ${step.color} shadow-sm border-opacity-100` : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}
                                         >
                                             <step.icon className="w-3 h-3" />
                                             {step.label} ({count})
@@ -193,12 +216,12 @@ export default function AdminDashboard() {
                             {/* Project grid */}
                             {loading ? (
                                 <div className="flex items-center justify-center py-32">
-                                    <Loader2 className="w-8 h-8 animate-spin opacity-20" />
+                                    <Loader2 className="w-8 h-8 animate-spin text-navy/20" />
                                 </div>
                             ) : filteredProjects.length === 0 ? (
-                                <div className="py-32 flex flex-col items-center gap-4 opacity-30">
+                                <div className="py-32 flex flex-col items-center gap-4 text-slate-400">
                                     <FolderOpen className="w-12 h-12" />
-                                    <p className="text-lg font-medium">Geen projecten gevonden</p>
+                                    <p className="text-lg font-bold text-slate-500">Geen projecten gevonden</p>
                                     <p className="text-sm">Maak een nieuw project aan via de sidebar</p>
                                 </div>
                             ) : (
@@ -220,6 +243,7 @@ export default function AdminDashboard() {
                         <ProjectDetail
                             project={selectedProject}
                             clientId={selectedProject.clientId}
+                            clientStatus={clientMap[selectedProject.clientId]?.status}
                             onBack={() => { setSelectedProject(null); load(); }}
                             onUpdate={(updated) => {
                                 setSelectedProject(updated);
@@ -232,12 +256,12 @@ export default function AdminDashboard() {
                         <div className="space-y-8">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h1 className="text-3xl font-extrabold font-montserrat">Klanten</h1>
-                                    <p className="text-sm opacity-60 mt-1">{clients.length} geregistreerde klanten</p>
+                                    <h1 className="text-3xl font-extrabold font-display text-navy mb-1">Klanten</h1>
+                                    <p className="text-sm text-slate-500 font-medium">{clients.length} geregistreerde klanten</p>
                                 </div>
                                 <button
                                     onClick={() => setShowNewClientModal(true)}
-                                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-green-600 hover:bg-green-500 text-sm font-bold transition-all shadow-lg shadow-green-600/20"
+                                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent hover:bg-orange-600 text-white text-sm font-black uppercase tracking-wider transition-all shadow-lg shadow-accent/20"
                                 >
                                     <Plus className="w-4 h-4" /> Nieuwe Klant
                                 </button>
@@ -251,6 +275,7 @@ export default function AdminDashboard() {
                             client={selectedClient}
                             onBack={() => setSelectedClient(null)}
                             onUpdate={setSelectedClient}
+                            onStartProject={handleStartFreeDesign}
                         />
                     )}
                 </main>

@@ -29,6 +29,7 @@ export interface UserData {
     displayName: string | null;
     photoURL: string | null;
     role: UserRole;
+    status?: "lead" | "active";
     companyDetails?: CompanyDetails;
     domainInfo?: DomainInfo;
     projectContext?: ProjectContext;
@@ -56,6 +57,12 @@ export interface ProjectDesign {
 
 export type ProjectStatus = "intake" | "design_review" | "development" | "delivered";
 
+export interface PackageSelection {
+    packageId: string;
+    addons: string[];
+    billingCycle: "monthly" | "yearly";
+}
+
 export interface ProjectData {
     id: string;
     clientId: string;
@@ -63,6 +70,7 @@ export interface ProjectData {
     status: ProjectStatus;
     assets: ProjectAsset[];
     designs: ProjectDesign[];
+    packageSelection?: PackageSelection;
     createdAt: Timestamp | FieldValue;
     updatedAt: Timestamp | FieldValue;
 }

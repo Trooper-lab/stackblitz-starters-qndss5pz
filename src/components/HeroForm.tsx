@@ -243,8 +243,8 @@ export default function HeroForm() {
             <div className="flex flex-col flex-grow p-8 md:p-10 justify-center relative z-10">
                 <div className="flex flex-col">
                     <div className="mb-10 text-center">
-                        <h3 className="font-display text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-2">Start Gratis Account</h3>
-                        <p className="text-sm text-slate-400 font-medium">Krijg direct toegang tot ons platform.</p>
+                        <h3 className="font-display text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-2">Claim Je Gratis, Op Maat Gemaakte Design</h3>
+                        <p className="text-sm text-slate-400 font-medium">Geen creditcard nodig. Volledig vrijblijvend.</p>
                     </div>
 
                     {error && (
@@ -369,7 +369,7 @@ export default function HeroForm() {
                                                 <Loader2 className="w-5 h-5 animate-spin" />
                                             ) : (
                                                 <>
-                                                    <span className="relative z-10">Maak Gratis Account</span>
+                                                    <span className="relative z-10">Claim Je Gratis Design</span>
                                                     <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
                                                 </>
                                             )}

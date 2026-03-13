@@ -70,27 +70,27 @@ export default function NewProjectWizard({ onClose, onCreated }: NewProjectWizar
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-[#0d1526] border border-white/10 rounded-2xl w-full max-w-xl shadow-2xl shadow-black/50 animate-in slide-in-from-bottom-4 overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-xl shadow-2xl shadow-slate-200/50 animate-in slide-in-from-bottom-4 overflow-hidden">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-white/10">
+                <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50">
                     <div>
-                        <h2 className="font-extrabold text-lg font-montserrat">Nieuw Project</h2>
+                        <h2 className="font-bold text-lg text-slate-900">Nieuw Project</h2>
                         <div className="flex items-center gap-2 mt-1.5">
                             {[1, 2].map(s => (
                                 <div key={s} className="flex items-center gap-2">
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border transition-all ${s <= step ? "bg-blue-600 border-blue-600 text-white" : "border-white/20 text-white/40"}`}>
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border transition-all ${s <= step ? "bg-navy border-navy text-white" : "border-slate-200 bg-white text-slate-400"}`}>
                                         {s < step ? <Check className="w-3 h-3" /> : s}
                                     </div>
-                                    <span className={`text-xs ${s === step ? "text-white/80" : "opacity-30"}`}>
+                                    <span className={`text-xs font-medium ${s === step ? "text-slate-800" : "text-slate-400"}`}>
                                         {s === 1 ? "Klant" : "Projectinfo"}
                                     </span>
-                                    {s < 2 && <ChevronRight className="w-3 h-3 opacity-20" />}
+                                    {s < 2 && <ChevronRight className="w-3 h-3 text-slate-300" />}
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 transition-all text-white/60 hover:opacity-100">
+                    <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 transition-all text-slate-400 hover:text-slate-800">
                         <X className="w-4 h-4" />
                     </button>
                 </div>
@@ -99,50 +99,50 @@ export default function NewProjectWizard({ onClose, onCreated }: NewProjectWizar
                     {/* Step 1: Select Client */}
                     {step === 1 && (
                         <div className="space-y-4 animate-in fade-in">
-                            <p className="text-sm text-white/70">Selecteer de klant voor dit project</p>
+                            <p className="text-sm font-medium text-slate-600">Selecteer de klant voor dit project</p>
                             <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input
                                     autoFocus
                                     placeholder="Zoek op naam, email of bedrijf..."
                                     value={search}
                                     onChange={e => setSearch(e.target.value)}
-                                    className="w-full bg-black/30 border border-white/10 focus:border-blue-500 rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-all"
+                                    className="w-full bg-white border border-slate-200 focus:border-navy focus:ring-1 focus:ring-navy rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 shadow-sm"
                                 />
                             </div>
 
                             <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
                                 {loading ? (
-                                    <div className="py-8 flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-white/50" /></div>
+                                    <div className="py-8 flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-slate-400" /></div>
                                 ) : filtered.length === 0 ? (
-                                    <div className="py-8 text-center text-sm text-white/50">Geen klanten gevonden</div>
+                                    <div className="py-8 text-center text-sm text-slate-500">Geen klanten gevonden</div>
                                 ) : (
                                     filtered.map(client => (
                                         <button
                                             key={client.uid}
                                             onClick={() => { setSelectedClient(client); setErrors({}); }}
-                                            className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${selectedClient?.uid === client.uid ? "border-blue-500 bg-blue-500/10" : "border-white/5 bg-white/5 hover:bg-white/10"}`}
+                                            className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${selectedClient?.uid === client.uid ? "border-navy bg-blue-50/50 shadow-sm" : "border-slate-100 bg-white hover:border-slate-200 hover:shadow-sm"}`}
                                         >
-                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-sm font-bold shrink-0">
+                                            <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-sm font-bold text-navy shrink-0">
                                                 {(client.displayName || client.email || "?")[0].toUpperCase()}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="font-medium truncate">{client.displayName || client.email}</p>
-                                                <p className="text-xs text-white/60 truncate">{client.companyDetails?.name || client.email}</p>
+                                                <p className="font-semibold text-slate-900 truncate">{client.displayName || client.email}</p>
+                                                <p className="text-xs text-slate-500 truncate">{client.companyDetails?.name || client.email}</p>
                                             </div>
                                             {selectedClient?.uid === client.uid && (
-                                                <Check className="w-4 h-4 text-blue-400 shrink-0" />
+                                                <Check className="w-4 h-4 text-navy shrink-0" />
                                             )}
                                         </button>
                                     ))
                                 )}
                             </div>
-                            {errors.client && <p className="text-red-400 text-xs">{errors.client}</p>}
+                            {errors.client && <p className="text-red-500 text-xs font-medium">{errors.client}</p>}
 
-                            <div className="flex justify-end pt-2">
+                            <div className="flex justify-end pt-4 border-t border-slate-100">
                                 <button
                                     onClick={() => { if (!selectedClient) { setErrors({ client: "Selecteer een klant" }); return; } setStep(2); }}
-                                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-bold transition-all shadow-lg shadow-blue-500/20"
+                                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-sm font-bold transition-all shadow-sm"
                                 >
                                     Volgende <ChevronRight className="w-4 h-4" />
                                 </button>
@@ -154,61 +154,61 @@ export default function NewProjectWizard({ onClose, onCreated }: NewProjectWizar
                     {step === 2 && (
                         <div className="space-y-5 animate-in fade-in">
                             {selectedClient && (
-                                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-xs font-bold">
+                                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                    <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-700">
                                         {(selectedClient.displayName || selectedClient.email || "?")[0].toUpperCase()}
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium">{selectedClient.displayName}</p>
-                                        <p className="text-xs text-white/60">{selectedClient.companyDetails?.name || selectedClient.email}</p>
+                                        <p className="text-sm font-semibold text-slate-900">{selectedClient.displayName}</p>
+                                        <p className="text-xs text-slate-500">{selectedClient.companyDetails?.name || selectedClient.email}</p>
                                     </div>
                                 </div>
                             )}
 
                             <div>
-                                <label className="text-xs uppercase font-bold text-white/60 mb-2 block tracking-wider">Project Titel *</label>
+                                <label className="text-xs uppercase font-bold text-slate-700 mb-2 block tracking-wider">Project Titel *</label>
                                 <div className="relative">
-                                    <FolderOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+                                    <FolderOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                     <input
                                         autoFocus
                                         type="text"
                                         placeholder="bijv. Website Redesign 2025"
                                         value={title}
                                         onChange={e => { setTitle(e.target.value); setErrors(prev => ({ ...prev, title: "" })); }}
-                                        className={`w-full bg-black/30 border rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-all ${errors.title ? "border-red-500" : "border-white/10 focus:border-blue-500"}`}
+                                        className={`w-full bg-white border rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 shadow-sm ${errors.title ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500" : "border-slate-200 focus:border-navy focus:ring-1 focus:ring-navy"}`}
                                     />
                                 </div>
-                                {errors.title && <p className="text-red-400 text-xs mt-1">{errors.title}</p>}
+                                {errors.title && <p className="text-red-500 text-xs mt-1 font-medium">{errors.title}</p>}
                             </div>
 
                             <div>
-                                <label className="text-xs uppercase font-bold text-white/60 mb-2 block tracking-wider">
-                                    Interne Notitie <span className="normal-case opacity-60">(optioneel)</span>
+                                <label className="text-xs uppercase font-bold text-slate-700 mb-2 block tracking-wider">
+                                    Interne Notitie <span className="normal-case font-normal text-slate-500">(optioneel)</span>
                                 </label>
                                 <textarea
                                     placeholder="Initiële afspraken, bijzonderheden, startdatum..."
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
                                     rows={3}
-                                    className="w-full bg-black/30 border border-white/10 focus:border-blue-500 rounded-xl px-4 py-3 text-sm outline-none transition-all resize-none"
+                                    className="w-full bg-white border border-slate-200 focus:border-navy focus:ring-1 focus:ring-navy rounded-xl px-4 py-3 text-sm text-slate-900 outline-none transition-all resize-none placeholder:text-slate-400 shadow-sm"
                                 />
                             </div>
 
                             {errors.general && (
-                                <p className="text-red-400 text-sm bg-red-400/5 border border-red-400/10 p-3 rounded-lg">{errors.general}</p>
+                                <p className="text-red-600 text-sm bg-red-50 border border-red-100 p-3 rounded-xl font-medium">{errors.general}</p>
                             )}
 
-                            <div className="flex justify-between pt-2">
+                            <div className="flex justify-between pt-4 border-t border-slate-100">
                                 <button
                                     onClick={() => setStep(1)}
-                                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm text-white/60 hover:opacity-100 hover:bg-white/5 transition-all"
+                                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all"
                                 >
                                     <ChevronLeft className="w-4 h-4" /> Terug
                                 </button>
                                 <button
                                     onClick={handleCreate}
                                     disabled={saving}
-                                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-bold transition-all shadow-lg shadow-blue-500/20 disabled:text-white/70"
+                                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-sm font-bold transition-all shadow-sm disabled:opacity-50"
                                 >
                                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                                     Project Aanmaken

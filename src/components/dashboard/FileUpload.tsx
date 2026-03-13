@@ -62,14 +62,14 @@ export default function FileUpload({ projectId, onUploadComplete }: FileUploadPr
             />
             <label
                 htmlFor="file-upload"
-                className={`flex items-center gap-3 px-6 py-3 rounded-xl border-2 border-dashed border-white/10 hover:border-blue-500/50 hover:bg-white/5 transition-all cursor-pointer ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`flex items-center gap-3 px-6 py-3 rounded-xl border-2 border-dashed border-slate-200 hover:border-navy hover:bg-slate-50 transition-all cursor-pointer ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
                 {uploading ? (
-                    <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
+                    <Loader2 className="w-5 h-5 animate-spin text-navy" />
                 ) : (
-                    <Upload className="w-5 h-5 opacity-50" />
+                    <Upload className="w-5 h-5 text-slate-400" />
                 )}
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium text-slate-700">
                     {uploading ? `Uploaden (${Math.round(progress)}%)` : "Nieuwe asset uploaden"}
                 </span>
             </label>

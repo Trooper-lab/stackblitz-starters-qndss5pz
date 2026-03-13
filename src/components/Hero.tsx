@@ -102,9 +102,9 @@ export default function Hero() {
                         className="font-display font-extrabold leading-[1.05] tracking-tight text-white flex flex-col items-start gap-1 w-full"
                         style={{ fontSize: titleFontSize, transition: 'font-size 0.1s ease-out' }}
                 >
-                        <span className="opacity-0 hero-title-line whitespace-nowrap pr-4">Stop met klanten te verliezen</span>
-                        <span className="opacity-0 hero-title-line whitespace-nowrap pr-4">
-                            door <span className="text-accent italic">verouderde </span><span className="opacity-0 hero-title-line whitespace-nowrap pr-4">websites<span className="text-accent">.</span></span>
+                        <span className="opacity-0 hero-title-line pr-4 leading-tight">Verander je website in een</span>
+                        <span className="opacity-0 hero-title-line pr-4 leading-tight">
+                            <span className="text-accent italic">24/7 leadmachine </span> binnen 5 dagen<span className="text-accent">.</span>
                         </span>
                 </h1>
                 </div>
@@ -113,7 +113,7 @@ export default function Hero() {
                     <div className="flex flex-col gap-10 lg:col-span-5 pt-4">
                         <div className="flex flex-col gap-6">
                             <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-md opacity-0 hero-subtitle">
-                                Wij bouwen high-performance websites voor drukke ondernemers die meer leads nodig hebben, geen extra kopzorgen. Krijg een site die net zo hard werkt als jij.
+                                Stop met het verliezen van klanten door een trage, verouderde website. Wij combineren de breinen van senior marketingexperts met de ongekende snelheid van AI om websites te lanceren die niet alleen prachtig zijn, maar voorspelbaar nieuwe klanten opleveren. Jij runt je bedrijf, wij vullen je agenda.
                             </p>
                             
                             <div className="flex flex-col gap-3 opacity-0 hero-social">

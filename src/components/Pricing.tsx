@@ -8,95 +8,13 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const tiers = [
-  {
-    name: '🌱 Groei Starter',
-    desc: 'Perfect voor kleine lokale bedrijven',
-    priceYearly: '€1.000',
-    priceMonthly: '€100',
-    featured: false,
-    features: [
-      'Hoog-converterende Landingspagina',
-      'Sterke SEO Fundering',
-      'GDPR complient',
-      'Custom lead formulier',
-    ],
-    cta: 'Claim Dit Plan',
-  },
-  {
-    name: '👑 Marktleider',
-    desc: 'Domineer je lokale concurrentie',
-    priceYearly: '€3.000',
-    priceMonthly: '€300',
-    featured: true,
-    features: [
-      'Tot 8 geoptimaliseerde pagina soorten',
-      'Meerdere Lead Formulier',
-      'Volledige Conversie Funnel Opzet',
-      "Onbeperkt aantal pagina's",
-    ],
-    cta: 'Begin Nu Met Groeien',
-  },
-  {
-    name: '⚡ Kracht op Maat',
-    desc: 'Voor gevestigde bedrijven met hoog volume',
-    priceYearly: '€7K+',
-    priceMonthly: '€700+',
-    featured: false,
-    features: [
-      "Onbeperkte Pagina-architectuur",
-      'Geavanceerde CRM-integraties',
-      'Professionele Video-integratie',
-      'Toegewijde Groeistrateeg',
-    ],
-    cta: 'Spreek met een Pro',
-  },
-];
-
-const addons = [
-  {
-    name: '🤖 AI Assistent Toegang',
-    desc: 'Zelf de volledige controle over je website met onze AI chat assistent',
-    priceMonthly: '€90',
-    priceYearly: '€900',
-    features: [
-      'Chat met AI om je website aan te passen',
-      "Creëer nieuwe pagina's via chat",
-      'Pas designs en content real-time aan',
-      'Wij fungeren als technische back-up',
-    ],
-  },
-  {
-    name: '🚀 Premium Support',
-    desc: 'Voorrang op aanpassingen en direct contact',
-    priceMonthly: '€150',
-    priceYearly: '€1.500',
-    features: [
-      'Wijzigingen binnen 24 uur doorgevoerd ipv 3-4 dagen',
-      'Direct contact via Slack of WhatsApp',
-      'Proactief meedenken over optimalisaties',
-      '1 op 1 strategie sessie per kwartaal',
-    ],
-  },
-  {
-    name: '📈 SEO & Groei',
-    desc: 'Doorlopende optimalisatie voor topposities',
-    priceMonthly: '€400',
-    priceYearly: '€4.000',
-    features: [
-      'Maandelijkse content updates',
-      'Technische SEO monitoring',
-      'Linkbuilding strategie',
-      'Uitgebreide rapportage',
-    ],
-  },
-];
+import { pricingTiers, pricingAddons } from '@/lib/config/pricing';
 
 const comparison = [
   {
     label: 'Opstartkosten',
     ai: '€0 (maar zelf bouwen)',
-    us: '€0 (Gratis design door ons)',
+    us: 'Vanaf €50 (50% commitment fee)',
     agency: '€3.000 - €10.000+',
   },
   {
@@ -126,7 +44,7 @@ const comparison = [
 ];
 
 export default function Pricing() {
-  const [billingCycle, setBillingCycle] = useState<'yearly' | 'monthly'>('yearly');
+  const [billingCycle, setBillingCycle] = useState<'yearly' | 'monthly'>('monthly');
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -137,26 +55,68 @@ export default function Pricing() {
 
       const mm = gsap.matchMedia();
 
-      mm.add('(min-width: 1024px)', () => {
+      mm.add('(min-width: 768px)', () => {
         const cardLeft = cards[0];
         const cardMiddle = cards[1];
         const cardRight = cards[2];
 
-        gsap.set(cardLeft, { x: '100%', opacity: 0, zIndex: 1 });
-        gsap.set(cardRight, { x: '-100%', opacity: 0, zIndex: 1 });
-        gsap.set(cardMiddle, { zIndex: 10, scale: 1.05, opacity: 1 });
+        // Ensure clean initial state
+        gsap.set([cardLeft, cardMiddle, cardRight], { opacity: 0 });
+        gsap.set(cardMiddle, { scale: 0.8, zIndex: 10 });
+        gsap.set(cardLeft, { xPercent: 100, x: 32, scale: 0.9, zIndex: 1 });
+        gsap.set(cardRight, { xPercent: -100, x: -32, scale: 0.9, zIndex: 1 });
 
-        gsap.to([cardLeft, cardRight], {
-          x: 0,
-          opacity: 1,
-          duration: 1.2,
-          ease: 'power4.out',
+        const tl = gsap.timeline({
           scrollTrigger: {
             trigger: gridRef.current,
-            start: 'top 80%',
+            start: 'top 85%',
             toggleActions: 'play none none reverse',
           },
         });
+
+        tl.to(cardMiddle, {
+          opacity: 1,
+          scale: 1.05,
+          duration: 0.8,
+          ease: 'power3.out'
+        })
+        .to(cardLeft, {
+          xPercent: 0,
+          x: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 1,
+          ease: 'power4.out'
+        }, '<0.2')
+        .to(cardRight, {
+          xPercent: 0,
+          x: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 1,
+          ease: 'power4.out'
+        }, '<');
+
+        // Force a refresh after a small delay to ensure page layout is settled
+        setTimeout(() => ScrollTrigger.refresh(), 100);
+      });
+
+      mm.add('(max-width: 767px)', () => {
+        gsap.fromTo(cards,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: 'top 90%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
       });
     }, containerRef);
 
@@ -249,35 +209,32 @@ export default function Pricing() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div className="max-w-xl">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-navy mb-4 leading-tight">
-              💼 <span className="text-accent italic">Investeringsopties</span>{' '}
-              gebouwd voor schaal<span className="text-accent">.</span>
+              💼 Onze <span className="text-accent italic">Groeiplannen</span>{' '}
+              (Gebouwd voor Schaal)<span className="text-accent">.</span>
             </h2>
             <p className="text-lg text-slate-600 font-medium leading-relaxed">
-              Geen poespas, geen technisch jargon. Gewoon duidelijke prijzen voor
-              ondernemers die online willen winnen. Inclusief supersnelle hosting en onderhoud.
+              Geen vage offertes of technisch jargon. Duidelijke prijzen, inclusief supersnelle hosting en onderhoud. Omdat we efficiënt werken met AI, krijg jij de waarde van een high-end bureau voor een fractie van de prijs.
             </p>
           </div>
-          
+
           <div className="flex flex-col items-center gap-2">
             <div className="flex bg-white p-1 rounded-full border border-slate-200 shadow-sm relative">
               <button
                 onClick={() => setBillingCycle('monthly')}
-                className={`relative z-10 px-6 py-2 rounded-full text-sm font-bold transition-colors ${
-                  billingCycle === 'monthly' ? 'text-white' : 'text-slate-600 hover:text-navy'
-                }`}
+                className={`relative z-10 px-6 py-2 rounded-full text-sm font-bold transition-colors ${billingCycle === 'monthly' ? 'text-white' : 'text-slate-600 hover:text-navy'
+                  }`}
               >
                 Maandelijks
               </button>
               <button
                 onClick={() => setBillingCycle('yearly')}
-                className={`relative z-10 px-6 py-2 rounded-full text-sm font-bold transition-colors ${
-                  billingCycle === 'yearly' ? 'text-white' : 'text-slate-600 hover:text-navy'
-                }`}
+                className={`relative z-10 px-6 py-2 rounded-full text-sm font-bold transition-colors ${billingCycle === 'yearly' ? 'text-white' : 'text-slate-600 hover:text-navy'
+                  }`}
               >
                 Jaarlijks
               </button>
               {/* Sliding background */}
-              <div 
+              <div
                 className="absolute top-1 bottom-1 w-1/2 bg-navy rounded-full transition-transform duration-300 ease-out"
                 style={{ transform: billingCycle === 'monthly' ? 'translateX(0)' : 'translateX(100%)' }}
               />
@@ -292,34 +249,32 @@ export default function Pricing() {
           className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-24"
           ref={gridRef}
         >
-          {tiers.map(tier => (
-            <div
-              key={tier.name}
-              className={`flex flex-col p-10 rounded-2xl transition-all duration-300 relative
-                                ${
-                                  tier.featured
-                                    ? 'border-4 border-accent bg-white shadow-2xl scale-105 z-10'
-                                    : 'border-2 border-slate-200 bg-white/50 z-1 hover:border-accent hover:bg-white hover:-translate-y-2 md:hover:scale-100 md:scale-100 scale-100'
-                                }`}
-            >
-              {tier.featured && (
+          {pricingTiers.map(tier => (
+            <div key={tier.name} className="relative w-full h-full flex">
+              <div
+                className={`flex flex-col p-6 lg:p-8 rounded-2xl transition-all duration-300 relative w-full h-full
+                                  ${tier.featured
+                    ? 'border-4 border-accent bg-white shadow-2xl scale-[1.02] lg:scale-105 z-10'
+                    : 'border-2 border-slate-200 bg-white/50 hover:border-accent hover:bg-white md:hover:scale-100 md:scale-100 scale-100'
+                  }`}
+              >
+                {tier.featured && (
                 <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-accent text-white px-6 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
                   ⭐ Onze Beste Keuze
                 </div>
               )}
 
-              <div className="mb-10">
-                <h3 className="font-display text-2xl font-extrabold mb-2 text-navy">
+              <div className="mb-8">
+                <h3 className="font-display text-xl lg:text-2xl font-extrabold mb-2 text-navy">
                   {tier.name}
                 </h3>
-                <p className="text-sm text-slate-500 font-medium mb-6">
+                <p className="text-xs lg:text-sm text-slate-500 font-medium mb-6">
                   {tier.desc}
                 </p>
                 <div className="flex items-baseline gap-1">
                   <span
-                    className={`font-display text-4xl sm:text-5xl font-black ${
-                      tier.featured ? 'text-accent' : 'text-navy'
-                    }`}
+                    className={`font-display text-4xl sm:text-5xl font-black ${tier.featured ? 'text-accent' : 'text-navy'
+                      }`}
                   >
                     {billingCycle === 'yearly' ? tier.priceYearly : tier.priceMonthly}
                   </span>
@@ -328,21 +283,20 @@ export default function Pricing() {
                   </span>
                 </div>
                 {billingCycle === 'yearly' && (
-                    <div className="mt-2 inline-block bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-md">
-                        Inclusief 2 maanden gratis
-                    </div>
+                  <div className="mt-2 inline-block bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-md">
+                    Inclusief 2 maanden gratis
+                  </div>
                 )}
               </div>
 
-              <ul className="grow space-y-5 mb-10 list-none p-0">
+              <ul className="grow space-y-4 mb-8 list-none p-0 text-sm lg:text-base">
                 {tier.features.map((f: string) => (
                   <li
                     key={f}
-                    className={`flex items-start gap-4 font-semibold ${
-                      tier.featured ? 'text-navy' : 'text-slate-600'
-                    }`}
+                    className={`flex items-start gap-3 font-semibold ${tier.featured ? 'text-navy' : 'text-slate-600'
+                      }`}
                   >
-                    <span className="text-accent text-xl leading-none shrink-0 font-bold">
+                    <span className="text-accent text-lg lg:text-xl leading-none shrink-0 font-bold">
                       ✓
                     </span>
                     {f}
@@ -353,14 +307,14 @@ export default function Pricing() {
               <a
                 href="#contact"
                 className={`block w-full py-4 rounded-xl text-center font-black text-sm uppercase tracking-wider transition-all duration-200
-                                    ${
-                                      tier.featured
-                                        ? 'bg-accent text-white shadow-xl hover:bg-orange-600'
-                                        : 'border-2 border-navy text-navy hover:bg-navy hover:text-white'
-                                    }`}
+                                    ${tier.featured
+                    ? 'bg-accent text-white shadow-xl hover:bg-orange-600'
+                    : 'border-2 border-navy text-navy hover:bg-navy hover:text-white'
+                  }`}
               >
                 {tier.cta}
               </a>
+              </div>
             </div>
           ))}
         </div>
@@ -370,7 +324,7 @@ export default function Pricing() {
             🚀 Groei Add-ons
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {addons.map(addon => (
+            {pricingAddons.map(addon => (
               <div
                 key={addon.name}
                 className="bg-white border-2 border-slate-200 rounded-2xl p-8 hover:border-accent transition-colors duration-300 flex flex-col"
@@ -390,7 +344,7 @@ export default function Pricing() {
                   </div>
                   {billingCycle === 'yearly' && (
                     <div className="mt-2 inline-block bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-md">
-                        Inclusief 2 maanden gratis
+                      Inclusief 2 maanden gratis
                     </div>
                   )}
                 </div>

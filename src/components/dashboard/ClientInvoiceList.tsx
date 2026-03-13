@@ -31,13 +31,13 @@ export default function ClientInvoiceList({ projectId }: ClientInvoiceListProps)
     const getStatusInfo = (status: string) => {
         switch (status) {
             case 'paid':
-                return { label: 'Betaald', icon: CheckCircle2, color: 'text-green-400 bg-green-400/10 border-green-400/20' };
+                return { label: 'Betaald', icon: CheckCircle2, color: 'text-green-700 bg-green-50 border-green-200' };
             case 'overdue':
-                return { label: 'Te laat', icon: AlertCircle, color: 'text-red-400 bg-red-400/10 border-red-400/20' };
+                return { label: 'Te laat', icon: AlertCircle, color: 'text-red-700 bg-red-50 border-red-200' };
             case 'sent':
-                return { label: 'Verzonden', icon: Clock, color: 'text-blue-400 bg-blue-400/10 border-blue-400/20' };
+                return { label: 'Verzonden', icon: Clock, color: 'text-blue-700 bg-blue-50 border-blue-200' };
             default:
-                return { label: 'Concept', icon: Receipt, color: 'text-white/30 bg-white/5 border-white/10' };
+                return { label: 'Concept', icon: Receipt, color: 'text-slate-500 bg-slate-100 border-slate-200' };
         }
     };
 
@@ -65,8 +65,8 @@ export default function ClientInvoiceList({ projectId }: ClientInvoiceListProps)
 
     if (invoices.length === 0) {
         return (
-            <div className="p-8 text-center border border-dashed border-white/10 rounded-2xl opacity-40">
-                <Receipt className="w-8 h-8 mx-auto mb-3 opacity-20" />
+            <div className="p-8 text-center border border-dashed border-slate-300 rounded-2xl bg-slate-50 text-slate-500">
+                <Receipt className="w-8 h-8 mx-auto mb-3 opacity-40 text-slate-400" />
                 <p className="text-sm">Nog geen facturen beschikbaar voor dit project.</p>
             </div>
         );
@@ -77,33 +77,33 @@ export default function ClientInvoiceList({ projectId }: ClientInvoiceListProps)
             {invoices.map((invoice) => {
                 const status = getStatusInfo(invoice.status);
                 return (
-                    <div key={invoice.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all border-l-4 border-l-blue-500/50">
+                    <div key={invoice.id} className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-md hover:border-slate-300 transition-all border-l-4 border-l-blue-500">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 bg-blue-500/20 rounded-xl text-blue-400">
+                                <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-navy">
                                     <Receipt className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-lg">Factuur #{invoice.invoiceNumber}</h4>
+                                    <h4 className="font-bold text-lg text-slate-900">Factuur #{invoice.invoiceNumber}</h4>
                                     <div className="flex items-center gap-3 mt-1">
                                         <span className={`text-[10px] px-2 py-0.5 rounded-full border font-bold uppercase tracking-wider flex items-center gap-1 ${status.color}`}>
                                             <status.icon className="w-3 h-3" />
                                             {status.label}
                                         </span>
-                                        <span className="text-xs opacity-40">Verzonden op {formatDate(invoice.createdAt)}</span>
+                                        <span className="text-xs text-slate-500 font-medium">Verzonden op {formatDate(invoice.createdAt)}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between md:justify-end gap-8 w-full md:w-auto mt-4 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-white/5">
+                            <div className="flex items-center justify-between md:justify-end gap-8 w-full md:w-auto mt-4 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-slate-100">
                                 <div className="text-right">
-                                    <p className="text-xs opacity-40 uppercase font-bold tracking-widest">Totaalbedrag</p>
-                                    <p className="text-2xl font-montserrat font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">
+                                    <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">Totaalbedrag</p>
+                                    <p className="text-2xl font-montserrat font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-navy to-navy-light pt-1">
                                         € {invoice.amount.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}
                                     </p>
                                 </div>
-                                <button className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-bold flex items-center gap-2 transition-all group">
-                                    Bekijken <ExternalLink className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+                                <button className="px-6 py-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 font-bold flex items-center gap-2 transition-all group shadow-sm">
+                                    Bekijken <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-navy transition-colors" />
                                 </button>
                             </div>
                         </div>

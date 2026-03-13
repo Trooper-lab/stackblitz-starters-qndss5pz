@@ -1,13 +1,16 @@
 export default function Stats() {
     const stats = [
-        { value: "💸 €0", label: "Startkosten", desc: "Start met een gratis, op maat gemaakt design." },
-        { value: "🤖 100%", label: "Controle", desc: "Beheer alles zelf, zonder technische kennis." },
-        { value: "🚀 5 dagen", label: "Gemiddelde Levering", desc: "Jouw op maat gemaakte website, snel geleverd." },
+        { value: "💸 €0", label: "Startkosten", desc: "Start met een gratis, door experts op maat gemaakt design." },
+        { value: "🚀 5 Dagen", label: "Levertijd", desc: "Jouw leadmachine live in dagen, niet in maanden." },
+        { value: "🤖 100%", label: "Controle", desc: "Beheer alles zelf via ons dashboard, of laat onze AI-assistent het voor je doen." },
     ];
 
     return (
         <section className="relative z-20 px-6 -mt-10">
             <div className="max-w-7xl mx-auto">
+                <div className="text-center mb-8">
+                    <h2 className="text-2xl font-bold tracking-tighter text-white">Waarom ondernemers voor ons kiezen:</h2>
+                </div>
                 <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden grid grid-cols-1 md:grid-cols-3">
                     {stats.map((s, i) => (
                         <div

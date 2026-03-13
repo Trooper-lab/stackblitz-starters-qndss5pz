@@ -8,10 +8,11 @@ import { ProjectDesign } from "@/types/database";
 interface AddDesignModalProps {
     onClose: () => void;
     onAdd: (design: ProjectDesign) => void;
+    defaultName?: string;
 }
 
-export default function AddDesignModal({ onClose, onAdd }: AddDesignModalProps) {
-    const [name, setName] = useState("");
+export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: AddDesignModalProps) {
+    const [name, setName] = useState(defaultName);
     const [url, setUrl] = useState("");
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
@@ -43,22 +44,22 @@ export default function AddDesignModal({ onClose, onAdd }: AddDesignModalProps) 
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-[#0f172a] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl shadow-black/50 animate-in slide-in-from-bottom-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg shadow-2xl shadow-slate-200/50 animate-in slide-in-from-bottom-4">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-white/10">
+                <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50 rounded-t-2xl">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                            <Layout className="w-5 h-5 text-blue-400" />
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center">
+                            <Layout className="w-5 h-5 text-navy" />
                         </div>
                         <div>
-                            <h2 className="font-bold text-lg">Design Toevoegen</h2>
-                            <p className="text-xs text-white/80">Voeg een HTML-design toe voor klantreview</p>
+                            <h2 className="font-bold text-lg text-slate-900">Design Toevoegen</h2>
+                            <p className="text-xs text-slate-500">Voeg een HTML-design toe voor klantreview</p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 transition-all text-white/60 hover:opacity-100"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 transition-all text-slate-400 hover:text-slate-800"
                     >
                         <X className="w-4 h-4" />
                     </button>
@@ -67,65 +68,65 @@ export default function AddDesignModal({ onClose, onAdd }: AddDesignModalProps) 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="p-6 space-y-5">
                     <div>
-                        <label className="text-xs uppercase font-bold text-white/80 mb-2 block tracking-wider">
+                        <label className="text-xs uppercase font-bold text-slate-700 mb-2 block tracking-wider">
                             Design Naam *
                         </label>
                         <div className="relative">
-                            <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+                            <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 autoFocus
                                 type="text"
                                 placeholder="bijv. Homepage V1, Landing Page Variant A"
                                 value={name}
                                 onChange={e => { setName(e.target.value); setErrors(prev => ({ ...prev, name: "" })); }}
-                                className={`w-full bg-black/30 border rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-all ${errors.name ? "border-red-500" : "border-white/10 focus:border-blue-500"}`}
+                                className={`w-full bg-white border rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 shadow-sm ${errors.name ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500" : "border-slate-200 focus:border-navy focus:ring-1 focus:ring-navy"}`}
                             />
                         </div>
-                        {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+                        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                     </div>
 
                     <div>
-                        <label className="text-xs uppercase font-bold text-white/80 mb-2 block tracking-wider">
+                        <label className="text-xs uppercase font-bold text-slate-700 mb-2 block tracking-wider">
                             Design URL *
                         </label>
                         <div className="relative">
-                            <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-30" />
+                            <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="url"
                                 placeholder="https://yourdesign.netlify.app"
                                 value={url}
                                 onChange={e => { setUrl(e.target.value); setErrors(prev => ({ ...prev, url: "" })); }}
-                                className={`w-full bg-black/30 border rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-all ${errors.url ? "border-red-500" : "border-white/10 focus:border-blue-500"}`}
+                                className={`w-full bg-white border rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 shadow-sm ${errors.url ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500" : "border-slate-200 focus:border-navy focus:ring-1 focus:ring-navy"}`}
                             />
                         </div>
-                        {errors.url && <p className="text-red-400 text-xs mt-1">{errors.url}</p>}
+                        {errors.url && <p className="text-red-500 text-xs mt-1">{errors.url}</p>}
                     </div>
 
                     <div>
-                        <label className="text-xs uppercase font-bold text-white/80 mb-2 block tracking-wider">
-                            Beschrijving <span className="normal-case opacity-60">(optioneel)</span>
+                        <label className="text-xs uppercase font-bold text-slate-700 mb-2 block tracking-wider">
+                            Beschrijving <span className="normal-case opacity-60 text-slate-500">(optioneel)</span>
                         </label>
                         <textarea
                             placeholder="Wat is er nieuw of anders in dit design?"
                             value={description}
                             onChange={e => setDescription(e.target.value)}
                             rows={3}
-                            className="w-full bg-black/30 border border-white/10 focus:border-blue-500 rounded-xl px-4 py-3 text-sm outline-none transition-all resize-none"
+                            className="w-full bg-white border border-slate-200 focus:border-navy focus:ring-1 focus:ring-navy rounded-xl px-4 py-3 text-sm text-slate-900 outline-none transition-all resize-none placeholder:text-slate-400 shadow-sm"
                         />
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-2">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-5 py-2.5 rounded-xl text-sm text-white/60 hover:opacity-100 hover:bg-white/5 transition-all"
+                            className="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all"
                         >
                             Annuleren
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-bold transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
+                            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-sm font-bold transition-all shadow-sm disabled:opacity-50"
                         >
                             <Plus className="w-4 h-4" />
                             Design Toevoegen

@@ -12,6 +12,7 @@ interface ClientListProps {
 export default function ClientList({ onSelectClient }: ClientListProps) {
     const [clients, setClients] = useState<UserData[]>([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState<"active" | "lead">("active");
 
     useEffect(() => {
         const fetchClients = async () => {
@@ -45,42 +46,63 @@ export default function ClientList({ onSelectClient }: ClientListProps) {
         return <div className="p-8 text-center opacity-50">Laden...</div>;
     }
 
-    if (clients.length === 0) {
-        return (
-            <div className="text-center py-20 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl">
-                <p className="opacity-40">Nog geen klanten geregistreerd.</p>
-            </div>
-        );
-    }
+    const leads = clients.filter(c => c.status === "lead");
+    const activeClients = clients.filter(c => c.status !== "lead");
+    const displayClients = activeTab === "lead" ? leads : activeClients;
 
     return (
-        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
-            <table className="w-full text-left border-collapse">
-                <thead>
-                    <tr className="border-b border-white/10 bg-white/5">
-                        <th className="p-4 font-semibold text-sm opacity-70">Naam</th>
-                        <th className="p-4 font-semibold text-sm opacity-70">Email</th>
-                        <th className="p-4 font-semibold text-sm opacity-70">Bedrijf</th>
-                        <th className="p-4 font-semibold text-sm opacity-70">Geregistreerd</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {clients.map((client) => (
-                        <tr
-                            key={client.uid}
-                            onClick={() => onSelectClient(client)}
-                            className="border-b border-white/5 hover:bg-white/10 transition-colors cursor-pointer"
-                        >
-                            <td className="p-4 font-medium">{client.displayName || "Onbekend"}</td>
-                            <td className="p-4 opacity-70">{client.email}</td>
-                            <td className="p-4 opacity-70">{client.companyDetails?.name || "-"}</td>
-                            <td className="p-4 opacity-70 text-sm border-0">
-                                {formatDate(client.createdAt)}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+        <div className="space-y-4">
+            <div className="flex bg-slate-100 p-1 rounded-xl w-full max-w-sm">
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("active")}
+                    className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === "active" ? "bg-white text-green-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                    Actieve Klanten ({activeClients.length})
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("lead")}
+                    className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === "lead" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                    Leads ({leads.length})
+                </button>
+            </div>
+
+            {displayClients.length === 0 ? (
+                <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <p className="text-slate-500 font-medium">Nog geen {activeTab === "lead" ? "leads" : "actieve klanten"} geregistreerd.</p>
+                </div>
+            ) : (
+                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="border-b border-slate-200 bg-slate-50">
+                                <th className="p-4 font-bold text-sm text-slate-500">Naam</th>
+                                <th className="p-4 font-bold text-sm text-slate-500">Email</th>
+                                <th className="p-4 font-bold text-sm text-slate-500">Bedrijf</th>
+                                <th className="p-4 font-bold text-sm text-slate-500">Geregistreerd</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {displayClients.map((client) => (
+                                <tr
+                                    key={client.uid}
+                                    onClick={() => onSelectClient(client)}
+                                    className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer text-slate-600"
+                                >
+                                    <td className="p-4 font-bold text-navy">{client.displayName || "Onbekend"}</td>
+                                    <td className="p-4 font-medium text-slate-500">{client.email}</td>
+                                    <td className="p-4 font-medium text-slate-500">{client.companyDetails?.name || "-"}</td>
+                                    <td className="p-4 font-medium text-slate-500 text-sm border-0">
+                                        {formatDate(client.createdAt)}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
     );
 }
