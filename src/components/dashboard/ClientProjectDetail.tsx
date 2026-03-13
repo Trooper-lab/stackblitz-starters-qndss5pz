@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ProjectData, ProjectDesign, ProjectAsset, PackageSelection } from "@/types/database";
+import { ProjectData, ProjectDesign, ProjectAsset } from "@/types/database";
 import { updateClientData } from "@/lib/services/clientService";
 import { updateDesignStatus, updateProject } from "@/lib/services/projectService";
 import { generateCommitmentFeeInvoice } from "@/lib/services/invoiceService";
@@ -304,7 +304,6 @@ export default function ClientProjectDetail({ project, onUpdate, onBack }: Clien
 
             {showWizardForDesign && (
                 <PackageSelectionWizard
-                    project={project}
                     onClose={() => setShowWizardForDesign(null)}
                     onComplete={handleWizardComplete}
                     isSubmitting={!!submitting && submitting === showWizardForDesign}

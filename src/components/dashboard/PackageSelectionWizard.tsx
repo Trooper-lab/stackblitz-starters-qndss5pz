@@ -3,16 +3,14 @@
 import { useState } from "react";
 import { X, Check, ChevronRight, ChevronLeft, Loader2, Receipt } from "lucide-react";
 import { pricingTiers, pricingAddons } from "@/lib/config/pricing";
-import { ProjectData } from "@/types/database";
 
 interface PackageSelectionWizardProps {
-    project: ProjectData;
     onClose: () => void;
     onComplete: (data: { packageId: string; addons: string[]; billingCycle: "monthly" | "yearly"; commitmentFee: number }) => void;
     isSubmitting: boolean;
 }
 
-export default function PackageSelectionWizard({ project, onClose, onComplete, isSubmitting }: PackageSelectionWizardProps) {
+export default function PackageSelectionWizard({ onClose, onComplete, isSubmitting }: PackageSelectionWizardProps) {
     const [step, setStep] = useState(1);
     const [selectedPackage, setSelectedPackage] = useState<string>("");
     const [selectedAddons, setSelectedAddons] = useState<string[]>([]);

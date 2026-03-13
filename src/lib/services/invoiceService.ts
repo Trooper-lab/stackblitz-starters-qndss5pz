@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDocs, addDoc, updateDoc, query, where, orderBy, serverTimestamp } from "firebase/firestore";
+import { collection, doc, getDocs, addDoc, updateDoc, query, where, orderBy, serverTimestamp, Timestamp } from "firebase/firestore";
 import { InvoiceData } from "@/types/database";
 
 // Fetch all invoices (for admin)
@@ -92,7 +92,7 @@ export const generateCommitmentFeeInvoice = async (
             amount,
             description: "50% Commitment Fee - Investering voor start project",
             status: "draft",
-            dueDate: dueDate as any, // In MVP we let Firestore auto-convert or store Date
+            dueDate: Timestamp.fromDate(dueDate), // Improved type safety for Firestore
         });
         return invoiceId;
     } catch (error) {

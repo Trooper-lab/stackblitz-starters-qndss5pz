@@ -41,8 +41,7 @@ export default function InvoiceManager({ project, clientId }: InvoiceManagerProp
                 invoiceNumber,
                 amount: 0,
                 description: `Factuur voor project: ${project.title}`,
-                status: "draft",
-                createdAt: Timestamp.fromDate(new Date()) // This will be overwritten by serverTimestamp in the service, but needed for type safety if Omit is used
+                status: "draft"
             });
             await loadInvoices();
         } catch (error) {
