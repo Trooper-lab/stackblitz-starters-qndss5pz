@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { UserData, CompanyDetails, ProjectContext, ProjectData, InvoiceData } from "@/types/database";
+import { UserData, CompanyDetails, ProjectContext, ProjectData, InvoiceData, DomainInfo } from "@/types/database";
 import { Timestamp } from "firebase/firestore";
 import { updateClientData } from "@/lib/services/clientService";
 
-import { Folder, Receipt, ExternalLink } from "lucide-react";
+import { Folder, Receipt, ExternalLink, Globe, ShieldCheck, Lock } from "lucide-react";
 
 interface ClientDetailProps {
     client: UserData;
@@ -55,6 +55,13 @@ export default function ClientDetail({ client, onBack, onUpdate, projects: initi
         setFormData({
             ...formData,
             projectContext: { ...(formData.projectContext || {} as ProjectContext), ...updates }
+        });
+    };
+
+    const updateDomain = (updates: Partial<DomainInfo>) => {
+        setFormData({
+            ...formData,
+            domainInfo: { ...(formData.domainInfo || {} as DomainInfo), ...updates }
         });
     };
 
@@ -156,6 +163,25 @@ export default function ClientDetail({ client, onBack, onUpdate, projects: initi
                                 <p className="text-slate-700 whitespace-pre-wrap">{client.companyDetails?.address || "-"}</p>
                             )}
                         </div>
+                        <div>
+                            <label className="block text-xs uppercase text-slate-500 font-semibold mb-1">Website</label>
+                            {isEditing ? (
+                                <input
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 focus:border-navy focus:ring-1 focus:ring-navy outline-none text-slate-900 transition-all shadow-sm"
+                                    value={formData.companyDetails?.website || ""}
+                                    onChange={(e) => updateCompany({ website: e.target.value })}
+                                    placeholder="https://www.example.nl"
+                                />
+                            ) : (
+                                <p className="text-slate-700">
+                                    {client.companyDetails?.website ? (
+                                        <a href={client.companyDetails.website.startsWith('http') ? client.companyDetails.website : `https://${client.companyDetails.website}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                                            {client.companyDetails.website} <ExternalLink className="w-3 h-3" />
+                                        </a>
+                                    ) : "-"}
+                                </p>
+                            )}
+                        </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-xs uppercase text-slate-500 font-semibold mb-1">KVK Nummer</label>
@@ -217,6 +243,70 @@ export default function ClientDetail({ client, onBack, onUpdate, projects: initi
                             <p className="text-sm text-slate-400 italic text-center">Nog geen pakket geselecteerd</p>
                         </div>
                     )}
+                </section>
+                
+                {/* Domein & Hosting */}
+                <section className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <h3 className="text-xl font-bold mb-6 text-navy flex items-center gap-2">
+                        <Globe className="w-5 h-5 text-blue-500" /> Domein & Hosting
+                    </h3>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-xs uppercase text-slate-500 font-semibold mb-1">Huidig Domein</label>
+                            {isEditing ? (
+                                <input
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 focus:border-navy focus:ring-1 focus:ring-navy outline-none text-slate-900 transition-all shadow-sm"
+                                    value={formData.domainInfo?.currentDomain || ""}
+                                    onChange={(e) => updateDomain({ currentDomain: e.target.value })}
+                                    placeholder="https://www.jouwbedrijf.nl"
+                                />
+                            ) : (
+                                <p className="text-slate-700">
+                                    {client.domainInfo?.currentDomain ? (
+                                        <a href={client.domainInfo.currentDomain.startsWith('http') ? client.domainInfo.currentDomain : `https://${client.domainInfo.currentDomain}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                                            {client.domainInfo.currentDomain} <ExternalLink className="w-3 h-3" />
+                                        </a>
+                                    ) : "-"}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <label className="block text-xs uppercase text-slate-500 font-semibold mb-1">Provider</label>
+                            {isEditing ? (
+                                <input
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 focus:border-navy focus:ring-1 focus:ring-navy outline-none text-slate-900 transition-all shadow-sm"
+                                    value={formData.domainInfo?.provider || ""}
+                                    onChange={(e) => updateDomain({ provider: e.target.value })}
+                                    placeholder="Bijv. Hostnet, TransIP"
+                                />
+                            ) : (
+                                <p className="text-slate-700 font-medium">{client.domainInfo?.provider || "-"}</p>
+                            )}
+                        </div>
+                        <div>
+                            <label className="block text-xs uppercase text-slate-500 font-semibold mb-1 flex items-center gap-1">
+                                <Lock className="w-3 h-3" /> Inloggegevens
+                            </label>
+                            {isEditing ? (
+                                <textarea
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 focus:border-navy focus:ring-1 focus:ring-navy outline-none text-slate-900 transition-all shadow-sm h-20"
+                                    value={formData.domainInfo?.loginDetails || ""}
+                                    onChange={(e) => updateDomain({ loginDetails: e.target.value })}
+                                    placeholder="Optionele notities over inloggegevens..."
+                                />
+                            ) : (
+                                <p className="text-slate-700 text-sm italic">
+                                    {client.domainInfo?.loginDetails ? "Details opgeslagen" : "Geen inloggegevens bekend"}
+                                </p>
+                            )}
+                        </div>
+                        {!isEditing && client.domainInfo?.sslStatus && (
+                             <div className="flex items-center gap-2 mt-4 p-2 bg-slate-50 rounded-lg border border-slate-100">
+                                <ShieldCheck className={`w-4 h-4 ${client.domainInfo.sslStatus === 'active' ? 'text-green-500' : 'text-slate-400'}`} />
+                                <span className="text-xs font-semibold uppercase text-slate-500">SSL STATUS: {client.domainInfo.sslStatus}</span>
+                             </div>
+                        )}
+                    </div>
                 </section>
 
                 <section className="md:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">

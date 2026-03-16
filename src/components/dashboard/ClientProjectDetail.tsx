@@ -214,7 +214,7 @@ export default function ClientProjectDetail({ project, onUpdate, onBack }: Clien
                     }`}
                 >
                     <Layout className="w-4 h-4" />
-                    <span>Ontwerpen</span>
+                    <span>Vibecheck</span>
                     <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeTab === "designs" ? "bg-navy/10 text-navy" : "bg-white/10 text-slate-400"}`}>
                         {project.designs.length}
                     </span>
@@ -271,10 +271,13 @@ export default function ClientProjectDetail({ project, onUpdate, onBack }: Clien
                             exit={{ opacity: 0, x: 20 }}
                             className="space-y-6"
                         >
-                            <div className="flex items-baseline justify-between">
-                                <h3 className="text-2xl font-bold font-montserrat text-white">Ontwerpen ter Review</h3>
-                                <p className="text-sm text-slate-500 font-medium">Klik op een ontwerp om het te bekijken.</p>
+                            <div className="flex items-baseline justify-between mb-2">
+                                <h3 className="text-2xl font-bold font-montserrat text-white">Vibecheck</h3>
+                                <p className="text-sm text-slate-500 font-medium">Klik op een ontwerp om de &apos;vibe&apos; te checken.</p>
                             </div>
+                            <p className="text-sm text-slate-400 font-medium leading-relaxed bg-white/5 p-4 rounded-2xl border border-white/5 italic mb-6">
+                                &quot;In deze fase zijn we op zoek naar de juiste <strong>&apos;vibe&apos;</strong>. Passeert dit design de vibe check? Dan kunnen we door. De details schaven we later makkelijk bij.&quot;
+                            </p>
 
                             <div className="grid grid-cols-1 gap-6">
                                 {project.designs.length === 0 ? (
@@ -303,7 +306,7 @@ export default function ClientProjectDetail({ project, onUpdate, onBack }: Clien
                                                     <div className="flex items-center gap-3">
                                                         <h4 className="font-bold text-xl text-white group-hover:text-blue-400 transition-colors">{design.name}</h4>
                                                         <span className={`text-[9px] px-2.5 py-1 rounded-full border font-bold uppercase tracking-wider ${getStatusColor(design.status)}`}>
-                                                            {design.status}
+                                                            {design.status === 'pending' ? 'vibecheck' : design.status}
                                                         </span>
                                                     </div>
                                                     {design.description && <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">{design.description}</p>}
@@ -326,7 +329,7 @@ export default function ClientProjectDetail({ project, onUpdate, onBack }: Clien
                                                         onClick={() => setViewingDesign(design)}
                                                         className="px-6 py-3 bg-white text-navy hover:bg-blue-50 rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-xl shadow-black/20 group/btn"
                                                     >
-                                                        <span>Bekijk Ontwerp</span>
+                                                        <span>Vibe Check</span>
                                                         <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                                                     </button>
 

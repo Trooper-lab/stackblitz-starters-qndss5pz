@@ -10,6 +10,8 @@ interface DesignViewerProps {
     onClose: () => void;
     onApprove?: (designId: string, feedback?: string) => void;
     onReject?: (designId: string, feedback: string) => void;
+    onEdit?: (design: ProjectDesign) => void;
+    onSaveFeedback?: (designId: string, feedback: string) => void;
     isSubmitting?: boolean;
     isAdmin?: boolean;
 }
@@ -19,6 +21,8 @@ export default function DesignViewer({
     onClose, 
     onApprove, 
     onReject, 
+    onEdit,
+    onSaveFeedback,
     isSubmitting = false,
     isAdmin = false 
 }: DesignViewerProps) {
@@ -41,6 +45,12 @@ export default function DesignViewer({
     const handleReject = () => {
         if (onReject && feedback.trim()) {
             onReject(design.id, feedback.trim());
+        }
+    };
+
+    const handleSaveFeedback = () => {
+        if (onSaveFeedback && feedback.trim()) {
+            onSaveFeedback(design.id, feedback.trim());
         }
     };
 
@@ -70,7 +80,7 @@ export default function DesignViewer({
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="text-[9px] font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest border border-blue-500/20">Concept v1</span>
                                 <span className="w-1 h-1 rounded-full bg-slate-600" />
-                                <span className="text-[9px] font-medium text-slate-500 uppercase tracking-widest">Design Review</span>
+                                <span className="text-[9px] font-medium text-slate-500 uppercase tracking-widest">Vibecheck</span>
                             </div>
                         </div>
                     </div>
@@ -151,7 +161,7 @@ export default function DesignViewer({
                                 <div className="w-10 h-10 rounded-2xl bg-accent/20 flex items-center justify-center">
                                     <Sparkles className="w-5 h-5 text-accent" />
                                 </div>
-                                <h3 className="font-display font-black uppercase tracking-tight text-white">Review Design</h3>
+                                <h3 className="font-display font-black uppercase tracking-tight text-white">Vibecheck</h3>
                             </div>
                             <button 
                                 onClick={() => setShowSidebar(false)} 
@@ -186,9 +196,12 @@ export default function DesignViewer({
                                         <span className="text-sm font-black uppercase tracking-tight">
                                             {design.status === "approved" ? "Goedgekeurd" : design.status === "rejected" ? "Afgewezen" : "In Afwachting"}
                                         </span>
-                                        <span className="text-[10px] opacity-60 font-medium">Design fase is actief</span>
+                                        <span className="text-[10px] opacity-60 font-medium whitespace-nowrap overflow-hidden text-ellipsis">Vibecheck fase is actief</span>
                                     </div>
                                 </div>
+                                <p className="text-[11px] text-slate-400 font-medium leading-relaxed bg-white/5 p-4 rounded-2xl border border-white/5 italic">
+                                    &quot;In deze fase zijn we op zoek naar de juiste <strong>&apos;vibe&apos;</strong>. Passeert dit design de vibe check? Dan kunnen we door. De details schaven we later makkelijk bij.&quot;
+                                </p>
                             </div>
 
                             {/* Description Section */}
@@ -219,8 +232,19 @@ export default function DesignViewer({
                                         readOnly={design.status !== "pending" && !isAdmin}
                                         onChange={(e) => setFeedback(e.target.value)}
                                     />
-                                    <div className="absolute bottom-4 right-4 opacity-20 pointer-events-none group-focus-within:opacity-100 transition-opacity">
-                                        <Send size={16} className="text-accent" />
+                                    <div className="absolute bottom-4 right-4 flex gap-2">
+                                        {isAdmin && feedback !== design.feedback && (
+                                            <button 
+                                                onClick={handleSaveFeedback}
+                                                className="p-2 bg-blue-500 hover:bg-blue-600 rounded-xl text-white transition-all shadow-lg"
+                                                title="Feedback opslaan"
+                                            >
+                                                <Send size={14} />
+                                            </button>
+                                        )}
+                                        <div className="opacity-20 pointer-events-none group-focus-within:opacity-100 transition-opacity flex items-center">
+                                            <Send size={16} className="text-accent" />
+                                        </div>
                                     </div>
                                 </div>
                                 <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic text-center">
@@ -255,14 +279,25 @@ export default function DesignViewer({
                                         ) : (
                                             <CheckCircle2 className="w-8 h-8 mb-3" />
                                         )}
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Accoord</span>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Akkoord</span>
                                     </motion.button>
                                 </div>
-                            ) : isAdmin && design.status === "pending" ? (
-                                <div className="text-center py-4 bg-white/5 rounded-2xl border border-white/10">
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                                        Wachten op klant-feedback
-                                    </p>
+                            ) : isAdmin ? (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <motion.button
+                                        whileHover={{ scale: 1.02, y: -2 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => onEdit?.(design)}
+                                        className="flex flex-col items-center justify-center p-6 bg-white/[0.03] border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/30 text-slate-400 hover:text-white transition-all group shadow-lg"
+                                    >
+                                        <Sparkles className="w-8 h-8 mb-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Bewerken</span>
+                                    </motion.button>
+                                    <div className="text-center py-4 px-2 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 leading-tight">
+                                            {design.status === "pending" ? "Wachten op klant" : "Review voltooid"}
+                                        </p>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="text-center py-4 bg-accent/10 rounded-2xl border border-accent/20">

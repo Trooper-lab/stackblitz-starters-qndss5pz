@@ -45,6 +45,7 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
     const [assets, setAssets] = useState<ProjectAsset[]>(project.assets || []);
     const [designs, setDesigns] = useState<ProjectDesign[]>(project.designs || []);
     const [showDesignModal, setShowDesignModal] = useState(false);
+    const [editingDesign, setEditingDesign] = useState<ProjectDesign | null>(null);
     const [viewingDesign, setViewingDesign] = useState<ProjectDesign | null>(null);
     const [notifSent, setNotifSent] = useState<string | null>(null);
     const [testLink, setTestLink] = useState(project.testLink || "");
@@ -56,11 +57,16 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
         const unsub = onSnapshot(doc(db, "projects", initialProject.id), (doc) => {
             if (doc.exists()) {
                 const updatedData = { id: doc.id, ...doc.data() } as ProjectData;
-                setProject(updatedData);
+                setProject(prev => {
+                    // Only update testLink if it changed on the server to avoid overwriting user input
+                    if (updatedData.testLink !== prev.testLink) {
+                        setTestLink(updatedData.testLink || "");
+                    }
+                    return updatedData;
+                });
                 setStatus(updatedData.status);
                 setAssets(updatedData.assets || []);
                 setDesigns(updatedData.designs || []);
-                setTestLink(updatedData.testLink || "");
                 setQaComments(updatedData.qaComments || []);
                 onUpdate(updatedData);
             }
@@ -106,11 +112,31 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
     };
 
     const handleAddDesign = async (design: ProjectDesign) => {
-        const updated = [...designs, design];
+        // If editing, find and replace the existing design
+        const existingIdx = designs.findIndex(d => d.id === design.id);
+        let updated: ProjectDesign[];
+        
+        if (existingIdx >= 0) {
+            updated = [...designs];
+            updated[existingIdx] = design;
+        } else {
+            updated = [...designs, design];
+        }
+        
         setDesigns(updated);
         await updateProject(project.id, { designs: updated });
         onUpdate({ ...project, designs: updated, assets });
         setShowDesignModal(false);
+        setEditingDesign(null);
+    };
+
+    const handleUpdateDesignFeedback = async (designId: string, feedback: string) => {
+        const updated = designs.map(d => 
+            d.id === designId ? { ...d, feedback } : d
+        );
+        setDesigns(updated);
+        await updateProject(project.id, { designs: updated });
+        onUpdate({ ...project, designs: updated, assets });
     };
 
     const handleSaveTestLink = async () => {
@@ -147,9 +173,13 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
         <>
             {showDesignModal && (
                 <AddDesignModal 
-                    onClose={() => setShowDesignModal(false)} 
+                    onClose={() => {
+                        setShowDesignModal(false);
+                        setEditingDesign(null);
+                    }} 
                     onAdd={handleAddDesign} 
                     defaultName={designs.length === 0 && clientStatus === "lead" ? "Gratis Website Ontwerp V1" : ""}
+                    initialDesign={editingDesign}
                 />
             )}
             {viewingDesign && (
@@ -157,6 +187,12 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                     design={viewingDesign} 
                     onClose={() => setViewingDesign(null)}
                     isAdmin={true}
+                    onEdit={(design) => {
+                        setEditingDesign(design);
+                        setViewingDesign(null);
+                        setShowDesignModal(true);
+                    }}
+                    onSaveFeedback={(designId, feedback) => handleUpdateDesignFeedback(designId, feedback)}
                 />
             )}
 

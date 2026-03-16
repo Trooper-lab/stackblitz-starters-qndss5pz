@@ -7,6 +7,7 @@ export interface CompanyDetails {
     address: string;
     email: string;
     phone: string;
+    website?: string;
     kvk?: string;
     vat?: string;
 }

@@ -9,13 +9,14 @@ interface AddDesignModalProps {
     onClose: () => void;
     onAdd: (design: ProjectDesign) => void;
     defaultName?: string;
+    initialDesign?: ProjectDesign | null;
 }
 
-export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: AddDesignModalProps) {
-    const [name, setName] = useState(defaultName);
-    const [htmlUrl, setHtmlUrl] = useState("");
-    const [htmlCode, setHtmlCode] = useState("");
-    const [description, setDescription] = useState("");
+export default function AddDesignModal({ onClose, onAdd, defaultName = "", initialDesign = null }: AddDesignModalProps) {
+    const [name, setName] = useState(initialDesign?.name || defaultName);
+    const [htmlUrl, setHtmlUrl] = useState(initialDesign?.htmlUrl || "");
+    const [htmlCode, setHtmlCode] = useState(initialDesign?.htmlCode || "");
+    const [description, setDescription] = useState(initialDesign?.description || "");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -33,13 +34,14 @@ export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: Add
 
         setLoading(true);
         const newDesign: ProjectDesign = {
-            id: `d_${Date.now()}`,
+            ...initialDesign,
+            id: initialDesign?.id || `d_${Date.now()}`,
             name: name.trim(),
-            status: "pending",
-            createdAt: Timestamp.fromDate(new Date()),
-            ...(htmlUrl.trim() && { htmlUrl: htmlUrl.trim() }),
-            ...(htmlCode.trim() && { htmlCode: htmlCode.trim() }),
-            ...(description.trim() && { description: description.trim() }),
+            status: initialDesign?.status || "pending",
+            createdAt: initialDesign?.createdAt || Timestamp.fromDate(new Date()),
+            htmlUrl: htmlUrl.trim() || undefined,
+            htmlCode: htmlCode.trim() || undefined,
+            description: description.trim() || undefined,
         };
 
         onAdd(newDesign);
@@ -55,7 +57,7 @@ export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: Add
                             <Layout className="w-5 h-5 text-navy" />
                         </div>
                         <div>
-                            <h2 className="font-bold text-lg text-slate-900">Design Toevoegen</h2>
+                            <h2 className="font-bold text-lg text-slate-900">{initialDesign ? "Design Bewerken" : "Design Toevoegen"}</h2>
                             <p className="text-xs text-slate-500">Plak de Google Stitch HTML-export voor klantreview</p>
                         </div>
                     </div>
@@ -156,8 +158,8 @@ export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: Add
                             disabled={loading}
                             className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-navy hover:bg-navy-light text-white text-sm font-bold transition-all shadow-sm disabled:opacity-50"
                         >
-                            <Plus className="w-4 h-4" />
-                            Design Toevoegen
+                            {!initialDesign && <Plus className="w-4 h-4" />}
+                            {initialDesign ? "Opslaan" : "Design Toevoegen"}
                         </button>
                     </div>
                 </form>
