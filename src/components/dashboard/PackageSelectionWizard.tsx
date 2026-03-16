@@ -8,13 +8,18 @@ interface PackageSelectionWizardProps {
     onClose: () => void;
     onComplete: (data: { packageId: string; addons: string[]; billingCycle: "monthly" | "yearly"; commitmentFee: number }) => void;
     isSubmitting: boolean;
+    initialSelection?: {
+        packageId?: string;
+        addons?: string[];
+        billingCycle?: "monthly" | "yearly";
+    };
 }
 
-export default function PackageSelectionWizard({ onClose, onComplete, isSubmitting }: PackageSelectionWizardProps) {
-    const [step, setStep] = useState(1);
-    const [selectedPackage, setSelectedPackage] = useState<string>("");
-    const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
-    const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+export default function PackageSelectionWizard({ onClose, onComplete, isSubmitting, initialSelection }: PackageSelectionWizardProps) {
+    const [step, setStep] = useState(initialSelection?.packageId ? 3 : 1);
+    const [selectedPackage, setSelectedPackage] = useState<string>(initialSelection?.packageId || "");
+    const [selectedAddons, setSelectedAddons] = useState<string[]>(initialSelection?.addons || []);
+    const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(initialSelection?.billingCycle || "monthly");
 
     const handleNext = () => setStep(s => Math.min(s + 1, 3));
     const handlePrev = () => setStep(s => Math.max(s - 1, 1));
@@ -138,7 +143,7 @@ export default function PackageSelectionWizard({ onClose, onComplete, isSubmitti
                                             {tier.features.slice(0, 4).map((feat, i) => (
                                                 <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
                                                     <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                                    <span>{feat}</span>
+                                                    <span>{feat.text}</span>
                                                 </li>
                                             ))}
                                         </ul>
@@ -172,7 +177,7 @@ export default function PackageSelectionWizard({ onClose, onComplete, isSubmitti
                                                     </div>
                                                     <div>
                                                         <h5 className="font-bold text-slate-900">{addon.name}</h5>
-                                                        <p className="text-sm text-slate-500">{addon.features[0]}</p>
+                                                        <p className="text-sm text-slate-500">{addon.features[0]?.text}</p>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">

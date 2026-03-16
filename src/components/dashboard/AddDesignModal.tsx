@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Layout, Link, FileText, Plus } from "lucide-react";
+import { X, Layout, FileCode, FileText, Plus } from "lucide-react";
 import { Timestamp } from "firebase/firestore";
 import { ProjectDesign } from "@/types/database";
 
@@ -13,7 +13,8 @@ interface AddDesignModalProps {
 
 export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: AddDesignModalProps) {
     const [name, setName] = useState(defaultName);
-    const [url, setUrl] = useState("");
+    const [htmlUrl, setHtmlUrl] = useState("");
+    const [htmlCode, setHtmlCode] = useState("");
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -21,8 +22,7 @@ export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: Add
     const validate = () => {
         const e: Record<string, string> = {};
         if (!name.trim()) e.name = "Geef een naam op";
-        if (!url.trim()) e.url = "Vul een URL in";
-        else if (!url.startsWith("http")) e.url = "Moet beginnen met http(s)://";
+        if (!htmlCode.trim() && !htmlUrl.trim()) e.html = "Geef een URL of plak de HTML code op";
         return e;
     };
 
@@ -35,17 +35,19 @@ export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: Add
         const newDesign: ProjectDesign = {
             id: `d_${Date.now()}`,
             name: name.trim(),
-            htmlUrl: url.trim(),
-            description: description.trim() || undefined,
             status: "pending",
-            createdAt: Timestamp.fromDate(new Date())
+            createdAt: Timestamp.fromDate(new Date()),
+            ...(htmlUrl.trim() && { htmlUrl: htmlUrl.trim() }),
+            ...(htmlCode.trim() && { htmlCode: htmlCode.trim() }),
+            ...(description.trim() && { description: description.trim() }),
         };
+
         onAdd(newDesign);
     };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg shadow-2xl shadow-slate-200/50 animate-in slide-in-from-bottom-4">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl shadow-2xl shadow-slate-200/50 animate-in slide-in-from-bottom-4">
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50 rounded-t-2xl">
                     <div className="flex items-center gap-3">
@@ -54,7 +56,7 @@ export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: Add
                         </div>
                         <div>
                             <h2 className="font-bold text-lg text-slate-900">Design Toevoegen</h2>
-                            <p className="text-xs text-slate-500">Voeg een HTML-design toe voor klantreview</p>
+                            <p className="text-xs text-slate-500">Plak de Google Stitch HTML-export voor klantreview</p>
                         </div>
                     </div>
                     <button
@@ -85,21 +87,47 @@ export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: Add
                         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                     </div>
 
-                    <div>
-                        <label className="text-xs uppercase font-bold text-slate-700 mb-2 block tracking-wider">
-                            Design URL *
-                        </label>
-                        <div className="relative">
-                            <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <input
-                                type="url"
-                                placeholder="https://yourdesign.netlify.app"
-                                value={url}
-                                onChange={e => { setUrl(e.target.value); setErrors(prev => ({ ...prev, url: "" })); }}
-                                className={`w-full bg-white border rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 shadow-sm ${errors.url ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500" : "border-slate-200 focus:border-navy focus:ring-1 focus:ring-navy"}`}
-                            />
+                    <div className="space-y-4">
+                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <div className="flex items-center gap-2 mb-3">
+                                <FileCode className="w-4 h-4 text-navy" />
+                                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">Design Bron</span>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-[10px] font-bold text-slate-500 mb-1 block uppercase tracking-tight">
+                                        HTML URL (bijv. Vercel of Cloudflare Link)
+                                    </label>
+                                    <input
+                                        type="url"
+                                        placeholder="https://..."
+                                        value={htmlUrl}
+                                        onChange={e => { setHtmlUrl(e.target.value); setErrors(prev => ({ ...prev, html: "" })); }}
+                                        className={`w-full bg-white border rounded-xl px-4 py-2.5 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 ${errors.html ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-navy"}`}
+                                    />
+                                </div>
+
+                                <div className="relative">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <div className="h-px flex-1 bg-slate-200" />
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase">of</span>
+                                        <div className="h-px flex-1 bg-slate-200" />
+                                    </div>
+                                    <label className="text-[10px] font-bold text-slate-500 mb-1 block uppercase tracking-tight">
+                                        HTML Code (Google Stitch Export)
+                                    </label>
+                                    <textarea
+                                        placeholder="Plak hier de HTML code..."
+                                        value={htmlCode}
+                                        onChange={e => { setHtmlCode(e.target.value); setErrors(prev => ({ ...prev, html: "" })); }}
+                                        rows={6}
+                                        className={`w-full bg-white border rounded-xl px-4 py-3 text-xs font-mono text-slate-800 outline-none transition-all placeholder:text-slate-400 shadow-sm resize-none ${errors.html ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-navy"}`}
+                                    />
+                                </div>
+                            </div>
+                            {errors.html && <p className="text-red-500 text-xs mt-2">{errors.html}</p>}
                         </div>
-                        {errors.url && <p className="text-red-500 text-xs mt-1">{errors.url}</p>}
                     </div>
 
                     <div>
@@ -110,7 +138,7 @@ export default function AddDesignModal({ onClose, onAdd, defaultName = "" }: Add
                             placeholder="Wat is er nieuw of anders in dit design?"
                             value={description}
                             onChange={e => setDescription(e.target.value)}
-                            rows={3}
+                            rows={2}
                             className="w-full bg-white border border-slate-200 focus:border-navy focus:ring-1 focus:ring-navy rounded-xl px-4 py-3 text-sm text-slate-900 outline-none transition-all resize-none placeholder:text-slate-400 shadow-sm"
                         />
                     </div>

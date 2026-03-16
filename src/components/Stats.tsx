@@ -8,9 +8,6 @@ export default function Stats() {
     return (
         <section className="relative z-20 px-6 -mt-10">
             <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold tracking-tighter text-white">Waarom ondernemers voor ons kiezen:</h2>
-                </div>
                 <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden grid grid-cols-1 md:grid-cols-3">
                     {stats.map((s, i) => (
                         <div

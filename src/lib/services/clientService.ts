@@ -1,12 +1,10 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDocs, getDoc, updateDoc, setDoc, query, where, orderBy, serverTimestamp } from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, updateDoc, setDoc, query, where, orderBy, serverTimestamp, writeBatch } from "firebase/firestore";
 import { UserData } from "@/types/database";
 
 // Create a new client
 export const createClient = async (data: Partial<UserData>): Promise<string> => {
     try {
-        // Generates a unique ID if not provided, though we usually use the Auth UID.
-        // For manual creation without Auth (pre-registration), we generate a random ID.
         const newClientRef = doc(collection(db, "users"));
         const clientData: UserData = {
             uid: newClientRef.id,
@@ -71,3 +69,89 @@ export const getClientById = async (uid: string): Promise<UserData | null> => {
         throw error;
     }
 }
+
+// Link a shell profile to a real Auth UID
+export const linkClientAccounts = async (authUid: string, email: string): Promise<UserData | null> => {
+    try {
+        console.log(`[linkClientAccounts] Starting linking for email: ${email}, authUid: ${authUid}`);
+        
+        // 1. Search for shell profiles with this email
+        console.log("[linkClientAccounts] 1. Searching for shell profile...");
+        const q = query(
+            collection(db, "users"),
+            where("email", "==", email),
+            where("role", "==", "client"),
+            where("uid", "!=", authUid) // Crucial: Don't find yourself if already linked
+        );
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) {
+            console.log("[linkClientAccounts] No shell profile found matching email.");
+            return null;
+        }
+
+        const shellDoc = snapshot.docs[0];
+        const shellId = shellDoc.id;
+        const shellData = shellDoc.data() as UserData;
+        
+        console.log(`[linkClientAccounts] Found shell profile: ${shellId}. Preparing batch...`);
+
+        const batch = writeBatch(db);
+
+        // 2. Create the new user document with the Auth UID
+        const newUserRef = doc(db, "users", authUid);
+        const newData: UserData = {
+            ...shellData,
+            uid: authUid,
+            email: email,
+            updatedAt: serverTimestamp()
+        };
+        batch.set(newUserRef, newData);
+        console.log(`[linkClientAccounts] Batch: Set new user doc ${authUid}`);
+
+        // 3. Update related collections to use the new UID
+        console.log("[linkClientAccounts] 3(a). Querying projects...");
+        const projectsQuery = query(collection(db, "projects"), where("clientEmail", "==", email));
+        const projectsSnap = await getDocs(projectsQuery);
+        console.log(`[linkClientAccounts] Found ${projectsSnap.size} projects to update.`);
+        projectsSnap.forEach((d) => {
+            if (d.data().clientId !== authUid) {
+                batch.update(doc(db, "projects", d.id), { clientId: authUid });
+            }
+        });
+
+        console.log("[linkClientAccounts] 3(b). Querying invoices...");
+        const invoicesQuery = query(collection(db, "invoices"), where("clientEmail", "==", email));
+        const invoicesSnap = await getDocs(invoicesQuery);
+        console.log(`[linkClientAccounts] Found ${invoicesSnap.size} invoices to update.`);
+        invoicesSnap.forEach((d) => {
+            if (d.data().clientId !== authUid) {
+                batch.update(doc(db, "invoices", d.id), { clientId: authUid });
+            }
+        });
+
+        console.log("[linkClientAccounts] 3(c). Querying notifications...");
+        const notifsQuery = query(collection(db, "notifications"), where("clientEmail", "==", email));
+        const notifsSnap = await getDocs(notifsQuery);
+        console.log(`[linkClientAccounts] Found ${notifsSnap.size} notifications to update.`);
+        notifsSnap.forEach((d) => {
+            if (d.data().clientId !== authUid) {
+                batch.update(doc(db, "notifications", d.id), { clientId: authUid });
+            }
+        });
+
+        // 4. Delete the old shell document
+        batch.delete(shellDoc.ref);
+        console.log(`[linkClientAccounts] Batch: Delete shell doc ${shellId}`);
+
+        // Commit the batch
+        console.log("[linkClientAccounts] 5. Committing batch...");
+        await batch.commit();
+        console.log("[linkClientAccounts] Batch committed successfully!");
+
+        return newData;
+    } catch (error) {
+        console.error("[linkClientAccounts] CRITICAL Error linking client accounts:", error);
+        throw error;
+    }
+};

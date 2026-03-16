@@ -1,6 +1,5 @@
 "use client";
 import { useRef, useLayoutEffect } from 'react';
-import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -92,17 +91,6 @@ export default function WhatIsAILeadSite() {
                             </div>
                         </div>
 
-                        {/* Custom SVG Graphic built to match brand */}
-                        <div className="hidden lg:block relative w-full h-64 overflow-hidden rounded-2xl shadow-xl bg-navy border-t-2 border-accent/30 group">
-                            <Image
-                                src="/ai_abstract_graphic.svg"
-                                alt="AI Network Abstraction"
-                                fill
-                                className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-700 ease-out"
-                            />
-                            {/* Overlay voor de editorial feel */}
-                            <div className="absolute inset-0 bg-gradient-to-tr from-navy/40 to-transparent mix-blend-multiply"></div>
-                        </div>
                     </div>
 
                     {/* Right Column */}

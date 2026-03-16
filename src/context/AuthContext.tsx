@@ -10,6 +10,7 @@ import {
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db, googleProvider } from "@/lib/firebase";
 import { UserData, UserRole } from "@/types/database";
+import { linkClientAccounts } from "@/lib/services/clientService";
 
 interface AuthContextType {
     user: User | null;
@@ -32,25 +33,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 try {
+                    // Fetch user metadata from Firestore
                     const userRef = doc(db, "users", currentUser.uid);
                     const userSnap = await getDoc(userRef);
 
                     if (userSnap.exists()) {
                         const data = userSnap.data() as UserData;
+                        
+                        // Even if user document exists, they might have new unlinked data (shell profiles)
+                        // associated with their email. Let's check for linking.
+                        if (currentUser.email) {
+                            try {
+                                const linkedUser = await linkClientAccounts(currentUser.uid, currentUser.email);
+                                if (linkedUser) {
+                                    setUserData(linkedUser);
+                                    setRole(linkedUser.role);
+                                    setLoading(false);
+                                    return;
+                                }
+                            } catch (err) {
+                                console.error("Error during account linking fallback:", err);
+                            }
+                        }
+
                         setUserData(data);
                         setRole(data.role);
                     } else {
-                        const newUser: UserData = {
-                            uid: currentUser.uid,
-                            email: currentUser.email || "",
-                            displayName: currentUser.displayName || "",
-                            photoURL: currentUser.photoURL || "",
-                            role: "client",
-                            createdAt: serverTimestamp(),
-                        };
-                        await setDoc(userRef, newUser);
-                        setUserData(newUser);
-                        setRole("client");
+                        // This is a new UID. Check if we should link an existing shell profile.
+                        let finalUserData: UserData | null = null;
+
+                        if (currentUser.email) {
+                            try {
+                                const linkedUser = await linkClientAccounts(currentUser.uid, currentUser.email);
+                                if (linkedUser) {
+                                    finalUserData = linkedUser;
+                                }
+                            } catch (err) {
+                                console.error("Error during account linking:", err);
+                            }
+                        }
+
+                        if (!finalUserData) {
+                            // Double check if the document was created while we were linking
+                            const secondCheck = await getDoc(userRef);
+                            if (secondCheck.exists()) {
+                                finalUserData = secondCheck.data() as UserData;
+                            } else {
+                                // Create new user document
+                                const newUser: UserData = {
+                                    uid: currentUser.uid,
+                                    email: currentUser.email || "",
+                                    displayName: currentUser.displayName || "",
+                                    photoURL: currentUser.photoURL || "",
+                                    role: "client",
+                                    status: "lead",
+                                    createdAt: serverTimestamp(),
+                                };
+                                await setDoc(userRef, newUser);
+                                finalUserData = newUser;
+                            }
+                        }
+
+                        if (finalUserData) {
+                            setUserData(finalUserData);
+                            setRole(finalUserData.role);
+                        }
                     }
                 } catch (error) {
                     console.error("Error fetching user data:", error);

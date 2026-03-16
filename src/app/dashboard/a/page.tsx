@@ -9,28 +9,34 @@ import NewProjectWizard from "@/components/dashboard/NewProjectWizard";
 import ClientList from "@/components/dashboard/ClientList";
 import ClientDetail from "@/components/dashboard/ClientDetail";
 import NewClientModal from "@/components/dashboard/NewClientModal";
-import { UserData, ProjectData } from "@/types/database";
+import { UserData, ProjectData, InvoiceData } from "@/types/database";
 import { getAllProjects, createProject } from "@/lib/services/projectService";
 import { getClients } from "@/lib/services/clientService";
+import { getAllInvoices } from "@/lib/services/invoiceService";
 import {
     Plus, FolderOpen, Users, LogOut, LayoutDashboard,
-    CheckCircle, Wrench, Layout, FileText, Loader2, RefreshCw
+    CheckCircle, Wrench, Layout, FileText, Loader2, RefreshCw, Home, TrendingUp, FileSpreadsheet, AlertCircle
 } from "lucide-react";
+import OverviewTab from "@/components/dashboard/admin/OverviewTab";
+import LeadManager from "@/components/dashboard/admin/LeadManager";
+import InvoiceOverview from "@/components/dashboard/admin/InvoiceOverview";
 
-type View = "pipeline" | "clients";
+type View = "overview" | "pipeline" | "clients" | "leads" | "invoices";
 
 const STEPS = [
     { key: "intake", label: "Intake", icon: FileText, color: "text-blue-600", bg: "bg-blue-50 border-blue-200" },
     { key: "design_review", label: "Design Review", icon: Layout, color: "text-purple-600", bg: "bg-purple-50 border-purple-200" },
     { key: "development", label: "Development", icon: Wrench, color: "text-yellow-600", bg: "bg-yellow-50 border-yellow-200" },
+    { key: "qa", label: "QA", icon: AlertCircle, color: "text-orange-600", bg: "bg-orange-50 border-orange-200" },
     { key: "delivered", label: "Opgeleverd", icon: CheckCircle, color: "text-green-600", bg: "bg-green-50 border-green-200" },
 ];
 
 export default function AdminDashboard() {
     const { signOut } = useAuth();
-    const [view, setView] = useState<View>("pipeline");
+    const [view, setView] = useState<View>("overview");
     const [projects, setProjects] = useState<ProjectData[]>([]);
     const [clients, setClients] = useState<UserData[]>([]);
+    const [invoices, setInvoices] = useState<InvoiceData[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
     const [selectedClient, setSelectedClient] = useState<UserData | null>(null);
@@ -41,9 +47,10 @@ export default function AdminDashboard() {
     const load = useCallback(async () => {
         setLoading(true);
         try {
-            const [p, c] = await Promise.all([getAllProjects(), getClients()]);
+            const [p, c, i] = await Promise.all([getAllProjects(), getClients(), getAllInvoices()]);
             setProjects(p);
             setClients(c);
+            setInvoices(i);
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
     }, []);
@@ -70,14 +77,30 @@ export default function AdminDashboard() {
     };
 
     const handleStartFreeDesign = async (clientId: string) => {
+        const client = clients.find(c => c.uid === clientId);
         try {
-            const id = await createProject({
+            const projectDataToCreate: Partial<ProjectData> = {
                 clientId,
+                clientEmail: client?.email || undefined,
                 title: "Free HTML Design",
                 status: "design_review",
                 assets: [],
                 designs: [],
-            });
+            };
+
+            // Copy package selection if the client has already made one during onboarding
+            if (client?.selectedPackage) {
+                projectDataToCreate.packageSelection = {
+                    packageId: client.selectedPackage.packageId,
+                    addons: client.selectedPackage.addons || [],
+                    billingCycle: client.selectedPackage.billingCycle || "monthly"
+                };
+            }
+
+            const id = await createProject(projectDataToCreate as Omit<ProjectData, "id" | "createdAt" | "updatedAt">);
+            
+            // Let's also update the client status to "design_pipeline"
+            await import("@/lib/services/clientService").then(mod => mod.updateClientData(clientId, { status: "design_pipeline" }));
             // We need to reload projects to get this new one, then select it
             const p = await getAllProjects();
             setProjects(p);
@@ -125,7 +148,30 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Nav */}
-                    <nav className="flex-1 p-4 space-y-1">
+                    <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+                        <button
+                            onClick={() => { setView("overview"); setSelectedProject(null); setSelectedClient(null); }}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "overview" ? "bg-white/10 text-white shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
+                        >
+                            <Home className="w-4 h-4" />
+                            Vandaag
+                        </button>
+                        <button
+                            onClick={() => { setView("leads"); setSelectedProject(null); setSelectedClient(null); }}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "leads" ? "bg-white/10 text-white shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
+                        >
+                            <TrendingUp className="w-4 h-4" />
+                            Leads
+                            <span className="ml-auto text-xs opacity-50 font-medium">{clients.filter(c => c.status === "new_lead" || c.status === "contacted" || c.status === "lead").length}</span>
+                        </button>
+                        <button
+                            onClick={() => { setView("clients"); setSelectedProject(null); setSelectedClient(null); }}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "clients" ? "bg-white/10 text-white shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
+                        >
+                            <Users className="w-4 h-4" />
+                            Klanten
+                            <span className="ml-auto text-xs opacity-50 font-medium">{clients.filter(c => c.status === "active_client" || c.status === "active" || c.status === "design_pipeline").length}</span>
+                        </button>
                         <button
                             onClick={() => { setView("pipeline"); setSelectedProject(null); setSelectedClient(null); }}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "pipeline" && !selectedProject ? "bg-white/10 text-white shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
@@ -137,12 +183,11 @@ export default function AdminDashboard() {
                             )}
                         </button>
                         <button
-                            onClick={() => { setView("clients"); setSelectedProject(null); setSelectedClient(null); }}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "clients" ? "bg-white/10 text-white shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
+                            onClick={() => { setView("invoices"); setSelectedProject(null); setSelectedClient(null); }}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${view === "invoices" ? "bg-white/10 text-white shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
                         >
-                            <Users className="w-4 h-4" />
-                            Klanten
-                            <span className="ml-auto text-xs opacity-50 font-medium">{clients.length}</span>
+                            <FileSpreadsheet className="w-4 h-4" />
+                            Facturen
                         </button>
                     </nav>
 
@@ -173,6 +218,22 @@ export default function AdminDashboard() {
 
                 {/* ── MAIN CONTENT ── */}
                 <main className="flex-grow ml-64 p-10 min-h-screen">
+                    {view === "overview" && (
+                        <OverviewTab projects={projects} clients={clients} invoices={invoices} onNavigate={(v) => {
+                            setView(v);
+                            setSelectedProject(null);
+                            setSelectedClient(null);
+                        }} />
+                    )}
+
+                    {view === "leads" && !selectedClient && (
+                        <LeadManager 
+                            clients={clients} 
+                            onSelectLead={setSelectedClient} 
+                            onStartFreeDesign={handleStartFreeDesign} 
+                        />
+                    )}
+
                     {view === "pipeline" && !selectedProject && (
                         <div className="space-y-8">
                             {/* Header */}
@@ -213,7 +274,7 @@ export default function AdminDashboard() {
                                 })}
                             </div>
 
-                            {/* Project grid */}
+                            {/* Project grid or Kanban */}
                             {loading ? (
                                 <div className="flex items-center justify-center py-32">
                                     <Loader2 className="w-8 h-8 animate-spin text-navy/20" />
@@ -224,7 +285,7 @@ export default function AdminDashboard() {
                                     <p className="text-lg font-bold text-slate-500">Geen projecten gevonden</p>
                                     <p className="text-sm">Maak een nieuw project aan via de sidebar</p>
                                 </div>
-                            ) : (
+                            ) : activeFilter ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                                     {filteredProjects.map(project => (
                                         <ProjectPipelineCard
@@ -234,6 +295,42 @@ export default function AdminDashboard() {
                                             onClick={() => setSelectedProject(project)}
                                         />
                                     ))}
+                                </div>
+                            ) : (
+                                <div className="flex gap-6 overflow-x-auto pb-4 snap-x">
+                                    {STEPS.map(step => {
+                                        const colProjects = filteredProjects.filter(p => p.status === step.key);
+                                        return (
+                                            <div key={step.key} className="flex-none w-80 flex flex-col snap-start">
+                                                <div className={`px-4 py-3 rounded-t-xl border-t border-x flex items-center justify-between ${step.bg}`}>
+                                                    <div className="flex items-center gap-2">
+                                                        <step.icon className={`w-4 h-4 ${step.color}`} />
+                                                        <h3 className={`font-bold text-sm ${step.color}`}>{step.label}</h3>
+                                                    </div>
+                                                    <span className={`text-xs font-black ${step.color} bg-white px-2 py-0.5 rounded-full shadow-sm`}>
+                                                        {colProjects.length}
+                                                    </span>
+                                                </div>
+                                                <div className="flex-1 bg-slate-100/50 border-x border-b border-slate-200 rounded-b-xl p-3 flex flex-col gap-3 min-h-[400px]">
+                                                    {colProjects.length === 0 ? (
+                                                        <div className="flex-1 flex flex-col items-center justify-center text-slate-400 opacity-50 py-10">
+                                                            <FolderOpen className="w-8 h-8 mb-2" />
+                                                            <p className="text-xs font-medium">Geen projecten</p>
+                                                        </div>
+                                                    ) : (
+                                                        colProjects.map(project => (
+                                                            <ProjectPipelineCard
+                                                                key={project.id}
+                                                                project={project}
+                                                                client={clientMap[project.clientId]}
+                                                                onClick={() => setSelectedProject(project)}
+                                                            />
+                                                        ))
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
@@ -270,13 +367,17 @@ export default function AdminDashboard() {
                         </div>
                     )}
 
-                    {view === "clients" && selectedClient && (
-                        <ClientDetail
-                            client={selectedClient}
-                            onBack={() => setSelectedClient(null)}
-                            onUpdate={setSelectedClient}
-                            onStartProject={handleStartFreeDesign}
-                        />
+                    {selectedClient && (view === "clients" || view === "leads") && (
+              <ClientDetail
+                client={selectedClient}
+                onBack={() => setSelectedClient(null)}
+                onUpdate={setSelectedClient}
+                projects={projects.filter((p) => p.clientId === selectedClient.uid)}
+                invoices={invoices.filter((i) => i.clientId === selectedClient.uid)}
+              />
+            )}
+                    {view === "invoices" && (
+                        <InvoiceOverview clients={clients} />
                     )}
                 </main>
             </div>

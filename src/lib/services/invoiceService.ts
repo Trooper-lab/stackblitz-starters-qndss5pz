@@ -7,7 +7,7 @@ export const getAllInvoices = async (): Promise<InvoiceData[]> => {
     try {
         const q = query(
             collection(db, "invoices"),
-            orderBy("issuedAt", "desc")
+            orderBy("createdAt", "desc")
         );
         const snapshot = await getDocs(q);
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
@@ -34,13 +34,18 @@ export const getClientInvoices = async (clientId: string): Promise<InvoiceData[]
 };
 
 // Fetch invoices for a specific project
-export const getProjectInvoices = async (projectId: string): Promise<InvoiceData[]> => {
+export const getProjectInvoices = async (projectId: string, clientId?: string): Promise<InvoiceData[]> => {
     try {
-        const q = query(
+        let q = query(
             collection(db, "invoices"),
             where("projectId", "==", projectId),
             orderBy("createdAt", "desc")
         );
+
+        if (clientId) {
+            q = query(q, where("clientId", "==", clientId));
+        }
+
         const snapshot = await getDocs(q);
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
     } catch (error) {
@@ -49,13 +54,28 @@ export const getProjectInvoices = async (projectId: string): Promise<InvoiceData
     }
 };
 
+// Helper to remove undefined values from Firestore data
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const cleanData = (data: Record<string, any>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const clean: Record<string, any> = {};
+    Object.keys(data).forEach(key => {
+        if (data[key] !== undefined) {
+            clean[key] = data[key];
+        }
+    });
+    return clean;
+};
+
 // Create a new invoice
 export const createInvoice = async (data: Omit<InvoiceData, "id" | "createdAt">): Promise<string> => {
     try {
+        const cleaned = cleanData(data);
         const docRef = await addDoc(collection(db, "invoices"), {
-            ...data,
+            ...cleaned,
             createdAt: serverTimestamp(),
-            status: data.status || "draft"
+            status: data.status || "draft",
+            issuedAt: data.issuedAt || serverTimestamp()
         });
         return docRef.id;
     } catch (error) {
@@ -68,7 +88,8 @@ export const createInvoice = async (data: Omit<InvoiceData, "id" | "createdAt">)
 export const updateInvoice = async (invoiceId: string, data: Partial<InvoiceData>): Promise<void> => {
     try {
         const docRef = doc(db, "invoices", invoiceId);
-        await updateDoc(docRef, data);
+        const cleaned = cleanData(data);
+        await updateDoc(docRef, cleaned);
     } catch (error) {
         console.error("Error updating invoice:", error);
         throw error;
@@ -79,7 +100,8 @@ export const updateInvoice = async (invoiceId: string, data: Partial<InvoiceData
 export const generateCommitmentFeeInvoice = async (
     projectId: string,
     clientId: string,
-    amount: number
+    amount: number,
+    clientEmail?: string
 ): Promise<string> => {
     try {
         const dueDate = new Date();
@@ -88,15 +110,75 @@ export const generateCommitmentFeeInvoice = async (
         const invoiceId = await createInvoice({
             projectId,
             clientId,
+            clientEmail: clientEmail || "",
             invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
             amount,
             description: "50% Commitment Fee - Investering voor start project",
             status: "draft",
-            dueDate: Timestamp.fromDate(dueDate), // Improved type safety for Firestore
+            dueDate: Timestamp.fromDate(dueDate),
         });
         return invoiceId;
     } catch (error) {
         console.error("Error generating commitment fee invoice:", error);
+        throw error;
+    }
+};
+
+// Generate final invoice
+export const generateFinalInvoice = async (
+    projectId: string,
+    clientId: string,
+    amount: number,
+    clientEmail?: string
+): Promise<string> => {
+    try {
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 14); // 14 days payment term
+
+        const invoiceId = await createInvoice({
+            projectId,
+            clientId,
+            clientEmail: clientEmail || "",
+            invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
+            amount,
+            description: "100% Oplevering - Finale facturatie project",
+            status: "draft",
+            dueDate: Timestamp.fromDate(dueDate),
+        });
+        return invoiceId;
+    } catch (error) {
+        console.error("Error generating final invoice:", error);
+        throw error;
+    }
+};
+
+// Generate maintenance invoice
+export const generateMaintenanceInvoice = async (
+    projectId: string,
+    clientId: string,
+    amount: number,
+    billingCycle: "monthly" | "yearly",
+    clientEmail?: string
+): Promise<string> => {
+    try {
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 7); // 7 days payment term for maintenance
+
+        const invoiceId = await createInvoice({
+            projectId,
+            clientId,
+            clientEmail: clientEmail || "",
+            invoiceNumber: `MNT-${Date.now().toString().slice(-6)}`,
+            amount,
+            description: `${billingCycle === "monthly" ? "Maandelijkse" : "Jaarlijkse"} Onderhoud & Hosting`,
+            status: "draft",
+            type: "maintenance",
+            billingCycle,
+            dueDate: Timestamp.fromDate(dueDate),
+        });
+        return invoiceId;
+    } catch (error) {
+        console.error("Error generating maintenance invoice:", error);
         throw error;
     }
 };

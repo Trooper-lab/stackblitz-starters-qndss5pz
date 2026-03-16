@@ -47,6 +47,7 @@ export default function NewProjectWizard({ onClose, onCreated }: NewProjectWizar
         try {
             const id = await createProject({
                 clientId: selectedClient!.uid,
+                clientEmail: selectedClient!.email || undefined,
                 title: title.trim(),
                 status: "intake",
                 assets: [],
@@ -55,6 +56,7 @@ export default function NewProjectWizard({ onClose, onCreated }: NewProjectWizar
             const newProject: ProjectData = {
                 id,
                 clientId: selectedClient!.uid,
+                clientEmail: selectedClient!.email || undefined,
                 title: title.trim(),
                 status: "intake",
                 assets: [],

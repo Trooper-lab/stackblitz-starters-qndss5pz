@@ -1,0 +1,36 @@
+rules_version = '2';
+
+// Craft rules based on the provided project requirements:
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Project files rules (e.g., /projects/{projectId}/...)
+    match /projects/{projectId}/{allPaths=**} {
+      // Allow read/write if the user is an admin
+      allow read, write: if isAdmin();
+      
+      // Allow read/write if the user is a client (klant) and owns the project 
+      // (either as customerId or clientId on the project doc)
+      allow read, write: if isAuthenticated() && 
+        (
+          firestore.get(/databases/(default)/documents/projects/$(projectId)).data.customerId == request.auth.uid ||
+          firestore.get(/databases/(default)/documents/projects/$(projectId)).data.clientId == request.auth.uid
+        );
+    }
+    
+    // Default deny for everything else
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

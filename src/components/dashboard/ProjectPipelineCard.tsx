@@ -1,13 +1,14 @@
 "use client";
 
 import { ProjectData, UserData } from "@/types/database";
-import { Calendar, CheckCircle, FileText, Wrench } from "lucide-react";
+import { Calendar, CheckCircle, FileText, Wrench, AlertCircle } from "lucide-react";
 import { Timestamp, FieldValue } from "firebase/firestore";
 
 const STEPS = [
     { key: "intake", label: "Intake", icon: FileText, color: "blue" },
     { key: "design_review", label: "Design", icon: FileText, color: "purple" },
     { key: "development", label: "Dev", icon: Wrench, color: "yellow" },
+    { key: "qa", label: "QA", icon: AlertCircle, color: "orange" },
     { key: "delivered", label: "Opgeleverd", icon: CheckCircle, color: "green" },
 ] as const;
 
@@ -17,6 +18,7 @@ const COLOR_MAP: Record<string, string> = {
     blue: "text-blue-700 bg-blue-50 border-blue-200 shadow-sm",
     purple: "text-purple-700 bg-purple-50 border-purple-200 shadow-sm",
     yellow: "text-yellow-700 bg-yellow-50 border-yellow-200 shadow-sm",
+    orange: "text-orange-700 bg-orange-50 border-orange-200 shadow-sm",
     green: "text-green-700 bg-green-50 border-green-200 shadow-sm",
 };
 

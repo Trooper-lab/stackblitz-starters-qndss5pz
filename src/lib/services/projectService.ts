@@ -1,6 +1,6 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, orderBy, serverTimestamp, Timestamp, FieldValue } from "firebase/firestore";
-import { ProjectData } from "@/types/database";
+import { collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, orderBy, serverTimestamp, onSnapshot } from "firebase/firestore";
+import { ProjectData, QAComment, LaunchSettings } from "@/types/database";
 
 // Fetch all projects (for admin)
 export const getAllProjects = async (): Promise<ProjectData[]> => {
@@ -18,37 +18,43 @@ export const getAllProjects = async (): Promise<ProjectData[]> => {
 };
 
 // Fetch projects for a specific client
-// We standardise on 'clientId' but the rules now support both for safety
-export const getClientProjects = async (uid: string): Promise<ProjectData[]> => {
+// Supports both UID and email-based matching for permissions and shell linking
+export const getClientProjects = async (uid: string, email?: string): Promise<ProjectData[]> => {
     if (!uid) return [];
     try {
-        const q = query(
-            collection(db, "projects"),
-            where("clientId", "==", uid),
-            orderBy("createdAt", "desc")
-        );
+        const queryConstraints = [where("clientId", "==", uid)];
+        if (email) {
+            queryConstraints.push(where("clientEmail", "==", email));
+        }
+
+        let q;
+        if (email) {
+            // Because Firestore 'or' queries can fail static analysis if one leg doesn't natively guarantee permission,
+            // we will query strictly by clientEmail for users who provide it (ensures rule compliance).
+            q = query(
+                collection(db, "projects"),
+                where("clientEmail", "==", email),
+                orderBy("createdAt", "desc")
+            );
+        } else {
+            q = query(
+                collection(db, "projects"),
+                queryConstraints[0],
+                orderBy("createdAt", "desc")
+            );
+        }
+
         const snapshot = await getDocs(q);
         const projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
 
-        // Fallback: Als er geen projecten zijn met clientId, check legacy customerId
+        // Legacy fallback: check for customerId field if no projects found
         if (projects.length === 0) {
             const qLegacy = query(
                 collection(db, "projects"),
                 where("customerId", "==", uid)
             );
             const legacySnapshot = await getDocs(qLegacy);
-            const legacyProjects = legacySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
-
-            // Handmatige sortering om index-error te voorkomen totdat de index is aangemaakt
-            return legacyProjects.sort((a, b) => {
-                const getTime = (date: Timestamp | FieldValue | undefined) => {
-                    if (date instanceof Timestamp) return date.toMillis();
-                    const d = date as unknown as { seconds?: number };
-                    if (d && typeof d.seconds === 'number') return d.seconds * 1000;
-                    return 0;
-                };
-                return getTime(b.createdAt) - getTime(a.createdAt);
-            });
+            return legacySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
         }
 
         return projects;
@@ -56,6 +62,38 @@ export const getClientProjects = async (uid: string): Promise<ProjectData[]> => 
         console.error("Error fetching client projects:", error);
         throw error;
     }
+};
+
+// Subscribe to projects for a specific client
+export const subscribeClientProjects = (
+    uid: string,
+    onUpdate: (projects: ProjectData[]) => void,
+    email?: string
+) => {
+    if (!uid) return () => { };
+
+    // We follow the same logic as getClientProjects for consistency
+    let q;
+    if (email) {
+        q = query(
+            collection(db, "projects"),
+            where("clientEmail", "==", email),
+            orderBy("createdAt", "desc")
+        );
+    } else {
+        q = query(
+            collection(db, "projects"),
+            where("clientId", "==", uid),
+            orderBy("createdAt", "desc")
+        );
+    }
+
+    return onSnapshot(q, (snapshot) => {
+        const projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
+        onUpdate(projects);
+    }, (error) => {
+        console.error("Error subscribing to projects:", error);
+    });
 };
 
 // Create a new project
@@ -73,12 +111,26 @@ export const createProject = async (data: Omit<ProjectData, "id" | "createdAt" |
     }
 };
 
+// Helper to remove undefined values from Firestore data
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const cleanData = (data: Record<string, any>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const clean: Record<string, any> = {};
+    Object.keys(data).forEach(key => {
+        if (data[key] !== undefined) {
+            clean[key] = data[key];
+        }
+    });
+    return clean;
+};
+
 // Update a project
 export const updateProject = async (projectId: string, data: Partial<ProjectData>): Promise<void> => {
     try {
         const docRef = doc(db, "projects", projectId);
+        const cleaned = cleanData(data);
         await updateDoc(docRef, {
-            ...data,
+            ...cleaned,
             updatedAt: serverTimestamp()
         });
     } catch (error) {
@@ -103,7 +155,11 @@ export const updateDesignStatus = async (
         const projectData = docSnap.data() as ProjectData;
         const updatedDesigns = projectData.designs.map(design => {
             if (design.id === designId) {
-                return { ...design, status, feedback };
+                const updatedDesign = { ...design, status };
+                if (feedback !== undefined) {
+                    updatedDesign.feedback = feedback;
+                }
+                return updatedDesign;
             }
             return design;
         });
@@ -114,6 +170,59 @@ export const updateDesignStatus = async (
         });
     } catch (error) {
         console.error("Error updating design status:", error);
+        throw error;
+    }
+};
+
+// Add a QA comment
+export const addQAComment = async (
+    projectId: string, 
+    comment: Omit<QAComment, "id" | "createdAt">
+): Promise<void> => {
+    try {
+        const docRef = doc(db, "projects", projectId);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) throw new Error("Project not found");
+
+        const projectData = docSnap.data() as ProjectData;
+        const currentComments = projectData.qaComments || [];
+        
+        const newComment: QAComment = {
+            ...comment,
+            id: Date.now().toString(),
+            createdAt: serverTimestamp()
+        };
+
+        await updateDoc(docRef, {
+            qaComments: [...currentComments, newComment],
+            updatedAt: serverTimestamp()
+        });
+    } catch (error) {
+        console.error("Error adding QA comment:", error);
+        throw error;
+    }
+};
+
+// Update launch settings
+export const updateLaunchSettings = async (
+    projectId: string,
+    settings: Partial<LaunchSettings>
+): Promise<void> => {
+    try {
+        const docRef = doc(db, "projects", projectId);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) throw new Error("Project not found");
+
+        const projectData = docSnap.data() as ProjectData;
+        const currentSettings = projectData.launchSettings || { option: "no_domain" };
+        const cleanedSettings = cleanData({ ...currentSettings, ...settings });
+
+        await updateDoc(docRef, {
+            launchSettings: cleanedSettings,
+            updatedAt: serverTimestamp()
+        });
+    } catch (error) {
+        console.error("Error updating launch settings:", error);
         throw error;
     }
 };

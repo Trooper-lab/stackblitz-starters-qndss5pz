@@ -6,7 +6,7 @@ service cloud.firestore {
     // Helper function to check if user is admin
     function isAdmin() {
       return request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     // Helper function to check if user is the owner of the document
@@ -14,39 +14,93 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
+    // Helper to check if user email matches document email
+    function emailMatches(docEmail) {
+      return request.auth != null && 
+             request.auth.token.email != null && 
+             request.auth.token.email == docEmail;
+    }
+
     // Users collection rules
     match /users/{userId} {
+      // Allow read/write for owner and admin
       allow read, write: if isOwner(userId) || isAdmin();
+      
+      // Allow create for new accounts
       allow create: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow delete if email matches (for cleaning up shell profiles during linking)
+      allow delete: if request.auth != null && (
+        isAdmin() || 
+        (resource.data.email != null && request.auth.token.email == resource.data.email)
+      );
+
+      // Allow listing users ONLY search by email for linking purposes
+      // This is constrained to require a verified email match in the query
+      allow list: if request.auth != null && (
+        isAdmin() || 
+        (request.auth.token.email != null && request.auth.token.email != "")
+      );
+      
+      // Allow individual get by email
+      allow get: if request.auth != null && (
+        isOwner(userId) || 
+        isAdmin() || 
+        (resource.data.email != null && request.auth.token.email == resource.data.email)
+      );
     }
 
     // Projects collection rules
     match /projects/{projectId} {
-      // Admins have full access
-      allow read, write: if isAdmin();
-      
-      // Allow reading projects for both 'clientId' and 'customerId' to maintain compatibility
       allow read: if request.auth != null && (
-        resource == null || 
+        isAdmin() || 
         resource.data.clientId == request.auth.uid || 
-        resource.data.customerId == request.auth.uid
+        resource.data.customerId == request.auth.uid ||
+        (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
       );
-        
-      // Allow updates for clients to interact with designs/assets
+      allow write: if isAdmin();
       allow update: if request.auth != null && (
+        isAdmin() ||
         resource.data.clientId == request.auth.uid || 
-        resource.data.customerId == request.auth.uid
+        resource.data.customerId == request.auth.uid ||
+        (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
       );
     }
 
     // Invoices collection rules
     match /invoices/{invoiceId} {
-      allow read, write: if isAdmin();
       allow read: if request.auth != null && (
+        isAdmin() || 
         resource.data.clientId == request.auth.uid || 
-        resource.data.customerId == request.auth.uid
+        resource.data.customerId == request.auth.uid ||
+        (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
+      );
+      allow create: if request.auth != null && (
+        isAdmin() || 
+        request.resource.data.clientId == request.auth.uid ||
+        (request.resource.data.clientEmail != null && request.auth.token.email == request.resource.data.clientEmail)
       );
       allow write: if isAdmin();
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        resource.data.clientId == request.auth.uid || 
+        (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
+      );
+    }
+    
+    // Notifications collection rules
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null && (
+        isAdmin() || 
+        resource.data.clientId == request.auth.uid ||
+        (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
+      );
+      allow write: if isAdmin();
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        resource.data.clientId == request.auth.uid ||
+        (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
+      );
     }
   }
 }

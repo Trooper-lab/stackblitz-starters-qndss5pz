@@ -15,7 +15,7 @@ export default function NewClientModal({ onClose, onCreated }: NewClientModalPro
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [companyName, setCompanyName] = useState("");
-    const [status, setStatus] = useState<"lead" | "active">("lead");
+    const [status, setStatus] = useState<"lead" | "active_client">("lead");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -44,6 +44,8 @@ export default function NewClientModal({ onClose, onCreated }: NewClientModalPro
                 companyDetails: {
                     name: companyName.trim(),
                     address: "",
+                    email: email.trim().toLowerCase(),
+                    phone: "",
                     kvk: "",
                     vat: ""
                 }
@@ -164,8 +166,8 @@ export default function NewClientModal({ onClose, onCreated }: NewClientModalPro
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setStatus("active")}
-                                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${status === "active" ? "bg-white text-green-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                                onClick={() => setStatus("active_client")}
+                                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${status === "active_client" ? "bg-white text-green-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                             >
                                 Actieve Klant
                             </button>

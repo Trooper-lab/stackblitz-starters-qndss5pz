@@ -14,8 +14,8 @@ const comparison = [
   {
     label: 'Opstartkosten',
     ai: '€0 (maar zelf bouwen)',
-    us: 'Vanaf €50 (50% commitment fee)',
-    agency: '€3.000 - €10.000+',
+    us: 'Vanaf €50',
+    agency: '€5.000 - €15.000+',
   },
   {
     label: 'Doorlooptijd',
@@ -80,22 +80,22 @@ export default function Pricing() {
           duration: 0.8,
           ease: 'power3.out'
         })
-        .to(cardLeft, {
-          xPercent: 0,
-          x: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          ease: 'power4.out'
-        }, '<0.2')
-        .to(cardRight, {
-          xPercent: 0,
-          x: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          ease: 'power4.out'
-        }, '<');
+          .to(cardLeft, {
+            xPercent: 0,
+            x: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: 'power4.out'
+          }, '<0.2')
+          .to(cardRight, {
+            xPercent: 0,
+            x: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: 'power4.out'
+          }, '<');
 
         // Force a refresh after a small delay to ensure page layout is settled
         setTimeout(() => ScrollTrigger.refresh(), 100);
@@ -259,61 +259,92 @@ export default function Pricing() {
                   }`}
               >
                 {tier.featured && (
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-accent text-white px-6 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
-                  ⭐ Onze Beste Keuze
-                </div>
-              )}
-
-              <div className="mb-8">
-                <h3 className="font-display text-xl lg:text-2xl font-extrabold mb-2 text-navy">
-                  {tier.name}
-                </h3>
-                <p className="text-xs lg:text-sm text-slate-500 font-medium mb-6">
-                  {tier.desc}
-                </p>
-                <div className="flex items-baseline gap-1">
-                  <span
-                    className={`font-display text-4xl sm:text-5xl font-black ${tier.featured ? 'text-accent' : 'text-navy'
-                      }`}
-                  >
-                    {billingCycle === 'yearly' ? tier.priceYearly : tier.priceMonthly}
-                  </span>
-                  <span className="text-sm font-bold text-slate-400 uppercase">
-                    /{billingCycle === 'yearly' ? 'jaar' : 'maand'}
-                  </span>
-                </div>
-                {billingCycle === 'yearly' && (
-                  <div className="mt-2 inline-block bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-md">
-                    Inclusief 2 maanden gratis
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-accent text-white px-6 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
+                    ⭐ Beste Keuze
                   </div>
                 )}
-              </div>
 
-              <ul className="grow space-y-4 mb-8 list-none p-0 text-sm lg:text-base">
-                {tier.features.map((f: string) => (
-                  <li
-                    key={f}
-                    className={`flex items-start gap-3 font-semibold ${tier.featured ? 'text-navy' : 'text-slate-600'
-                      }`}
-                  >
-                    <span className="text-accent text-lg lg:text-xl leading-none shrink-0 font-bold">
-                      ✓
-                    </span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
+                <div className="mb-10">
+                  <h3 className="font-display text-2xl lg:text-3xl font-extrabold mb-2 text-navy flex items-center gap-2">
+                    {tier.name}
+                  </h3>
+                  <p className="text-sm text-slate-500 font-medium mb-8">
+                    {tier.desc}
+                  </p>
 
-              <a
-                href="#contact"
-                className={`block w-full py-4 rounded-xl text-center font-black text-sm uppercase tracking-wider transition-all duration-200
+                  <div className="mb-6 space-y-4">
+                    <div>
+                      <p className="text-[10px] sm:text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                        Totale waarde:
+                      </p>
+                      <p className={`text-xl font-black ${tier.featured ? 'text-orange-500' : 'text-navy'}`}>
+                        €{tier.features.reduce((acc, f) => acc + (f.numericValue || 0), 0).toLocaleString('nl-NL')}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] sm:text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
+                        Onze aanbieding:
+                      </p>
+                      <div className="flex items-baseline gap-2">
+                        <span
+                          className={`font-display text-6xl sm:text-7xl font-black leading-none ${tier.featured ? 'text-accent' : 'text-navy'
+                            }`}
+                        >
+                          €{billingCycle === 'yearly' ? Math.round(tier.priceYearlyValue / 12) : tier.priceMonthlyValue}
+                        </span>
+                        <span className="text-sm sm:text-base font-bold text-slate-400 uppercase tracking-widest">
+                          /{billingCycle === 'yearly' ? 'Maand' : 'Maand'}
+                        </span>
+                      </div>
+                      {billingCycle === 'yearly' && (
+                        <div className="mt-3 inline-block bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                          Bespaar 2 maanden
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <ul className="grow space-y-6 mb-10 list-none p-0">
+                  {tier.features.map((feature, i) => (
+                    <li
+                      key={i}
+                      className="flex flex-col gap-2.5"
+                    >
+                      <div className={`flex items-start gap-4 font-extrabold text-sm lg:text-base ${tier.featured ? 'text-navy' : 'text-slate-700'}`}>
+                        <span className="text-accent text-xl leading-none shrink-0 font-black">
+                          ✓
+                        </span>
+                        <span className="leading-tight">{feature.text}</span>
+                      </div>
+                      {feature.value && (
+                        <div className="ml-9">
+                          <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm transition-all duration-300
+                            ${feature.isTotal 
+                              ? 'bg-emerald-100 border-emerald-200 text-emerald-700 hover:scale-105 cursor-default' 
+                              : 'bg-emerald-50/50 border-emerald-100/30 text-emerald-600'}
+                          `}>
+                            {feature.isTotal ? 'INBEGREPEN T.W.V: ' : 'T.w.v: '}
+                            <span className="ml-1 font-black">{feature.value}</span>
+                            {feature.isTotal && <span className="ml-1.5 text-xs">↗</span>}
+                          </span>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+
+                <a
+                  href="#contact"
+                  className={`block w-full py-5 rounded-2xl text-center font-black text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-lg
                                     ${tier.featured
-                    ? 'bg-accent text-white shadow-xl hover:bg-orange-600'
-                    : 'border-2 border-navy text-navy hover:bg-navy hover:text-white'
-                  }`}
-              >
-                {tier.cta}
-              </a>
+                      ? 'bg-accent text-white hover:bg-orange-600 hover:scale-[1.02] hover:shadow-orange-200 shadow-orange-100'
+                      : 'bg-white border-2 border-navy text-navy hover:bg-navy hover:text-white hover:scale-[1.02]'
+                    }`}
+                >
+                  {tier.cta}
+                </a>
               </div>
             </div>
           ))}
@@ -349,13 +380,13 @@ export default function Pricing() {
                   )}
                 </div>
                 <ul className="space-y-3 list-none p-0 mb-8 flex-grow">
-                  {addon.features.map((f: string) => (
+                  {addon.features.map((feature, i) => (
                     <li
-                      key={f}
+                      key={i}
                       className="flex items-start gap-3 font-medium text-slate-600 text-sm"
                     >
                       <span className="text-accent font-bold">✓</span>
-                      {f}
+                      {feature.text}
                     </li>
                   ))}
                 </ul>

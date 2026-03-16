@@ -1,3 +1,10 @@
+export interface Feature {
+  text: string;
+  value?: string;
+  numericValue?: number;
+  isTotal?: boolean;
+}
+
 export interface PricingTier {
   id: string;
   name: string;
@@ -7,7 +14,7 @@ export interface PricingTier {
   priceYearlyValue: number;
   priceMonthlyValue: number;
   featured: boolean;
-  features: string[];
+  features: Feature[];
   cta: string;
 }
 
@@ -19,7 +26,7 @@ export interface PricingAddon {
   priceYearly: string;
   priceMonthlyValue: number;
   priceYearlyValue: number;
-  features: string[];
+  features: { text: string }[];
 }
 
 export const pricingTiers: PricingTier[] = [
@@ -28,51 +35,51 @@ export const pricingTiers: PricingTier[] = [
     name: '🌱 Groei Starter',
     desc: 'Perfect voor lokale dominantie',
     priceYearly: '€1.000',
-    priceMonthly: '€100',
+    priceMonthly: '100',
     priceYearlyValue: 1000,
     priceMonthlyValue: 100,
     featured: false,
     features: [
-      'Hoog-converterende Landingspagina & Website (Waarde €3.500)',
-      'AI-Gedreven SEO Fundering (Waarde €1.200/jr)',
-      'Custom Lead Formulier & Funnel (Waarde €800)',
-      'Premium, supersnelle hosting & GDPR compliance (Waarde €350/jr)',
+      { text: 'Hoog-converterende Landingspagina', value: '€3.450', numericValue: 3450 },
+      { text: 'AI-Gedreven SEO Fundering', value: '€1.140/JR', numericValue: 1140 },
+      { text: 'Custom Lead Formulier & Funnel', value: '€795', numericValue: 795 },
+      { text: 'Premium, supersnelle hosting & GDPR compliance', value: '€420/JR', numericValue: 420 },
     ],
-    cta: 'Claim Dit Plan',
+    cta: 'CLAIM DIT PLAN',
   },
   {
     id: 'leader',
     name: '👑 Marktleider',
     desc: 'Onze Beste Keuze - Domineer je markt',
     priceYearly: '€3.000',
-    priceMonthly: '€300',
+    priceMonthly: '300',
     priceYearlyValue: 3000,
     priceMonthlyValue: 300,
     featured: true,
     features: [
-      'Tot 8 geoptimaliseerde pagina soorten (Waarde €6.000)',
-      'Volledige Conversie Funnel & Meerdere Formulieren (Waarde €2.500)',
-      "Onbeperkt aantal pagina's & CMS (Waarde €1.500/jr)",
-      'Alles uit het Starter plan (Waarde €5.850)',
+      { text: 'Tot 8 geoptimaliseerde pagina soorten', value: '€5.850', numericValue: 5850 },
+      { text: 'Volledige Conversie Funnel & Meerdere Formulieren', value: '€2.495', numericValue: 2495 },
+      { text: "Onbeperkt aantal pagina's & CMS", value: '€1.440/JR', numericValue: 1440 },
+      { text: 'Alles uit het Starter plan', value: '€5.805', numericValue: 5805, isTotal: true },
     ],
-    cta: 'Begin Nu Met Groeien',
+    cta: 'BEGIN NU MET GROEIEN',
   },
   {
     id: 'custom',
     name: '⚡ Kracht op Maat',
     desc: 'Voor hoog volume & gevestigde bedrijven',
-    priceYearly: '€7.000+',
-    priceMonthly: '€700+',
+    priceYearly: '€7.000',
+    priceMonthly: '700',
     priceYearlyValue: 7000,
     priceMonthlyValue: 700,
     featured: false,
     features: [
-      "Onbeperkte Pagina-architectuur",
-      'Geavanceerde CRM-integraties',
-      'Professionele Video-integratie',
-      'Toegewijde Groeistrateeg',
+      { text: 'Onbeperkte Pagina-architectuur', value: '€11.500', numericValue: 11500 },
+      { text: 'Geintegreerd Custom CRM', value: '€2.940/JR', numericValue: 2940 },
+      { text: 'AI integraties/automatisering', value: '€3.850', numericValue: 3850 },
+      { text: 'Toegewijde Groeistrateeg', value: '€3.600/JR', numericValue: 3600 },
     ],
-    cta: 'Spreek met een Pro',
+    cta: 'SPREEK MET EEN PRO',
   },
 ];
 
@@ -86,10 +93,10 @@ export const pricingAddons: PricingAddon[] = [
     priceMonthlyValue: 90,
     priceYearlyValue: 900,
     features: [
-      'Chat met AI om je website aan te passen',
-      "Creëer nieuwe pagina's via chat",
-      'Pas designs en content real-time aan',
-      'Wij fungeren als technische back-up',
+      { text: 'Chat met AI om je website aan te passen' },
+      { text: "Creëer nieuwe pagina's via chat" },
+      { text: 'Pas designs en content real-time aan' },
+      { text: 'Wij fungeren als technische back-up' },
     ],
   },
   {
@@ -101,10 +108,10 @@ export const pricingAddons: PricingAddon[] = [
     priceMonthlyValue: 150,
     priceYearlyValue: 1500,
     features: [
-      'Wijzigingen binnen 24 uur doorgevoerd ipv 3-4 dagen',
-      'Direct contact via Slack of WhatsApp',
-      'Proactief meedenken over optimalisaties',
-      '1 op 1 strategie sessie per kwartaal',
+      { text: 'Wijzigingen binnen 24 uur doorgevoerd ipv 3-4 dagen' },
+      { text: 'Direct contact via Slack of WhatsApp' },
+      { text: 'Proactief meedenken over optimalisaties' },
+      { text: '1 op 1 strategie sessie per kwartaal' },
     ],
   },
   {
@@ -116,10 +123,10 @@ export const pricingAddons: PricingAddon[] = [
     priceMonthlyValue: 400,
     priceYearlyValue: 4000,
     features: [
-      'Maandelijkse content updates',
-      'Technische SEO monitoring',
-      'Linkbuilding strategie',
-      'Uitgebreide rapportage',
+      { text: 'Maandelijkse content updates' },
+      { text: 'Technische SEO monitoring' },
+      { text: 'Linkbuilding strategie' },
+      { text: 'Uitgebreide rapportage' },
     ],
   },
 ];
