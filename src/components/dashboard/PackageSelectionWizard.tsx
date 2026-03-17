@@ -35,15 +35,9 @@ export default function PackageSelectionWizard({ onClose, onComplete, isSubmitti
         return pkgPrice + addonsPrice;
     };
 
-    const calculateMonthlyEquivalent = () => {
-        const pkg = getPackage();
-        if (!pkg) return 0;
-        const pkgPrice = pkg.priceMonthlyValue;
-        const addonsPrice = getAddons().reduce((sum, a) => sum + a.priceMonthlyValue, 0);
-        return pkgPrice + addonsPrice;
-    };
-
-    const commitmentFee = calculateMonthlyEquivalent() * 0.5;
+    const commitmentFee = billingCycle === "monthly" 
+        ? calculateTotal() * 0.5 
+        : calculateTotal() / 12;
 
     const handleSubmit = () => {
         if (!selectedPackage) return;
@@ -87,8 +81,8 @@ export default function PackageSelectionWizard({ onClose, onComplete, isSubmitti
                     {step === 1 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                             <div className="text-center mb-8">
-                                <h3 className="text-2xl font-bold font-montserrat text-navy mb-2">Kies het pakket dat bij je past</h3>
-                                <p className="text-slate-500 max-w-xl mx-auto mb-8">Selecteer de basis voor jouw nieuwe website. Je kunt later altijd nog upgraden of extra modules toevoegen.</p>
+                                <h3 className="text-2xl font-bold font-montserrat text-navy mb-2">Klaar voor de volgende stap?</h3>
+                                <p className="text-slate-500 max-w-xl mx-auto mb-8">Kies het pakket dat het beste aansluit bij je doelen. We starten de ontwikkeling zodra de keuze is gemaakt.</p>
                                 
                                 <div className="bg-white p-1.5 rounded-full inline-flex relative border border-slate-200 shadow-sm mb-4">
                                     <button
@@ -197,7 +191,7 @@ export default function PackageSelectionWizard({ onClose, onComplete, isSubmitti
                         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 max-w-2xl mx-auto">
                             <div className="text-center mb-8">
                                 <h3 className="text-2xl font-bold font-montserrat text-navy mb-2">Overzicht & Bevestiging</h3>
-                                <p className="text-slate-500">Controleer je keuze en bevestig je ontwerp om te starten.</p>
+                                <p className="text-slate-500">Na bevestiging sturen we de factuur voor de commitment fee en gaan we direct aan de slag om je design live te zetten.</p>
                             </div>
 
                             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -239,16 +233,37 @@ export default function PackageSelectionWizard({ onClose, onComplete, isSubmitti
 
                             <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 relative overflow-hidden">
                                 <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
-                                <h4 className="font-bold text-navy mb-2 flex items-center gap-2">
+                                <h4 className="font-bold text-navy mb-2 flex items-center gap-2 text-sm">
                                     <Receipt className="w-5 h-5 text-blue-600" />
-                                    Commitment Fee Invoice
+                                    Betalingsstructuur & Commitment Fee
                                 </h4>
-                                <p className="text-sm text-slate-600 mb-4 leading-relaxed">
-                                    Zodra je het ontwerp goedkeurt, maken wij direct een initiële factuur aan van 50% van de eerste maandkosten. Dit is een eenmalige commitment fee vóór we het project live zetten.
-                                </p>
-                                <div className="flex justify-between items-center border-t border-blue-200/50 pt-4 mt-2">
-                                    <span className="font-semibold text-slate-700">Te factureren bedrag (eenmalig)</span>
-                                    <span className="font-bold text-xl text-navy">€{commitmentFee.toFixed(2)}</span>
+                                <div className="space-y-4">
+                                    <p className="text-sm text-slate-600 leading-relaxed">
+                                        Bij goedkeuring van je favoriete design starten we de ontwikkeling. 
+                                        De betaling verloopt als volgt:
+                                    </p>
+                                    <div className="space-y-2 bg-white/50 p-4 rounded-xl border border-blue-100">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-slate-500">
+                                                Nu: Commitment Fee ({billingCycle === "monthly" ? "50% 1e maand" : "1 maand"})
+                                            </span>
+                                            <span className="font-bold text-navy">€{commitmentFee.toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-slate-500">
+                                                Bij Livegang: Restant {billingCycle === "monthly" ? "1e maand" : "11 maanden"}
+                                            </span>
+                                            <span className="font-bold text-navy">
+                                                €{(calculateTotal() - commitmentFee).toFixed(2)}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm pt-2 border-t border-blue-100">
+                                            <span className="text-slate-500 italic">Vervolg: Facturatie per 1e v/d maand (14 dgn termijn)</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 italic">
+                                        * De commitment fee wordt volledig verrekend met je eerste maandbedrag.
+                                    </p>
                                 </div>
                             </div>
                         </div>

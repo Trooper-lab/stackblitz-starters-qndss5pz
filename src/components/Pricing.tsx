@@ -135,20 +135,22 @@ export default function Pricing() {
             Probeer eerst, beslis later
           </h2>
           <p className="text-lg text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
-            We zijn zo overtuigd van onze aanpak dat we je een gratis voorproefje
-            geven. Ontvang een op maat gemaakt homepage design, volledig
-            vrijblijvend.
+            We zijn zo overtuigd van onze aanpak dat we je 3 gratis ontwerpen
+            geven. Kies je favoriet en we gaan pas bouwen als jij 100% 
+            tevreden bent over het resultaat.
           </p>
         </div>
 
         <div className="bg-white p-12 rounded-3xl shadow-2xl border-4 border-accent max-w-4xl mx-auto text-center mb-32">
           <h3 className="font-display text-3xl font-extrabold text-navy mb-4">
-            Claim je Gratis Homepage Design
+            Claim je 3 Gratis Homepage Designs
           </h3>
           <p className="text-slate-600 mb-8 max-w-xl mx-auto">
-            Geen kleine lettertjes, geen addertjes onder het gras. We maken een
-            uniek design voor je, met de kracht van AI en onze expertise. Ben je
-            overtuigd? Dan kijken we samen naar de volgende stap.
+            Geen kleine lettertjes, geen addertjes onder het gras. We maken 3
+            unieke designs voor je. Ben je overtuigd? Dan finetunen we je favoriet
+            tot in de puntjes en starten we de bouw. 
+            <br />
+            <span className="text-[10px] opacity-60">* De ontwerpen zijn concepten om de richting te bepalen.</span>
           </p>
           <a
             href="#contact"

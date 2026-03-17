@@ -1,6 +1,21 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDocs, addDoc, updateDoc, query, where, orderBy, serverTimestamp, Timestamp } from "firebase/firestore";
+import { collection, doc, getDocs, addDoc, updateDoc, query, where, orderBy, serverTimestamp, Timestamp, onSnapshot } from "firebase/firestore";
 import { InvoiceData } from "@/types/database";
+import { deepCleanData } from "@/lib/utils";
+
+// Subscribe to all invoices (for admin)
+export const subscribeAllInvoices = (onUpdate: (invoices: InvoiceData[]) => void) => {
+    const q = query(
+        collection(db, "invoices"),
+        orderBy("createdAt", "desc")
+    );
+    return onSnapshot(q, (snapshot) => {
+        const invoices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
+        onUpdate(invoices);
+    }, (error) => {
+        console.error("Error subscribing to all invoices:", error);
+    });
+};
 
 // Fetch all invoices (for admin)
 export const getAllInvoices = async (): Promise<InvoiceData[]> => {
@@ -12,10 +27,11 @@ export const getAllInvoices = async (): Promise<InvoiceData[]> => {
         const snapshot = await getDocs(q);
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
     } catch (error) {
-        console.error("Error fetching invoices:", error);
+        console.error("Error fetching all invoices:", error);
         throw error;
     }
 };
+
 
 // Fetch invoices for a specific client
 export const getClientInvoices = async (clientId: string): Promise<InvoiceData[]> => {
@@ -23,14 +39,33 @@ export const getClientInvoices = async (clientId: string): Promise<InvoiceData[]
         const q = query(
             collection(db, "invoices"),
             where("clientId", "==", clientId),
-            orderBy("issuedAt", "desc")
-        );
+            orderBy("createdAt", "desc")
+        )
         const snapshot = await getDocs(q);
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
     } catch (error) {
         console.error("Error fetching client invoices:", error);
         throw error;
     }
+};
+
+// Subscribe to all invoices for a client
+export const subscribeClientInvoices = (
+    clientId: string,
+    onUpdate: (invoices: InvoiceData[]) => void
+) => {
+    const q = query(
+        collection(db, "invoices"),
+        where("clientId", "==", clientId),
+        orderBy("createdAt", "desc")
+    );
+
+    return onSnapshot(q, (snapshot) => {
+        const invoices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
+        onUpdate(invoices);
+    }, (error) => {
+        console.error("Error subscribing to client invoices:", error);
+    });
 };
 
 // Fetch invoices for a specific project
@@ -54,23 +89,34 @@ export const getProjectInvoices = async (projectId: string, clientId?: string): 
     }
 };
 
-// Helper to remove undefined values from Firestore data
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const cleanData = (data: Record<string, any>) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const clean: Record<string, any> = {};
-    Object.keys(data).forEach(key => {
-        if (data[key] !== undefined) {
-            clean[key] = data[key];
-        }
+// Subscribe to invoices for a specific project
+export const subscribeProjectInvoices = (
+    projectId: string,
+    onUpdate: (invoices: InvoiceData[]) => void,
+    clientId?: string
+) => {
+    let q = query(
+        collection(db, "invoices"),
+        where("projectId", "==", projectId),
+        orderBy("createdAt", "desc")
+    );
+
+    if (clientId) {
+        q = query(q, where("clientId", "==", clientId));
+    }
+
+    return onSnapshot(q, (snapshot) => {
+        const invoices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InvoiceData));
+        onUpdate(invoices);
+    }, (error) => {
+        console.error("Error subscribing to project invoices:", error);
     });
-    return clean;
 };
 
 // Create a new invoice
 export const createInvoice = async (data: Omit<InvoiceData, "id" | "createdAt">): Promise<string> => {
     try {
-        const cleaned = cleanData(data);
+        const cleaned = deepCleanData(data);
         const docRef = await addDoc(collection(db, "invoices"), {
             ...cleaned,
             createdAt: serverTimestamp(),
@@ -88,7 +134,7 @@ export const createInvoice = async (data: Omit<InvoiceData, "id" | "createdAt">)
 export const updateInvoice = async (invoiceId: string, data: Partial<InvoiceData>): Promise<void> => {
     try {
         const docRef = doc(db, "invoices", invoiceId);
-        const cleaned = cleanData(data);
+        const cleaned = deepCleanData(data);
         await updateDoc(docRef, cleaned);
     } catch (error) {
         console.error("Error updating invoice:", error);

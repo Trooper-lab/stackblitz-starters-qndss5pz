@@ -19,7 +19,7 @@ interface SignupFormProps {
 
 export default function SignupForm({ 
     variant = "glass", 
-    title = "Claim Je Gratis, Op Maat Gemaakte Design",
+    title = "Claim Je 3 Gratis Homepage Designs",
     subtitle = "Geen creditcard nodig. Volledig vrijblijvend."
 }: SignupFormProps) {
     const { signInWithGoogle } = useAuth();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Bell, X, Eye, Receipt, Folder, Info, ChevronRight } from "lucide-react";
+import { Bell, X, Eye, Receipt, Folder, Info, ChevronRight, Loader2 } from "lucide-react";
 import {
     ClientNotification,
     getClientNotifications,
@@ -38,14 +38,23 @@ export default function ClientNotificationBanner({ clientId, onActionClick }: Cl
     const { userData } = useAuth();
     const userEmail = userData?.email || undefined;
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+
     const load = useCallback(async () => {
+        if (!clientId || loading) return;
+        setLoading(true);
+        setError(false);
         try {
             const all = await getClientNotifications(clientId, userEmail);
             setNotifications(all);
         } catch (e) {
             console.error("Error loading notifications:", e);
+            setError(true);
+        } finally {
+            setLoading(false);
         }
-    }, [clientId, userEmail]);
+    }, [clientId, userEmail, loading]);
 
     useEffect(() => {
         load();
@@ -114,7 +123,16 @@ export default function ClientNotificationBanner({ clientId, onActionClick }: Cl
                     </div>
 
                     <div className="max-h-[400px] overflow-y-auto divide-y divide-white/5">
-                        {allDisplayed.length === 0 ? (
+                        {loading && notifications.length === 0 ? (
+                            <div className="py-12 flex flex-col items-center justify-center gap-2 opacity-50">
+                                <Loader2 className="w-5 h-5 animate-spin text-accent" />
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Laden...</p>
+                            </div>
+                        ) : error ? (
+                            <div className="py-12 text-center text-red-400 text-xs px-6">
+                                Er is een fout opgetreden bij het laden van je meldingen.
+                            </div>
+                        ) : allDisplayed.length === 0 ? (
                             <div className="py-12 text-center text-slate-500 text-sm">
                                 Geen meldingen
                             </div>

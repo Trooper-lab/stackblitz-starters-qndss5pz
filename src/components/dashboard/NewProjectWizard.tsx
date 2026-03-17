@@ -49,7 +49,7 @@ export default function NewProjectWizard({ onClose, onCreated }: NewProjectWizar
                 clientId: selectedClient!.uid,
                 clientEmail: selectedClient!.email || undefined,
                 title: title.trim(),
-                status: "intake",
+                status: "vibecheck",
                 assets: [],
                 designs: [],
             });
@@ -58,7 +58,7 @@ export default function NewProjectWizard({ onClose, onCreated }: NewProjectWizar
                 clientId: selectedClient!.uid,
                 clientEmail: selectedClient!.email || undefined,
                 title: title.trim(),
-                status: "intake",
+                status: "vibecheck",
                 assets: [],
                 designs: [],
                 createdAt: Timestamp.fromDate(new Date()),

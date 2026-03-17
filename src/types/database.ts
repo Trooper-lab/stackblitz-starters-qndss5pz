@@ -39,6 +39,7 @@ export interface UserData {
     domainInfo?: DomainInfo;
     projectContext?: ProjectContext;
     selectedPackage?: PackageSelection;
+    onboardingStep?: number;
     createdAt: Timestamp | FieldValue;
     updatedAt?: Timestamp | FieldValue;
 }
@@ -60,9 +61,10 @@ export interface ProjectDesign {
     status: "pending" | "approved" | "rejected";
     feedback?: string;
     createdAt: Timestamp | FieldValue;
+    phase?: "vibecheck" | "design_review";
 }
 
-export type ProjectStatus = "intake" | "design_review" | "development" | "qa" | "delivered";
+export type ProjectStatus = "vibecheck" | "upload" | "design_review" | "development" | "qa" | "delivered" | "completed";
 
 export interface PackageSelection {
     packageId: string;
@@ -101,6 +103,11 @@ export interface ProjectData {
     clientEmail?: string;
     title: string;
     status: ProjectStatus;
+    uploadData?: {
+        companyDetails: CompanyDetails;
+        domainInfo: DomainInfo;
+        projectContext: ProjectContext;
+    };
     assets: ProjectAsset[];
     designs: ProjectDesign[];
     packageSelection?: PackageSelection;

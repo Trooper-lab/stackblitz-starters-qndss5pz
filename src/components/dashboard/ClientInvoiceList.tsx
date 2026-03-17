@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { InvoiceData, UserData } from "@/types/database";
-import { getProjectInvoices } from "@/lib/services/invoiceService";
+import { subscribeProjectInvoices, subscribeClientInvoices } from "@/lib/services/invoiceService";
 import { getClientById } from "@/lib/services/clientService";
 import { Receipt, Clock, CheckCircle2, AlertCircle, ExternalLink, Loader2, Calendar, Printer } from "lucide-react";
 import { Timestamp, FieldValue } from "firebase/firestore";
@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import InvoiceDocument from "./InvoiceDocument";
 
 interface ClientInvoiceListProps {
-    projectId: string;
+    projectId?: string;
     clientId: string;
 }
 
@@ -21,26 +21,44 @@ export default function ClientInvoiceList({ projectId, clientId }: ClientInvoice
     const [selectedInvoice, setSelectedInvoice] = useState<InvoiceData | null>(null);
 
     useEffect(() => {
-        const load = async () => {
+        let unsubscribeInvoices: () => void;
+        
+        const loadClient = async () => {
             try {
-                const [invData, clientData] = await Promise.all([
-                    getProjectInvoices(projectId, clientId),
-                    getClientById(clientId)
-                ]);
-                
-                setInvoices((invData || []).sort((a: InvoiceData, b: InvoiceData) => {
-                    const dateA = a.createdAt instanceof Timestamp ? a.createdAt.toMillis() : 0;
-                    const dateB = b.createdAt instanceof Timestamp ? b.createdAt.toMillis() : 0;
-                    return dateB - dateA;
-                }));
+                const clientData = await getClientById(clientId);
                 if (clientData) setClient(clientData as UserData);
             } catch (error) {
-                console.error("Error loading invoices:", error);
-            } finally {
-                setLoading(false);
+                console.error("Error loading client details:", error);
             }
         };
-        load();
+
+        loadClient();
+
+        setLoading(true);
+
+        const handleInvoices = (invData: InvoiceData[]) => {
+            setInvoices((invData || []).sort((a: InvoiceData, b: InvoiceData) => {
+                const dateA = a.createdAt instanceof Timestamp ? a.createdAt.toMillis() : 0;
+                const dateB = b.createdAt instanceof Timestamp ? b.createdAt.toMillis() : 0;
+                return dateB - dateA;
+            }));
+            setLoading(false);
+        };
+
+        if (projectId) {
+            unsubscribeInvoices = subscribeProjectInvoices(
+                projectId,
+                handleInvoices,
+                clientId
+            );
+        } else {
+            // Global view for client
+            unsubscribeInvoices = subscribeClientInvoices(clientId, handleInvoices);
+        }
+
+        return () => {
+            if (unsubscribeInvoices) unsubscribeInvoices();
+        };
     }, [projectId, clientId]);
 
     const getStatusInfo = (status: string) => {

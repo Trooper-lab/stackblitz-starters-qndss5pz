@@ -30,9 +30,10 @@ export default function ProjectList({ onSelectProject }: ProjectListProps) {
 
     const getStatusColor = (status: ProjectStatus) => {
         switch (status) {
-            case "intake": return "bg-yellow-50 text-yellow-700 border-yellow-200";
-            case "design_review": return "bg-blue-50 text-blue-700 border-blue-200";
-            case "development": return "bg-purple-50 text-purple-700 border-purple-200";
+            case "vibecheck": return "bg-blue-50 text-blue-700 border-blue-200";
+            case "upload": return "bg-yellow-50 text-yellow-700 border-yellow-200";
+            case "design_review": return "bg-purple-50 text-purple-700 border-purple-200";
+            case "development": return "bg-amber-50 text-amber-700 border-amber-200";
             case "delivered": return "bg-green-50 text-green-700 border-green-200";
             default: return "bg-slate-50 text-slate-700 border-slate-200";
         }

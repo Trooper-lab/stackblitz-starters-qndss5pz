@@ -1,6 +1,21 @@
 import { db } from "@/lib/firebase";
 import { collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, orderBy, serverTimestamp, onSnapshot } from "firebase/firestore";
 import { ProjectData, QAComment, LaunchSettings } from "@/types/database";
+import { deepCleanData } from "@/lib/utils";
+
+// Subscribe to all projects (for admin)
+export const subscribeAllProjects = (onUpdate: (projects: ProjectData[]) => void) => {
+    const q = query(
+        collection(db, "projects"),
+        orderBy("createdAt", "desc")
+    );
+    return onSnapshot(q, (snapshot) => {
+        const projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
+        onUpdate(projects);
+    }, (error) => {
+        console.error("Error subscribing to all projects:", error);
+    });
+};
 
 // Fetch all projects (for admin)
 export const getAllProjects = async (): Promise<ProjectData[]> => {
@@ -12,10 +27,11 @@ export const getAllProjects = async (): Promise<ProjectData[]> => {
         const snapshot = await getDocs(q);
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProjectData));
     } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error("Error fetching all projects:", error);
         throw error;
     }
 };
+
 
 // Fetch projects for a specific client
 // Supports both UID and email-based matching for permissions and shell linking
@@ -74,18 +90,20 @@ export const subscribeClientProjects = (
 
     // We follow the same logic as getClientProjects for consistency
     let q;
-    if (email) {
+    if (uid) {
+        q = query(
+            collection(db, "projects"),
+            where("clientId", "==", uid),
+            orderBy("createdAt", "desc")
+        );
+    } else if (email) {
         q = query(
             collection(db, "projects"),
             where("clientEmail", "==", email),
             orderBy("createdAt", "desc")
         );
     } else {
-        q = query(
-            collection(db, "projects"),
-            where("clientId", "==", uid),
-            orderBy("createdAt", "desc")
-        );
+        return () => { };
     }
 
     return onSnapshot(q, (snapshot) => {
@@ -99,8 +117,9 @@ export const subscribeClientProjects = (
 // Create a new project
 export const createProject = async (data: Omit<ProjectData, "id" | "createdAt" | "updatedAt">): Promise<string> => {
     try {
+        const cleaned = deepCleanData(data);
         const docRef = await addDoc(collection(db, "projects"), {
-            ...data,
+            ...cleaned,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
         });
@@ -111,24 +130,11 @@ export const createProject = async (data: Omit<ProjectData, "id" | "createdAt" |
     }
 };
 
-// Helper to remove undefined values from Firestore data
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const cleanData = (data: Record<string, any>) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const clean: Record<string, any> = {};
-    Object.keys(data).forEach(key => {
-        if (data[key] !== undefined) {
-            clean[key] = data[key];
-        }
-    });
-    return clean;
-};
-
 // Update a project
 export const updateProject = async (projectId: string, data: Partial<ProjectData>): Promise<void> => {
     try {
         const docRef = doc(db, "projects", projectId);
-        const cleaned = cleanData(data);
+        const cleaned = deepCleanData(data);
         await updateDoc(docRef, {
             ...cleaned,
             updatedAt: serverTimestamp()
@@ -193,8 +199,10 @@ export const addQAComment = async (
             createdAt: serverTimestamp()
         };
 
+        const cleanedComment = deepCleanData(newComment);
+
         await updateDoc(docRef, {
-            qaComments: [...currentComments, newComment],
+            qaComments: [...currentComments, cleanedComment],
             updatedAt: serverTimestamp()
         });
     } catch (error) {
@@ -215,7 +223,7 @@ export const updateLaunchSettings = async (
 
         const projectData = docSnap.data() as ProjectData;
         const currentSettings = projectData.launchSettings || { option: "no_domain" };
-        const cleanedSettings = cleanData({ ...currentSettings, ...settings });
+        const cleanedSettings = deepCleanData({ ...currentSettings, ...settings });
 
         await updateDoc(docRef, {
             launchSettings: cleanedSettings,
@@ -223,6 +231,19 @@ export const updateLaunchSettings = async (
         });
     } catch (error) {
         console.error("Error updating launch settings:", error);
+        throw error;
+    }
+};
+// Update a project name
+export const updateProjectName = async (projectId: string, newName: string): Promise<void> => {
+    try {
+        const docRef = doc(db, "projects", projectId);
+        await updateDoc(docRef, {
+            title: newName,
+            updatedAt: serverTimestamp()
+        });
+    } catch (error) {
+        console.error("Error updating project name:", error);
         throw error;
     }
 };

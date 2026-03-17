@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ProjectData, ProjectAsset, ProjectDesign, ProjectStatus, ClientStatus, QAComment } from "@/types/database";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { updateProject } from "@/lib/services/projectService";
 import { db } from "@/lib/firebase";
-import { doc, onSnapshot, serverTimestamp, Timestamp } from "firebase/firestore";
+import { doc, onSnapshot, Timestamp } from "firebase/firestore";
 import FileUpload from "./FileUpload";
-import { ChevronLeft, Check, CheckCircle, FileText, Upload, ExternalLink, ArrowRight, Layout, Plus, MessageSquare, Bell, Wrench, Globe, Receipt } from "lucide-react";
+import { ChevronLeft, Check, CheckCircle, FileText, Upload, ExternalLink, ArrowRight, Layout, Plus, MessageSquare, Bell, Wrench, Globe, Receipt, Sparkles, Home } from "lucide-react";
 import Image from "next/image";
 import { notifyReviewDesign, notifyProjectUpdate } from "@/lib/services/notificationService";
 import AddDesignModal from "./AddDesignModal";
@@ -14,14 +15,16 @@ import DesignViewer from "./DesignViewer";
 import InvoiceManager from "./InvoiceManager";
 
 const STEPS = [
-    { key: "intake" as const, label: "Intake", desc: "Logo, foto's & content", icon: FileText, color: "blue" },
-    { key: "design_review" as const, label: "Design", desc: "Design goedkeuring", icon: Layout, color: "purple" },
+    { key: "vibecheck" as const, label: "Vibecheck", desc: "Design richting bepalen", icon: Sparkles, color: "indigo" },
+    { key: "upload" as const, label: "Upload", desc: "Logo, foto's & content", icon: FileText, color: "blue" },
+    { key: "design_review" as const, label: "Design Check", desc: "Design goedkeuring", icon: Layout, color: "purple" },
     { key: "development" as const, label: "Development", desc: "Bouwen & Techniek", icon: Wrench, color: "amber" },
     { key: "qa" as const, label: "QA Check", desc: "Testen & Feedback", icon: CheckCircle, color: "orange" },
     { key: "delivered" as const, label: "Oplevering", desc: "Live & Facturatie", icon: Receipt, color: "emerald" },
 ];
 
 const COLOR = {
+    indigo: { bg: "bg-indigo-50", text: "text-indigo-600", border: "border-indigo-100", ring: "ring-indigo-500" },
     blue: { bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-100", ring: "ring-blue-500" },
     purple: { bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-100", ring: "ring-purple-500" },
     amber: { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-100", ring: "ring-amber-500" },
@@ -38,19 +41,81 @@ interface ProjectDetailProps {
     onUpdate: (updated: ProjectData) => void;
 }
 
-export default function ProjectDetail({ project: initialProject, clientId, clientStatus, clientEmail, onBack, onUpdate }: ProjectDetailProps) {
+export default function ProjectDetail({ project: initialProject, clientId, clientStatus, clientEmail, onUpdate }: ProjectDetailProps) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
     const [project, setProject] = useState<ProjectData>(initialProject);
     const [status, setStatus] = useState<ProjectStatus>(project.status);
     const [saving, setSaving] = useState(false);
     const [assets, setAssets] = useState<ProjectAsset[]>(project.assets || []);
     const [designs, setDesigns] = useState<ProjectDesign[]>(project.designs || []);
-    const [showDesignModal, setShowDesignModal] = useState(false);
-    const [editingDesign, setEditingDesign] = useState<ProjectDesign | null>(null);
-    const [viewingDesign, setViewingDesign] = useState<ProjectDesign | null>(null);
+    
+    // URL-based state
+    const showDesignModal = searchParams.get("newDesign") === "true";
+    const editingDesignId = searchParams.get("editDesign");
+    const viewingDesignId = searchParams.get("viewDesign");
+    
+    const editingDesign = designs.find(d => d.id === editingDesignId) || null;
+    const viewingDesign = designs.find(d => d.id === viewingDesignId) || null;
+
     const [notifSent, setNotifSent] = useState<string | null>(null);
     const [testLink, setTestLink] = useState(project.testLink || "");
+    const isEditingTestLink = useRef(false);
     const [qaComments, setQaComments] = useState<QAComment[]>(project.qaComments || []);
     const [newComment, setNewComment] = useState("");
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [editedTitle, setEditedTitle] = useState(project.title);
+
+    const setShowDesignModal = useCallback((show: boolean) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (show) params.set("newDesign", "true");
+        else params.delete("newDesign");
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }, [pathname, router, searchParams]);
+
+    const closeDesignModal = useCallback(() => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("newDesign");
+        params.delete("editDesign");
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }, [pathname, router, searchParams]);
+
+    const openDesignModalForEdit = useCallback((design: ProjectDesign) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("editDesign", design.id);
+        params.delete("viewDesign");
+        params.set("newDesign", "true");
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    }, [pathname, router, searchParams]);
+
+    const setViewingDesign = useCallback((design: ProjectDesign | null) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (design) params.set("viewDesign", design.id);
+        else params.delete("viewDesign");
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    }, [pathname, router, searchParams]);
+
+    // Load draft comment from localStorage
+    useEffect(() => {
+        const savedDraft = localStorage.getItem(`draft_comment_${project.id}`);
+        if (savedDraft) {
+            setNewComment(savedDraft);
+        }
+    }, [project.id]);
+
+    // Save draft comment to localStorage
+    useEffect(() => {
+        if (newComment) {
+            localStorage.setItem(`draft_comment_${project.id}`, newComment);
+        } else {
+            localStorage.removeItem(`draft_comment_${project.id}`);
+        }
+    }, [newComment, project.id]);
+
+    const onUpdateRef = useRef(onUpdate);
+    useEffect(() => { onUpdateRef.current = onUpdate; }, [onUpdate]);
 
     // Real-time listener for project updates
     useEffect(() => {
@@ -58,8 +123,8 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
             if (doc.exists()) {
                 const updatedData = { id: doc.id, ...doc.data() } as ProjectData;
                 setProject(prev => {
-                    // Only update testLink if it changed on the server to avoid overwriting user input
-                    if (updatedData.testLink !== prev.testLink) {
+                    // Only update testLink if it changed on the server AND we are not currently editing it
+                    if (updatedData.testLink !== prev.testLink && !isEditingTestLink.current) {
                         setTestLink(updatedData.testLink || "");
                     }
                     return updatedData;
@@ -68,11 +133,12 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                 setAssets(updatedData.assets || []);
                 setDesigns(updatedData.designs || []);
                 setQaComments(updatedData.qaComments || []);
-                onUpdate(updatedData);
+                setEditedTitle(updatedData.title);
+                onUpdateRef.current(updatedData);
             }
         });
         return () => unsub();
-    }, [initialProject.id, onUpdate]);
+    }, [initialProject.id]);
 
     const sendNotification = async (type: "design" | "qa" | "delivered") => {
         try {
@@ -112,22 +178,38 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
     };
 
     const handleAddDesign = async (design: ProjectDesign) => {
-        // If editing, find and replace the existing design
-        const existingIdx = designs.findIndex(d => d.id === design.id);
-        let updated: ProjectDesign[];
-        
-        if (existingIdx >= 0) {
-            updated = [...designs];
-            updated[existingIdx] = design;
-        } else {
-            updated = [...designs, design];
+        setSaving(true);
+        try {
+            // If editing, find and replace the existing design
+            const existingIdx = designs.findIndex(d => d.id === design.id);
+            let updated: ProjectDesign[];
+            
+            if (existingIdx >= 0) {
+                updated = [...designs];
+                // Ensure phase is preserved or set if missing
+                const updatedDesign = { ...design };
+                if (!updatedDesign.phase && (status === "vibecheck" || status === "design_review")) {
+                    updatedDesign.phase = status;
+                }
+                updated[existingIdx] = updatedDesign;
+            } else {
+                const newDesign = { ...design };
+                if (!newDesign.phase && (status === "vibecheck" || status === "design_review")) {
+                    newDesign.phase = status;
+                }
+                updated = [...designs, newDesign];
+            }
+            
+            setDesigns(updated);
+            await updateProject(project.id, { designs: updated });
+            onUpdate({ ...project, designs: updated, assets });
+            closeDesignModal();
+        } catch (e) { 
+            console.error("Error adding design:", e);
+            alert("Er is iets misgegaan bij het opslaan van het design.");
+        } finally {
+            setSaving(false);
         }
-        
-        setDesigns(updated);
-        await updateProject(project.id, { designs: updated });
-        onUpdate({ ...project, designs: updated, assets });
-        setShowDesignModal(false);
-        setEditingDesign(null);
     };
 
     const handleUpdateDesignFeedback = async (designId: string, feedback: string) => {
@@ -138,6 +220,26 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
         await updateProject(project.id, { designs: updated });
         onUpdate({ ...project, designs: updated, assets });
     };
+
+    // Debounced auto-save for testLink
+    useEffect(() => {
+        if (testLink === project.testLink) return;
+        
+        const timeoutId = setTimeout(async () => {
+            setSaving(true);
+            try {
+                await updateProject(project.id, { testLink });
+                // We don't necessarily need to call onUpdate here because 
+                // the onSnapshot listener will trigger an update anyway
+            } catch (e) {
+                console.error("Error auto-saving testLink:", e);
+            } finally {
+                setSaving(false);
+            }
+        }, 1500); // 1.5s debounce
+
+        return () => clearTimeout(timeoutId);
+    }, [testLink, project.id, project.testLink]);
 
     const handleSaveTestLink = async () => {
         setSaving(true);
@@ -158,15 +260,34 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                 authorName: "Admin",
                 authorRole: "admin",
                 text: newComment,
-                createdAt: serverTimestamp()
+                createdAt: Timestamp.now()
             };
             const updated = [...qaComments, comment];
             setQaComments(updated);
             await updateProject(project.id, { qaComments: updated });
+            localStorage.removeItem(`draft_comment_${project.id}`);
             setNewComment("");
             onUpdate({ ...project, qaComments: updated, assets, designs, testLink });
         } catch (e) { console.error(e); }
         finally { setSaving(false); }
+    };
+
+    const handleSaveTitle = async () => {
+        if (!editedTitle.trim() || editedTitle === project.title) {
+            setIsEditingTitle(false);
+            setEditedTitle(project.title);
+            return;
+        }
+        setSaving(true);
+        try {
+            await updateProject(project.id, { title: editedTitle });
+            setIsEditingTitle(false);
+        } catch (e) { 
+            console.error(e);
+            setEditedTitle(project.title);
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
@@ -174,12 +295,13 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
             {showDesignModal && (
                 <AddDesignModal 
                     onClose={() => {
-                        setShowDesignModal(false);
-                        setEditingDesign(null);
+                        closeDesignModal();
                     }} 
                     onAdd={handleAddDesign} 
                     defaultName={designs.length === 0 && clientStatus === "lead" ? "Gratis Website Ontwerp V1" : ""}
                     initialDesign={editingDesign}
+                    projectId={project.id}
+                    phase={status === "vibecheck" || status === "design_review" ? status : undefined}
                 />
             )}
             {viewingDesign && (
@@ -188,9 +310,7 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                     onClose={() => setViewingDesign(null)}
                     isAdmin={true}
                     onEdit={(design) => {
-                        setEditingDesign(design);
-                        setViewingDesign(null);
-                        setShowDesignModal(true);
+                        openDesignModalForEdit(design);
                     }}
                     onSaveFeedback={(designId, feedback) => handleUpdateDesignFeedback(designId, feedback)}
                 />
@@ -198,21 +318,52 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
 
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 {/* Back button */}
-                <button onClick={onBack} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors">
+                <button 
+                    onClick={() => {
+                        const params = new URLSearchParams(searchParams.toString());
+                        params.delete("project"); // This triggers the onBack logic in parent
+                        router.push(`${pathname}?${params.toString()}`);
+                    }} 
+                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
+                >
                     <ChevronLeft className="w-4 h-4" /> Terug naar projecten
                 </button>
 
                 {/* Title */}
                 <div>
                     <div className="flex items-center gap-3 items-end mb-1">
-                        <h2 className="text-3xl font-extrabold font-montserrat text-navy leading-none">{project.title}</h2>
+                        {isEditingTitle ? (
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="text"
+                                    value={editedTitle}
+                                    onChange={(e) => setEditedTitle(e.target.value)}
+                                    className="text-3xl font-extrabold font-montserrat text-navy leading-none border-b-2 border-navy focus:outline-none bg-transparent"
+                                    autoFocus
+                                    onBlur={handleSaveTitle}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
+                                />
+                                {saving && <div className="animate-spin rounded-full h-4 w-4 border-2 border-navy border-t-transparent" />}
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3">
+                                <h2 className="text-3xl font-extrabold font-montserrat text-navy leading-none">{project.title}</h2>
+                                <button 
+                                    onClick={() => setIsEditingTitle(true)}
+                                    className="p-1 text-slate-400 hover:text-navy transition-colors"
+                                    title="Titel bewerken"
+                                >
+                                    <Wrench className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
                         {clientStatus === "lead" && (
-                            <span className="px-3 py-1 bg-purple-100 text-purple-700 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-purple-200">
+                            <span className="px-3 py-1 bg-purple-100 text-purple-700 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-purple-200 self-center">
                                 Lead Project
                             </span>
                         )}
                     </div>
-                    <p className="text-sm text-slate-500">Project ID: {project.id.slice(0, 12)}...</p>
+                    <p className="text-slate-500 font-medium">Beheer alle assets, designs en feedback voor dit project.</p>
                 </div>
 
                 {/* Package Selection Details (if active/converted) */}
@@ -236,37 +387,36 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                     </div>
                 )}
 
-                {/* ── 5-STEP STEPPER ── */}
-                <div className="grid grid-cols-5 gap-3">
+                {/* ── 6-STEP STEPPER ── */}
+                <div className="grid grid-cols-6 gap-3">
                     {STEPS.map((step, i) => {
                         const Icon = step.icon;
                         const isDone = i < currentIdx;
                         const isActive = i === currentIdx;
-                        const sc = COLOR[step.color as keyof typeof COLOR];
+                        const sc = COLOR[step.color as keyof typeof COLOR] || COLOR.blue;
                         return (
                             <button
                                 key={step.key}
                                 onClick={() => !saving && advanceToStep(step.key)}
                                 disabled={saving}
-                                className={`relative flex flex-col gap-3 p-4 rounded-2xl border text-left transition-all ${isActive
+                                className={`relative flex flex-col gap-2 p-3 rounded-2xl border text-left transition-all ${isActive
                                     ? `${sc.border} ${sc.bg} ring-2 ${sc.ring}/20`
                                     : isDone
                                         ? "border-slate-200 bg-white hover:bg-slate-50"
                                         : "border-slate-100 bg-slate-50/50 opacity-70 hover:opacity-100"
                                     }`}
                             >
-                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isActive || isDone ? sc.bg : "bg-slate-100"}`}>
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${isActive || isDone ? sc.bg : "bg-slate-100"}`}>
                                     {isDone
-                                        ? <Check className={`w-4 h-4 ${sc.text}`} />
-                                        : <Icon className={`w-4 h-4 ${isActive ? sc.text : "text-slate-400"}`} />
+                                        ? <Check className={`w-3.5 h-3.5 ${sc.text}`} />
+                                        : <Icon className={`w-3.5 h-3.5 ${isActive ? sc.text : "text-slate-400"}`} />
                                     }
                                 </div>
                                 <div>
-                                    <p className={`text-xs font-bold ${isActive ? 'text-slate-900' : isDone ? 'text-slate-700' : 'text-slate-500'}`}>{step.label}</p>
-                                    <p className="text-[10px] text-slate-500 mt-0.5">{step.desc}</p>
+                                    <p className={`text-[10px] font-black uppercase tracking-wider ${isActive ? "text-slate-900" : isDone ? "text-slate-700" : "text-slate-500"}`}>{step.label}</p>
                                 </div>
                                 {isActive && (
-                                    <div className={`absolute top-3 right-3 w-2 h-2 rounded-full bg-${step.color}-500 animate-pulse`} />
+                                    <div className={`absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-${step.color}-500 animate-pulse`} />
                                 )}
                             </button>
                         );
@@ -277,19 +427,175 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                 <div className={`rounded-2xl border ${c.border} ${c.bg} p-1`}>
                     <div className="bg-white rounded-xl p-6 space-y-6 shadow-sm">
 
-                        {/* STEP 1: INTAKE */}
-                        {status === "intake" && (
+                        {/* STEP 1: VIBECHECK */}
+                        {status === "vibecheck" && (
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2.5 bg-indigo-50 border border-indigo-100 rounded-xl"><Sparkles className="w-5 h-5 text-indigo-600" /></div>
+                                        <div>
+                                            <h3 className="font-bold text-lg text-navy">Vibecheck Concepten</h3>
+                                            <p className="text-xs text-slate-500">Upload homepage concepten om de klant te helpen de richting te kiezen</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowDesignModal(true)}
+                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-bold transition-all shadow-lg shadow-indigo-500/20"
+                                    >
+                                        <Plus className="w-4 h-4" /> Concept Toevoegen
+                                    </button>
+                                </div>
+
+                                {designs.filter(d => d.phase === 'vibecheck' || (!d.phase && status === 'vibecheck')).length === 0 ? (
+                                    <div className="py-16 flex flex-col items-center gap-4 border border-dashed border-indigo-200 bg-indigo-50/30 rounded-xl text-slate-400">
+                                        <div className="w-16 h-16 rounded-[1.5rem] bg-indigo-50 flex items-center justify-center ring-8 ring-indigo-50/50">
+                                            <Sparkles className="w-8 h-8 text-indigo-400" />
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="font-bold text-slate-600 mb-1">Nog geen concepten geüpload</p>
+                                            <p className="text-xs text-slate-500">Upload 3 homepage concepten om de klant de juiste richting te laten kiezen.</p>
+                                        </div>
+                                        <button
+                                            onClick={() => setShowDesignModal(true)}
+                                            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-bold transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                                        >
+                                            <Plus className="w-4 h-4" /> Eerste Concept Toevoegen
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {designs.filter(d => d.phase === 'vibecheck' || (!d.phase && status === 'vibecheck')).map((design) => {
+                                            const statusColor = design.status === "approved"
+                                                ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+                                                : design.status === "rejected"
+                                                    ? "text-red-700 bg-red-50 border-red-200"
+                                                    : "text-amber-700 bg-amber-50 border-amber-200";
+                                            const statusLabel = design.status === "approved" ? "Goedgekeurd" : design.status === "rejected" ? "Afgewezen" : "Wachten op review";
+                                            return (
+                                                <div key={design.id} className="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
+                                                            <Layout className="w-5 h-5 text-indigo-500" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-bold text-slate-900">{design.name}</p>
+                                                            {design.description && <p className="text-xs text-slate-500 mt-0.5">{design.description}</p>}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className={`px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider ${statusColor}`}>
+                                                            {statusLabel}
+                                                        </span>
+                                                        <button
+                                                            onClick={() => openDesignModalForEdit(design)}
+                                                            className="p-2 text-slate-400 hover:text-navy hover:bg-slate-100 rounded-lg transition-all"
+                                                            title="Bewerken"
+                                                        >
+                                                            <Wrench className="w-4 h-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setViewingDesign(design)}
+                                                            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
+                                                        >
+                                                            <ExternalLink className="w-3.5 h-3.5" /> Bekijken
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {designs.length > 0 && (
+                                    <div className="flex items-center justify-between pt-2">
+                                        <p className="text-xs text-slate-500 font-medium">
+                                            {designs.length} concept{designs.length !== 1 ? "en" : ""} geüpload
+                                        </p>
+                                        <button
+                                            onClick={() => advanceToStep("upload")}
+                                            disabled={saving}
+                                            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-navy text-white hover:bg-navy-light font-bold text-sm transition-all shadow-lg shadow-navy/20 disabled:opacity-50"
+                                        >
+                                            Naar Upload Fase <ArrowRight className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                )}
+                                {designs.length === 0 && (
+                                    <div className="flex justify-end">
+                                        <button
+                                            onClick={() => advanceToStep("upload")}
+                                            className="text-indigo-600 hover:text-indigo-700 font-bold text-sm transition-all"
+                                        >
+                                            Stap overslaan →
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+
+                        {/* STEP 2: UPLOAD */ }
+                        {status === "upload" && (
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2.5 bg-blue-50 border border-blue-100 rounded-xl"><FileText className="w-5 h-5 text-blue-600" /></div>
                                         <div>
-                                            <h3 className="font-bold text-lg text-navy">Intake & Assets</h3>
+                                            <h3 className="font-bold text-lg text-navy">Upload & Assets</h3>
                                             <p className="text-xs text-slate-500">Upload logo&apos;s, foto&apos;s en documenten van de klant</p>
                                         </div>
                                     </div>
                                     <FileUpload projectId={project.id} onUploadComplete={handleAssetUpload} />
                                 </div>
+
+                                {project.uploadData && (
+                                    <div className="grid md:grid-cols-3 gap-6">
+                                        {/* Company Details */}
+                                        <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
+                                            <div className="flex items-center gap-2 text-slate-900">
+                                                <Home className="w-4 h-4" />
+                                                <h4 className="font-bold text-sm">Bedrijfsgegevens</h4>
+                                            </div>
+                                            <div className="space-y-2 text-xs">
+                                                <div className="flex justify-between"><span className="text-slate-500">Naam:</span> <span className="font-medium">{project.uploadData.companyDetails.name}</span></div>
+                                                <div className="flex justify-between"><span className="text-slate-500">BTW:</span> <span className="font-medium">{project.uploadData.companyDetails.vat || "-"}</span></div>
+                                                <div className="flex justify-between"><span className="text-slate-500">KvK:</span> <span className="font-medium">{project.uploadData.companyDetails.kvk || "-"}</span></div>
+                                                <div className="flex justify-between"><span className="text-slate-500">Tel:</span> <span className="font-medium">{project.uploadData.companyDetails.phone}</span></div>
+                                                <div className="pt-2 border-t border-slate-200">
+                                                    <p className="text-slate-500 mb-1">Adres:</p>
+                                                    <p className="font-medium">{project.uploadData.companyDetails.address}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Domain Info */}
+                                        <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
+                                            <div className="flex items-center gap-2 text-slate-900">
+                                                <Globe className="w-4 h-4" />
+                                                <h4 className="font-bold text-sm">Domein & Hosting</h4>
+                                            </div>
+                                            <div className="space-y-2 text-xs">
+                                                <div className="flex justify-between"><span className="text-slate-500">Huidig domein:</span> <span className="font-medium">{project.uploadData.domainInfo.currentDomain || "-"}</span></div>
+                                                <div className="flex justify-between"><span className="text-slate-500">Provider:</span> <span className="font-medium">{project.uploadData.domainInfo.provider || "-"}</span></div>
+                                                <div className="flex justify-between"><span className="text-slate-500">Login:</span> <span className="font-medium">{project.uploadData.domainInfo.loginDetails || "-"}</span></div>
+                                                <div className="flex justify-between"><span className="text-slate-500">SSL:</span> <span className="font-medium uppercase">{project.uploadData.domainInfo.sslStatus}</span></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Project Context */}
+                                        <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
+                                            <div className="flex items-center gap-2 text-slate-900">
+                                                <FileText className="w-4 h-4" />
+                                                <h4 className="font-bold text-sm">Project Context</h4>
+                                            </div>
+                                            <div className="space-y-2 text-xs">
+                                                <div><p className="text-slate-500 mb-1">Doelen:</p><p className="font-medium line-clamp-2" title={project.uploadData.projectContext.goals}>{project.uploadData.projectContext.goals}</p></div>
+                                                <div><p className="text-slate-500 mb-1">Doelgroep:</p><p className="font-medium line-clamp-2" title={project.uploadData.projectContext.targetAudience}>{project.uploadData.projectContext.targetAudience}</p></div>
+                                                <div><p className="text-slate-500 mb-1">Concurrenten:</p><p className="font-medium line-clamp-2" title={project.uploadData.projectContext.competitors}>{project.uploadData.projectContext.competitors}</p></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                                     {assets.length === 0 ? (
@@ -330,14 +636,14 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                             </div>
                         )}
 
-                        {/* STEP 2: DESIGN REVIEW */}
+                        {/* STEP 3: DESIGN CHECK */}
                         {status === "design_review" && (
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2.5 bg-purple-50 border border-purple-100 rounded-xl"><Layout className="w-5 h-5 text-purple-600" /></div>
                                         <div>
-                                            <h3 className="font-bold text-lg text-navy">Designs voor Review</h3>
+                                            <h3 className="font-bold text-lg text-navy">Definitieve Designs (Design Check)</h3>
                                             <p className="text-xs text-slate-500">Voeg design-links toe die de klant kan bekijken en goedkeuren</p>
                                         </div>
                                     </div>
@@ -345,12 +651,12 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                                         onClick={() => setShowDesignModal(true)}
                                         className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 text-white hover:bg-purple-700 text-sm font-bold transition-all shadow-lg shadow-purple-500/20"
                                     >
-                                        <Plus className="w-4 h-4" /> Design Toevoegen
+                                        <Plus className="w-4 h-4" /> Design Check Toevoegen
                                     </button>
                                 </div>
 
                                 <div className="space-y-3">
-                                    {designs.length === 0 ? (
+                                    {designs.filter(d => d.phase === 'design_review').length === 0 ? (
                                         <div className="py-16 flex flex-col items-center gap-3 border border-dashed border-slate-200 bg-slate-50 rounded-xl text-slate-500">
                                             <Layout className="w-8 h-8 opacity-40" />
                                             <p className="text-sm">Nog geen designs toegevoegd</p>
@@ -369,7 +675,7 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                                             )}
                                         </div>
                                     ) : (
-                                        designs.map((design) => {
+                                        designs.filter(d => d.phase === 'design_review').map((design) => {
                                             const statusColor = design.status === "approved"
                                                 ? "text-emerald-700 bg-emerald-50 border-emerald-200"
                                                 : design.status === "rejected"
@@ -452,6 +758,8 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                                             type="url" 
                                             value={testLink}
                                             onChange={(e) => setTestLink(e.target.value)}
+                                            onFocus={() => { isEditingTestLink.current = true; }}
+                                            onBlur={() => { isEditingTestLink.current = false; }}
                                             placeholder="https://test-omgeving.nl"
                                             className="flex-1 px-4 py-2.5 rounded-xl border border-amber-200 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm"
                                         />

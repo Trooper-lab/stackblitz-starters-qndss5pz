@@ -1,21 +1,22 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDocs, getDoc, updateDoc, setDoc, query, where, orderBy, serverTimestamp, writeBatch } from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, updateDoc, setDoc, query, where, orderBy, serverTimestamp, writeBatch, onSnapshot } from "firebase/firestore";
 import { UserData } from "@/types/database";
+import { deepCleanData } from "@/lib/utils";
 
 // Create a new client
 export const createClient = async (data: Partial<UserData>): Promise<string> => {
     try {
         const newClientRef = doc(collection(db, "users"));
+        const cleanedMetadata = deepCleanData(data);
         const clientData: UserData = {
             uid: newClientRef.id,
             email: data.email || null,
             displayName: data.displayName || null,
             photoURL: null,
             role: "client",
-            companyDetails: data.companyDetails,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
-            ...data
+            ...cleanedMetadata
         };
         await setDoc(newClientRef, clientData);
         return newClientRef.id;
@@ -25,7 +26,22 @@ export const createClient = async (data: Partial<UserData>): Promise<string> => 
     }
 };
 
-// Fetch all clients (users with role 'client')
+// Subscribe to all clients (for admin)
+export const subscribeClients = (onUpdate: (clients: UserData[]) => void) => {
+    const q = query(
+        collection(db, "users"),
+        where("role", "==", "client"),
+        orderBy("createdAt", "desc")
+    );
+    return onSnapshot(q, (snapshot) => {
+        const clients = snapshot.docs.map(doc => doc.data() as UserData);
+        onUpdate(clients);
+    }, (error) => {
+        console.error("Error subscribing to clients:", error);
+    });
+};
+
+// Fetch all clients (for admin)
 export const getClients = async (): Promise<UserData[]> => {
     try {
         const q = query(
@@ -45,9 +61,10 @@ export const getClients = async (): Promise<UserData[]> => {
 export const updateClientData = async (uid: string, data: Partial<UserData>): Promise<void> => {
     try {
         const userRef = doc(db, "users", uid);
+        const cleaned = deepCleanData(data);
         await updateDoc(userRef, {
-            ...data,
-            updatedAt: new Date()
+            ...cleaned,
+            updatedAt: serverTimestamp()
         });
     } catch (error) {
         console.error("Error updating client data:", error);

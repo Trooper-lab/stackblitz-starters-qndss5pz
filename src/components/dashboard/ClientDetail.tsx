@@ -14,9 +14,11 @@ interface ClientDetailProps {
     projects: ProjectData[];
     invoices: InvoiceData[];
     onStartProject?: (clientId: string) => void;
+    onSelectProject?: (project: ProjectData) => void;
 }
 
-export default function ClientDetail({ client, onBack, onUpdate, projects: initialProjects, invoices: initialInvoices, onStartProject }: ClientDetailProps) {
+export default function ClientDetail({ client, onBack, onUpdate, projects: initialProjects, invoices: initialInvoices, onStartProject, onSelectProject }: ClientDetailProps) {
+    const draftKey = `clientDraft_${client.uid}`;
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<UserData>(client);
     const [saving, setSaving] = useState(false);
@@ -29,12 +31,43 @@ export default function ClientDetail({ client, onBack, onUpdate, projects: initi
         setInvoices(initialInvoices);
     }, [initialProjects, initialInvoices]);
 
+    useEffect(() => {
+        const savedDraft = localStorage.getItem(draftKey);
+        if (savedDraft) {
+            try {
+                const parsed = JSON.parse(savedDraft);
+                setFormData(parsed);
+                setIsEditing(true);
+            } catch (e) {
+                console.error("Failed to parse draft", e);
+            }
+        }
+    }, [draftKey]);
+
+    useEffect(() => {
+        if (!isEditing) {
+            setFormData(client);
+        }
+    }, [client, isEditing]);
+
+    useEffect(() => {
+        if (isEditing) {
+            const timer = setTimeout(() => {
+                localStorage.setItem(draftKey, JSON.stringify(formData));
+            }, 1000);
+            return () => clearTimeout(timer);
+        } else {
+            localStorage.removeItem(draftKey);
+        }
+    }, [formData, isEditing, draftKey]);
+
     const handleSave = async () => {
         setSaving(true);
         try {
             await updateClientData(client.uid, formData);
             onUpdate(formData);
             setIsEditing(false);
+            localStorage.removeItem(draftKey);
         } catch (error) {
             console.error("Save failed", error);
             alert("Er is iets misgegaan bij het opslaan.");
@@ -75,7 +108,27 @@ export default function ClientDetail({ client, onBack, onUpdate, projects: initi
                     ← Terug naar lijst
                 </button>
                 <div className="flex gap-4 items-center">
-                    {client.status === "lead" && (
+                    {(client.status === "new_lead" || client.status === "lead") && (
+                        <button
+                            onClick={async () => {
+                                setSaving(true);
+                                try {
+                                    await updateClientData(client.uid, { status: "contacted" });
+                                    onUpdate({ ...client, status: "contacted" });
+                                } catch (e) {
+                                    console.error("Status update failed", e);
+                                    alert("Er is iets misgegaan.");
+                                } finally {
+                                    setSaving(false);
+                                }
+                            }}
+                            disabled={saving}
+                            className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-bold transition-all shadow-sm disabled:opacity-50"
+                        >
+                            {saving ? "..." : "Markeer als Gecontacteerd"}
+                        </button>
+                    )}
+                    {(client.status === "contacted" || client.status === "lead") && (
                         <button
                             onClick={async () => {
                                 setSaving(true);
@@ -92,10 +145,10 @@ export default function ClientDetail({ client, onBack, onUpdate, projects: initi
                             disabled={saving}
                             className="px-6 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 font-bold transition-all shadow-sm disabled:opacity-50"
                         >
-                            {saving ? "Verwerken..." : "Promoveren naar Klant"}
+                            {saving ? "..." : "Promoveren naar Klant"}
                         </button>
                     )}
-                    {(client.status === "new_lead" || client.status === "lead") && onStartProject && (
+                    {(client.status === "new_lead" || client.status === "contacted" || client.status === "lead") && onStartProject && (
                         <button
                             onClick={() => {
                                 setCreatingProject(true);
@@ -110,7 +163,11 @@ export default function ClientDetail({ client, onBack, onUpdate, projects: initi
                     {isEditing ? (
                         <>
                             <button
-                                onClick={() => setIsEditing(false)}
+                                onClick={() => {
+                                    setIsEditing(false);
+                                    setFormData(client);
+                                    localStorage.removeItem(draftKey);
+                                }}
                                 className="px-6 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition-all font-medium bg-white"
                             >
                                 Annuleren
@@ -379,7 +436,7 @@ export default function ClientDetail({ client, onBack, onUpdate, projects: initi
                     ) : (
                         <div className="space-y-3">
                             {projects.map(p => (
-                                <div key={p.id} className="p-4 border border-slate-200 rounded-xl hover:shadow-md transition-all flex justify-between items-center group cursor-pointer bg-slate-50 hover:bg-white">
+                                <div key={p.id} onClick={() => onSelectProject?.(p)} className="p-4 border border-slate-200 rounded-xl hover:shadow-md transition-all flex justify-between items-center group cursor-pointer bg-slate-50 hover:bg-white">
                                     <div>
                                         <p className="font-bold text-navy">{p.title}</p>
                                         <p className="text-xs text-slate-500 mt-1 capitalize">{p.status.replace("_", " ")}</p>

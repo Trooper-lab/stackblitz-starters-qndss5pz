@@ -15,7 +15,7 @@ export default function NewClientModal({ onClose, onCreated }: NewClientModalPro
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [companyName, setCompanyName] = useState("");
-    const [status, setStatus] = useState<"lead" | "active_client">("lead");
+    const [status, setStatus] = useState<"new_lead" | "contacted" | "active_client">("new_lead");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -159,8 +159,8 @@ export default function NewClientModal({ onClose, onCreated }: NewClientModalPro
                         <div className="flex bg-slate-100 p-1 rounded-xl">
                             <button
                                 type="button"
-                                onClick={() => setStatus("lead")}
-                                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${status === "lead" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                                onClick={() => setStatus("new_lead")}
+                                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${status === "new_lead" ? "bg-white text-navy shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                             >
                                 Lead
                             </button>

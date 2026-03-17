@@ -129,4 +129,19 @@ export const pricingAddons: PricingAddon[] = [
       { text: 'Uitgebreide rapportage' },
     ],
   },
+  {
+    id: "advertising",
+    name: '📣 Advertising (ADS)',
+    desc: 'Wij beheren jouw advertentiebudget voor maximale ROI',
+    priceMonthly: '€500',
+    priceYearly: '€5.000',
+    priceMonthlyValue: 500,
+    priceYearlyValue: 5000,
+    features: [
+      { text: 'Beheer van Google & Meta Ads' },
+      { text: 'Optimalisaties op basis van conversies' },
+      { text: 'Maandelijks prestatieoverzicht' },
+      { text: 'Excl. media-uitgaven' },
+    ],
+  },
 ];

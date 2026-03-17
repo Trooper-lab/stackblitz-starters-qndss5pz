@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { UserData } from "@/types/database";
-import { Mail, Phone, Rocket, TrendingUp, MoreVertical, Search } from "lucide-react";
+import { Mail, Phone, Rocket, TrendingUp, MoreVertical, Search, Loader2, Building2, Package, Calendar, User, MessageSquare } from "lucide-react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { updateClientData } from "@/lib/services/clientService";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface LeadManagerProps {
     clients: UserData[];
@@ -18,50 +21,150 @@ interface ColumnProps {
     onStartFreeDesign: (clientId: string) => void;
 }
 
-const LeadCard = ({ lead, onSelectLead, onStartFreeDesign }: { lead: UserData, onSelectLead: (lead: UserData) => void, onStartFreeDesign: (clientId: string) => void }) => (
-    <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-slate-300 transition-all cursor-pointer group" onClick={() => onSelectLead(lead)}>
-        <div className="flex justify-between items-start mb-3">
-            <div>
-                <h4 className="font-bold text-navy">{lead.displayName || "Onbekende Naam"}</h4>
-                <p className="text-xs text-slate-500">{lead.email}</p>
-            </div>
-            <button className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-slate-100 rounded-md">
-                <MoreVertical className="w-4 h-4" />
-            </button>
-        </div>
-        
-        <div className="flex flex-wrap gap-2 mb-4">
-            {lead.companyDetails?.name && (
-                <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded flex items-center gap-1">
-                    {lead.companyDetails.name}
-                </span>
-            )}
-            {lead.selectedPackage?.packageId && (
-                <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded border border-blue-100 font-medium">
-                    📦 {lead.selectedPackage.packageId}
-                </span>
-            )}
-        </div>
+const LeadCard = ({ lead, onSelectLead, onStartFreeDesign }: { lead: UserData, onSelectLead: (lead: UserData) => void, onStartFreeDesign: (clientId: string) => void }) => {
+    const [updating, setUpdating] = useState(false);
 
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
-            <div className="flex gap-2">
-                <button className="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition-colors" title="Email" onClick={(e) => { e.stopPropagation(); window.location.href = `mailto:${lead.email}`; }}>
-                    <Mail className="w-3.5 h-3.5" />
-                </button>
-                <button className="w-8 h-8 rounded bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-100 transition-colors" title="Bellen" onClick={(e) => { e.stopPropagation(); }}>
-                    <Phone className="w-3.5 h-3.5" />
+    const handleMarkContacted = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setUpdating(true);
+        try {
+            await updateClientData(lead.uid, { status: "contacted" });
+        } catch (error) {
+            console.error("Error marking lead as contacted:", error);
+            alert("Er is iets misgegaan bij het bijwerken van de status.");
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const formatDate = (date: unknown) => {
+        if (!date) return "-";
+        
+        // Handle Firestore Timestamp or Date ISO string
+        if (typeof date === 'object' && date !== null && 'seconds' in date) {
+            const d = date as { seconds: number };
+            return new Date(d.seconds * 1000).toLocaleDateString();
+        }
+        
+        try {
+            return new Date(date as string | number | Date).toLocaleDateString();
+        } catch {
+            return "-";
+        }
+    };
+
+    return (
+        <motion.div 
+            layout
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ y: -4, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)" }}
+            className="group relative bg-white border border-slate-200 rounded-[2rem] p-6 transition-all cursor-pointer hover:border-purple-200" 
+            onClick={() => onSelectLead(lead)}
+        >
+            <AnimatePresence>
+                {updating && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-white/80 backdrop-blur-sm z-20 flex items-center justify-center rounded-[2rem]"
+                    >
+                        <div className="flex flex-col items-center gap-3">
+                            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-purple-600">Bijwerken...</span>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div className="flex justify-between items-start mb-5">
+                <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:bg-purple-50 group-hover:border-purple-100 transition-colors">
+                        <User className="w-6 h-6 text-slate-400 group-hover:text-purple-500 transition-colors" />
+                    </div>
+                    <div>
+                        <h4 className="font-black text-navy text-lg leading-tight tracking-tight group-hover:text-purple-600 transition-colors">
+                            {lead.displayName || "Onbekende Naam"}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-1">
+                            <p className="text-xs font-medium text-slate-400">{lead.email}</p>
+                            <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                            <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                <Calendar className="w-3 h-3" />
+                                {formatDate(lead.createdAt)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button className="text-slate-300 hover:text-navy p-1 transition-colors">
+                    <MoreVertical className="w-5 h-5" />
                 </button>
             </div>
             
-            <button 
-                onClick={(e) => { e.stopPropagation(); onStartFreeDesign(lead.uid); }}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:text-purple-800 text-xs font-bold rounded flex-1 justify-center ml-2 border border-purple-200 transition-colors"
-            >
-                <Rocket className="w-3 h-3" /> Gratis Design
-            </button>
-        </div>
-    </div>
-);
+            <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-white transition-colors">
+                    <div className="flex items-center gap-2 mb-1">
+                        <Building2 className="w-3 h-3 text-slate-400" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Bedrijf</span>
+                    </div>
+                    <p className="text-sm font-bold text-navy truncate">
+                        {lead.companyDetails?.name || "Geen opgave"}
+                    </p>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-white transition-colors">
+                    <div className="flex items-center gap-2 mb-1">
+                        <Package className="w-3 h-3 text-slate-400" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Pakket</span>
+                    </div>
+                    <p className="text-sm font-bold text-navy truncate">
+                        {lead.selectedPackage?.packageId || "Nog geen"}
+                    </p>
+                </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-5 border-t border-slate-100">
+                <div className="flex gap-2">
+                    <button 
+                        className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 border border-slate-100 hover:border-blue-100 transition-all shadow-sm" 
+                        title="Email" 
+                        onClick={(e) => { e.stopPropagation(); window.location.href = `mailto:${lead.email}`; }}
+                    >
+                        <Mail className="w-4 h-4" />
+                    </button>
+                    {lead.companyDetails?.phone && (
+                        <button 
+                            className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-green-50 hover:text-green-600 border border-slate-100 hover:border-green-100 transition-all shadow-sm" 
+                            title="Bellen" 
+                            onClick={(e) => { e.stopPropagation(); window.location.href = `tel:${lead.companyDetails?.phone}`; }}
+                        >
+                            <Phone className="w-4 h-4" />
+                        </button>
+                    )}
+                </div>
+                
+                <div className="flex gap-3">
+                    {(lead.status === "new_lead" || lead.status === "lead" || !lead.status) && (
+                        <button 
+                            onClick={handleMarkContacted}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white text-xs font-black uppercase tracking-widest rounded-xl border border-blue-100 transition-all shadow-sm"
+                        >
+                            <MessageSquare className="w-3.5 h-3.5" />
+                            Contact
+                        </button>
+                    )}
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); onStartFreeDesign(lead.uid); }}
+                        className="flex items-center gap-2 px-6 py-2 bg-purple-600 text-white hover:bg-purple-700 text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-purple-500/20"
+                    >
+                        <Rocket className="w-3.5 h-3.5" />
+                        Start Vibecheck
+                    </button>
+                </div>
+            </div>
+        </motion.div>
+    );
+};
 
 const Column = ({ title, count, color, leads, onSelectLead, onStartFreeDesign }: ColumnProps) => (
     <div className="flex flex-col h-full">
@@ -85,7 +188,35 @@ const Column = ({ title, count, color, leads, onSelectLead, onStartFreeDesign }:
 );
 
 export default function LeadManager({ clients, onSelectLead, onStartFreeDesign }: LeadManagerProps) {
-    const leads = clients.filter(c => c.status === "new_lead" || c.status === "contacted" || c.status === "design_pipeline" || c.status === "lost" || !c.status || c.status === "lead");
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchQuery = searchParams.get("search") || "";
+
+    const setSearchQuery = useCallback((query: string) => {
+        const params = new URLSearchParams(searchParams);
+        if (query) {
+            params.set("search", query);
+        } else {
+            params.delete("search");
+        }
+        router.push(`${pathname}?${params.toString()}`);
+    }, [searchParams, router, pathname]);
+
+    const leads = clients.filter(c => {
+        const isLead = c.status === "new_lead" || c.status === "contacted" || c.status === "design_pipeline" || c.status === "lost" || !c.status || c.status === "lead";
+        if (!isLead) return false;
+        
+        if (searchQuery) {
+            const searchLower = searchQuery.toLowerCase();
+            const nameMatch = (c.displayName || "").toLowerCase().includes(searchLower);
+            const emailMatch = (c.email || "").toLowerCase().includes(searchLower);
+            const companyMatch = (c.companyDetails?.name || "").toLowerCase().includes(searchLower);
+            return nameMatch || emailMatch || companyMatch;
+        }
+        
+        return true;
+    });
 
     const newLeads = leads.filter(l => l.status === "new_lead" || l.status === "lead" || !l.status);
     const contactedLeads = leads.filter(l => l.status === "contacted");
@@ -107,6 +238,8 @@ export default function LeadManager({ clients, onSelectLead, onStartFreeDesign }
                         <input 
                             type="text" 
                             placeholder="Zoek leads..." 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 ring-purple-500/20 focus:border-purple-500 transition-all w-64 shadow-sm"
                         />
                     </div>
@@ -122,3 +255,4 @@ export default function LeadManager({ clients, onSelectLead, onStartFreeDesign }
         </div>
     );
 }
+

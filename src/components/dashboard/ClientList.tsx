@@ -1,39 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getClients } from "@/lib/services/clientService";
-import { getAllInvoices } from "@/lib/services/invoiceService";
+import { useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { UserData, InvoiceData } from "@/types/database";
 import { Timestamp, FieldValue } from "firebase/firestore";
 
 interface ClientListProps {
-    onSelectClient: (client: UserData) => void;
+    onSelectClient: (client: UserData | null) => void;
+    clients?: UserData[];
+    invoices?: InvoiceData[];
 }
 
-export default function ClientList({ onSelectClient }: ClientListProps) {
-    const [clients, setClients] = useState<UserData[]>([]);
-    const [invoices, setInvoices] = useState<InvoiceData[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<"active" | "lead">("active");
+export default function ClientList({ onSelectClient, clients = [], invoices = [] }: ClientListProps) {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+    const activeTab = (searchParams.get("tab") as "active" | "lead") || "active";
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [clientsData, invoicesData] = await Promise.all([
-                    getClients(),
-                    getAllInvoices()
-                ]);
-                setClients(clientsData);
-                setInvoices(invoicesData);
-            } catch (error) {
-                console.error("Failed to fetch clients/invoices", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
+    const setActiveTab = useCallback((tab: "active" | "lead") => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("tab", tab);
+        router.push(`${pathname}?${params.toString()}`);
+    }, [pathname, router, searchParams]);
 
     const formatDate = (date: Timestamp | FieldValue | undefined) => {
         if (!date) return "-";
@@ -47,10 +35,6 @@ export default function ClientList({ onSelectClient }: ClientListProps) {
         }
         return "-";
     };
-
-    if (loading) {
-        return <div className="p-8 text-center opacity-50">Laden...</div>;
-    }
 
     const leads = clients.filter(c => c.status === "lead" || c.status === "new_lead" || c.status === "contacted");
     const activeClients = clients.filter(c => c.status === "active_client" || c.status === "active" || c.status === "design_pipeline");

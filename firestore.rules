@@ -6,7 +6,8 @@ service cloud.firestore {
     // Helper function to check if user is admin
     function isAdmin() {
       return request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'client') == 'admin';
     }
 
     // Helper function to check if user is the owner of the document
@@ -36,7 +37,6 @@ service cloud.firestore {
       );
 
       // Allow listing users ONLY search by email for linking purposes
-      // This is constrained to require a verified email match in the query
       allow list: if request.auth != null && (
         isAdmin() || 
         (request.auth.token.email != null && request.auth.token.email != "")
@@ -51,6 +51,7 @@ service cloud.firestore {
     }
 
     // Projects collection rules
+    // Projects collection rules
     match /projects/{projectId} {
       allow read: if request.auth != null && (
         isAdmin() || 
@@ -58,13 +59,21 @@ service cloud.firestore {
         resource.data.customerId == request.auth.uid ||
         (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
       );
-      allow write: if isAdmin();
+      
+      allow create: if request.auth != null && (
+        isAdmin() ||
+        request.resource.data.clientId == request.auth.uid ||
+        (request.resource.data.clientEmail != null && request.auth.token.email == request.resource.data.clientEmail)
+      );
+
       allow update: if request.auth != null && (
         isAdmin() ||
         resource.data.clientId == request.auth.uid || 
         resource.data.customerId == request.auth.uid ||
         (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
       );
+
+      allow delete: if isAdmin();
     }
 
     // Invoices collection rules
@@ -80,12 +89,12 @@ service cloud.firestore {
         request.resource.data.clientId == request.auth.uid ||
         (request.resource.data.clientEmail != null && request.auth.token.email == request.resource.data.clientEmail)
       );
-      allow write: if isAdmin();
       allow update: if request.auth != null && (
         isAdmin() ||
         resource.data.clientId == request.auth.uid || 
         (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
       );
+      allow delete: if isAdmin();
     }
     
     // Notifications collection rules
@@ -95,12 +104,17 @@ service cloud.firestore {
         resource.data.clientId == request.auth.uid ||
         (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
       );
-      allow write: if isAdmin();
+      allow create: if request.auth != null && (
+        isAdmin() ||
+        request.resource.data.clientId == request.auth.uid ||
+        (request.resource.data.clientEmail != null && request.auth.token.email == request.resource.data.clientEmail)
+      );
       allow update: if request.auth != null && (
         isAdmin() ||
         resource.data.clientId == request.auth.uid ||
         (resource.data.clientEmail != null && request.auth.token.email == resource.data.clientEmail)
       );
+      allow delete: if isAdmin();
     }
   }
 }

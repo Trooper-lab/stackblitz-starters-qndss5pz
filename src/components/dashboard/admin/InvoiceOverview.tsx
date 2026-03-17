@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { InvoiceData, UserData, ProjectData } from "@/types/database";
-import { getAllInvoices, createInvoice, updateInvoice } from "@/lib/services/invoiceService";
-import { getClients } from "@/lib/services/clientService";
-import { getAllProjects } from "@/lib/services/projectService";
+import { createInvoice, updateInvoice } from "@/lib/services/invoiceService";
 import InvoiceDocument from "@/components/dashboard/InvoiceDocument";
 import {
     Receipt, CheckCircle, Clock, AlertTriangle, FileText,
@@ -46,12 +45,29 @@ interface InvoiceSuggestion {
     billingCycle?: "monthly" | "yearly";
 }
 
-export default function InvoiceOverview({ clients: propClients }: { clients?: UserData[] }) {
-    const [invoices, setInvoices] = useState<InvoiceData[]>([]);
-    const [clients, setClients] = useState<UserData[]>(propClients || []);
-    const [projects, setProjects] = useState<ProjectData[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState<FilterStatus>("all");
+interface InvoiceOverviewProps {
+    clients?: UserData[];
+    invoices?: InvoiceData[];
+    projects?: ProjectData[];
+}
+
+export default function InvoiceOverview({ clients = [], invoices = [], projects = [] }: InvoiceOverviewProps) {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+    const filter = (searchParams.get("filter") as FilterStatus) || "all";
+    const loading = false; // Loading is handled by parent now
+
+    const setFilter = useCallback((newFilter: FilterStatus) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (newFilter === "all") {
+            params.delete("filter");
+        } else {
+            params.set("filter", newFilter);
+        }
+        router.push(`${pathname}?${params.toString()}`);
+    }, [pathname, router, searchParams]);
+
     const [showForm, setShowForm] = useState(false);
     const [creating, setCreating] = useState(false);
     const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -60,23 +76,6 @@ export default function InvoiceOverview({ clients: propClients }: { clients?: Us
     const [form, setForm] = useState<NewInvoiceForm>({
         clientId: "", projectId: "", description: "", amount: 0, dueDays: 14, type: "one_time"
     });
-
-    const load = useCallback(async () => {
-        setLoading(true);
-        try {
-            const [inv, proj, cl] = await Promise.all([
-                getAllInvoices(),
-                getAllProjects(),
-                propClients ? Promise.resolve(propClients) : getClients(),
-            ]);
-            setInvoices(inv);
-            setProjects(proj);
-            setClients(cl);
-        } catch (e) { console.error(e); }
-        finally { setLoading(false); }
-    }, [propClients]);
-
-    useEffect(() => { load(); }, [load]);
 
     const clientMap = Object.fromEntries(clients.map(c => [c.uid, c]));
     const projectMap = Object.fromEntries(projects.map(p => [p.id, p]));
@@ -95,7 +94,7 @@ export default function InvoiceOverview({ clients: propClients }: { clients?: Us
 
         // 1. Commitment Fee Suggestion
         const hasCommitment = projectInvoices.some(i => i.description.includes("Commitment Fee"));
-        if (!hasCommitment && p.status !== "intake") {
+        if (!hasCommitment && p.status !== "vibecheck") {
             suggests.push({
                 projectId: p.id,
                 clientId: p.clientId,
@@ -177,7 +176,6 @@ export default function InvoiceOverview({ clients: propClients }: { clients?: Us
             setShowForm(false);
             setEditingId(null);
             setForm({ clientId: "", projectId: "", description: "", amount: 0, dueDays: 14, type: "one_time" });
-            await load();
         } catch (e) {
             console.error("Error saving invoice:", e);
             alert("Er is een fout opgetreden bij het opslaan van de factuur.");
@@ -193,7 +191,7 @@ export default function InvoiceOverview({ clients: propClients }: { clients?: Us
             projectId: inv.projectId,
             description: inv.description,
             amount: inv.amount,
-            dueDays: 14, // default, usually not stored in exactly this way but can be derived if needed
+            dueDays: 14, // default
             type: inv.type || "one_time",
             billingCycle: inv.billingCycle
         });
@@ -223,7 +221,6 @@ export default function InvoiceOverview({ clients: propClients }: { clients?: Us
             }
 
             await createInvoice(invoiceData);
-            await load();
         } catch (e) { console.error(e); }
         finally { setCreating(false); }
     };
@@ -236,7 +233,6 @@ export default function InvoiceOverview({ clients: propClients }: { clients?: Us
                 ...(newStatus === "paid" ? { paidAt: Timestamp.now() } : {}),
                 ...(newStatus === "sent" ? { issuedAt: Timestamp.now() } : {}),
             });
-            setInvoices(prev => prev.map(i => i.id === inv.id ? { ...i, status: newStatus } : i));
         } catch (e) { console.error(e); }
         finally { setUpdatingId(null); }
     };
@@ -251,7 +247,7 @@ export default function InvoiceOverview({ clients: propClients }: { clients?: Us
                 </div>
                 <div className="flex items-center gap-3">
                     <button
-                        onClick={load}
+                        onClick={() => {}}
                         disabled={loading}
                         className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-500 hover:text-navy hover:bg-slate-100 transition-all border border-slate-200 bg-white"
                     >

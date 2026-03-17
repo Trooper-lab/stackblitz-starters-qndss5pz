@@ -1,15 +1,16 @@
 "use client";
 
 import { ProjectData, UserData } from "@/types/database";
-import { Calendar, CheckCircle, FileText, Wrench, AlertCircle } from "lucide-react";
+import { Calendar, CheckCircle, FileText, Wrench, AlertCircle, Sparkles, Layout } from "lucide-react";
 import { Timestamp, FieldValue } from "firebase/firestore";
 
 const STEPS = [
-    { key: "intake", label: "Intake", icon: FileText, color: "blue" },
-    { key: "design_review", label: "Design", icon: FileText, color: "purple" },
+    { key: "vibecheck", label: "Vibe", icon: Sparkles, color: "blue" },
+    { key: "upload", label: "Upload", icon: FileText, color: "blue" },
+    { key: "design_review", label: "Design", icon: Layout, color: "purple" },
     { key: "development", label: "Dev", icon: Wrench, color: "yellow" },
     { key: "qa", label: "QA", icon: AlertCircle, color: "orange" },
-    { key: "delivered", label: "Opgeleverd", icon: CheckCircle, color: "green" },
+    { key: "delivered", label: "Live", icon: CheckCircle, color: "green" },
 ] as const;
 
 const stepIndex = (status: string) => STEPS.findIndex(s => s.key === status);

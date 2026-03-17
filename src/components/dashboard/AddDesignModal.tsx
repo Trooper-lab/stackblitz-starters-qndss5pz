@@ -1,24 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Layout, FileCode, FileText, Plus } from "lucide-react";
 import { Timestamp } from "firebase/firestore";
 import { ProjectDesign } from "@/types/database";
+import { deepCleanData } from "@/lib/utils";
 
 interface AddDesignModalProps {
     onClose: () => void;
     onAdd: (design: ProjectDesign) => void;
     defaultName?: string;
     initialDesign?: ProjectDesign | null;
+    projectId: string;
+    phase?: "vibecheck" | "design_review";
 }
 
-export default function AddDesignModal({ onClose, onAdd, defaultName = "", initialDesign = null }: AddDesignModalProps) {
+export default function AddDesignModal({ onClose, onAdd, defaultName = "", initialDesign = null, projectId, phase }: AddDesignModalProps) {
     const [name, setName] = useState(initialDesign?.name || defaultName);
     const [htmlUrl, setHtmlUrl] = useState(initialDesign?.htmlUrl || "");
     const [htmlCode, setHtmlCode] = useState(initialDesign?.htmlCode || "");
     const [description, setDescription] = useState(initialDesign?.description || "");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const draftKey = `draft_design_${projectId}_${initialDesign?.id || "new"}`;
+
+    // Load draft
+    useEffect(() => {
+        const saved = localStorage.getItem(draftKey);
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                if (data.name) setName(data.name);
+                if (data.htmlUrl) setHtmlUrl(data.htmlUrl);
+                if (data.htmlCode) setHtmlCode(data.htmlCode);
+                if (data.description) setDescription(data.description);
+            } catch (e) {
+                console.error("Error parsing design draft:", e);
+            }
+        }
+    }, [draftKey]);
+
+    // Save draft
+    useEffect(() => {
+        const data = { name, htmlUrl, htmlCode, description };
+        // Only save if there's actual content and it's different from initial
+        const isDefault = name === (initialDesign?.name || defaultName) && 
+                          htmlUrl === (initialDesign?.htmlUrl || "") && 
+                          htmlCode === (initialDesign?.htmlCode || "") && 
+                          description === (initialDesign?.description || "");
+        
+        if (!isDefault) {
+            localStorage.setItem(draftKey, JSON.stringify(data));
+        } else {
+            // Keep it if it was already there (maybe they typed then cleared)
+            // Or just remove it if it matches initial state
+        }
+    }, [name, htmlUrl, htmlCode, description, draftKey, initialDesign, defaultName]);
 
     const validate = () => {
         const e: Record<string, string> = {};
@@ -38,13 +76,15 @@ export default function AddDesignModal({ onClose, onAdd, defaultName = "", initi
             id: initialDesign?.id || `d_${Date.now()}`,
             name: name.trim(),
             status: initialDesign?.status || "pending",
+            phase: initialDesign?.phase || phase, // Use passed phase or existing phase
             createdAt: initialDesign?.createdAt || Timestamp.fromDate(new Date()),
-            htmlUrl: htmlUrl.trim() || undefined,
-            htmlCode: htmlCode.trim() || undefined,
-            description: description.trim() || undefined,
+            ...(htmlUrl.trim() ? { htmlUrl: htmlUrl.trim() } : {}),
+            ...(htmlCode.trim() ? { htmlCode: htmlCode.trim() } : {}),
+            ...(description.trim() ? { description: description.trim() } : {}),
         };
 
-        onAdd(newDesign);
+        localStorage.removeItem(draftKey);
+        onAdd(deepCleanData(newDesign));
     };
 
     return (

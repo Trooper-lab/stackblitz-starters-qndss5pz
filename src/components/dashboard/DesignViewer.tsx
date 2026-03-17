@@ -258,28 +258,29 @@ export default function DesignViewer({
                             {design.status === "pending" && !isAdmin ? (
                                 <div className="grid grid-cols-2 gap-4">
                                     <motion.button
-                                        whileHover={{ scale: 1.02, y: -2 }}
+                                        whileHover={{ scale: 1.02, backgroundColor: "rgba(239, 68, 68, 0.1)", borderColor: "rgba(239, 68, 68, 0.3)" }}
                                         whileTap={{ scale: 0.98 }}
                                         disabled={isSubmitting || !feedback.trim()}
                                         onClick={handleReject}
-                                        className="flex flex-col items-center justify-center p-6 bg-white/[0.03] border border-white/10 rounded-3xl hover:bg-red-500/10 hover:border-red-500/30 text-slate-400 hover:text-red-400 transition-all group disabled:opacity-30 shadow-lg"
+                                        className="flex flex-col items-center justify-center p-6 bg-white/[0.03] border border-white/10 rounded-3xl text-slate-400 hover:text-red-400 transition-all group disabled:opacity-30 shadow-lg"
                                     >
                                         <XCircle className="w-8 h-8 mb-3 opacity-60 group-hover:opacity-100 transition-opacity" />
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Aanpassen</span>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Feedback geven</span>
                                     </motion.button>
                                     <motion.button
-                                        whileHover={{ scale: 1.02, y: -2 }}
+                                        whileHover={{ scale: 1.02, y: -2, boxShadow: "0 20px 40px -10px rgba(59, 130, 246, 0.5)" }}
                                         whileTap={{ scale: 0.98 }}
                                         disabled={isSubmitting}
                                         onClick={handleApprove}
-                                        className="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl text-white shadow-2xl shadow-blue-500/20 hover:brightness-110 transition-all group disabled:opacity-50"
+                                        className="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 rounded-3xl text-white shadow-2xl shadow-blue-500/20 hover:brightness-110 transition-all group disabled:opacity-50 relative overflow-hidden"
                                     >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
                                         {isSubmitting ? (
                                             <Loader2 className="w-8 h-8 mb-3 animate-spin" />
                                         ) : (
                                             <CheckCircle2 className="w-8 h-8 mb-3" />
                                         )}
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Akkoord</span>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Design Goedkeuren</span>
                                     </motion.button>
                                 </div>
                             ) : isAdmin ? (

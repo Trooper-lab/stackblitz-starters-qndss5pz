@@ -160,16 +160,18 @@ export default function OverviewTab({ projects, clients, invoices, onNavigate }:
                     <h2 className="text-xl font-bold text-navy">Pipeline Overzicht</h2>
                     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                         <div className="space-y-4">
-                            {["intake", "design_review", "development", "qa"].map(step => {
+                            {["vibecheck", "upload", "design_review", "development", "qa"].map(step => {
                                 const count = projects.filter(p => p.status === step).length;
                                 const labels: Record<string, string> = {
-                                    "intake": "Intake",
+                                    "vibecheck": "Vibecheck",
+                                    "upload": "Upload",
                                     "design_review": "Design",
                                     "development": "Development",
                                     "qa": "QA / Testing"
                                 };
                                 const colors: Record<string, string> = {
-                                    "intake": "bg-blue-500",
+                                    "vibecheck": "bg-indigo-500",
+                                    "upload": "bg-blue-500",
                                     "design_review": "bg-purple-500",
                                     "development": "bg-yellow-500",
                                     "qa": "bg-orange-500"
