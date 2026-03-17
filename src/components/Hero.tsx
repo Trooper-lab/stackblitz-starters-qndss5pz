@@ -89,6 +89,8 @@ export default function Hero() {
         return () => ctx.revert();
     }, []);
 
+    const avatars = ["/1.png", "/2.png", "/3.png"];
+
     return (
         <section ref={containerRef} className="relative overflow-hidden bg-navy pt-32 pb-16 md:pt-40 md:pb-24 text-white min-h-[90vh] flex items-center w-full">
             <div className="absolute top-0 right-0 h-full w-full pointer-events-none overflow-hidden">
@@ -116,24 +118,23 @@ export default function Hero() {
                                 Stop met het verliezen van klanten door een trage, verouderde website. Wij combineren de breinen van senior marketingexperts met de ongekende snelheid van AI om websites te lanceren die niet alleen prachtig zijn, maar voorspelbaar nieuwe klanten opleveren. Jij runt je bedrijf, wij vullen je agenda.
                             </p>
                             
-                            <div className="flex flex-col gap-3 opacity-0 hero-social">
-                                <div className="flex items-center gap-1 text-accent">
-                                    {[1, 2, 3, 4, 5].map((i) => (
-                                        <Star key={i} size={16} fill="currentColor" />
+                            <div className="flex items-center gap-4 text-sm text-slate-400 opacity-0 hero-social">
+                                <div className="flex -space-x-3">
+                                    {avatars.map((src, index) => (
+                                        <div
+                                            key={index}
+                                            className="h-10 w-10 rounded-full border-2 border-navy bg-navy-light bg-cover bg-center shadow-lg"
+                                            style={{ backgroundImage: `url('${src}')` }}
+                                        />
                                     ))}
-                                    <span className="ml-2 text-white font-bold text-sm">4.9/5</span>
                                 </div>
-                                <div className="flex items-center gap-4 text-sm text-slate-400">
-                                    <div className="flex -space-x-3">
-                                        {[1, 2, 3].map((i) => (
-                                            <div
-                                                key={i}
-                                                className="h-10 w-10 rounded-full border-2 border-navy bg-navy-light bg-cover bg-center shadow-lg"
-                                                style={{ backgroundImage: `url('https://i.pravatar.cc/100?u=${i}')` }}
-                                            />
+                                <div className="flex flex-col">
+                                    <div className="flex items-center gap-1 text-accent">
+                                        {[1, 2, 3, 4, 5].map((i) => (
+                                            <Star key={i} size={14} fill="currentColor" />
                                         ))}
                                     </div>
-                                    <span className="font-medium text-xs sm:text-sm">Vertrouwd door 500+ ondernemers</span>
+                                    <span className="font-medium text-xs sm:text-sm mt-0.5 text-white">Bewezen resultaat (4.9/5)</span>
                                 </div>
                             </div>
                         </div>

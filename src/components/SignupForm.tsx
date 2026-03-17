@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -58,12 +58,25 @@ export default function SignupForm({
         });
     }
 
+    // Auto redirect after successful signup
+    useEffect(() => {
+        if (isSubmitted) {
+            const timer = setTimeout(() => {
+                router.push("/dashboard/k");
+            }, 2500); // Redirect after 2.5 seconds
+            
+            return () => clearTimeout(timer);
+        }
+    }, [isSubmitted, router]);
+
     const handleGoogleSignIn = async () => {
         setIsProcessing(true);
         setError("");
         try {
             const user = await signInWithGoogle();
             if (user) {
+                // Determine redirect path based on user role if needed, defaulting to client dashboard
+                // Since this is signup, we assume they are a new client.
                 router.push("/dashboard/k");
             }
         } catch (err: unknown) {
@@ -97,6 +110,7 @@ export default function SignupForm({
 
             setIsProcessing(false);
             showSuccessState();
+            // Note: The redirection is now handled by the useEffect above
         } catch (err: unknown) {
             const error = err as { code?: string };
             console.error("Sign up error:", err);
@@ -139,7 +153,8 @@ export default function SignupForm({
                     >
                         Ga naar Dashboard
                     </button>
-                    <p className={`text-xs ${variant === "glass" ? "text-slate-500" : "text-slate-400"}`}>
+                    <p className={`text-xs ${variant === "glass" ? "text-slate-500" : "text-slate-400"} flex items-center gap-2`}>
+                        <Loader2 className="w-3 h-3 animate-spin" />
                         Je wordt automatisch doorverwezen...
                     </p>
                 </div>

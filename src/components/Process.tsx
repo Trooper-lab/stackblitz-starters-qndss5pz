@@ -42,45 +42,77 @@ export default function Process() {
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
-            // Animeer elke stap naar binnen wanneer je erheen scrolt
-            gsap.utils.toArray<HTMLElement>(".process-step").forEach((step, i) => {
-                const isEven = i % 2 === 0;
-                gsap.fromTo(
-                    step,
-                    {
-                        opacity: 0,
-                        y: 50,
-                        x: isEven ? -30 : 30, // Schuif in vanaf de zijkanten
-                        filter: "blur(10px)"
-                    },
-                    {
-                        opacity: 1,
-                        y: 0,
-                        x: 0,
-                        filter: "blur(0px)",
-                        duration: 1,
-                        ease: "power3.out",
-                        scrollTrigger: {
-                            trigger: step,
-                            start: "top 80%", // Start animatie wanneer de bovenkant van het element op 80% van het scherm is
-                            toggleActions: "play none none reverse" // Speelt af omlaag, draait terug omhoog
+            const mm = gsap.matchMedia();
+
+            mm.add("(min-width: 768px)", () => {
+                // Desktop: Slide in from sides
+                gsap.utils.toArray<HTMLElement>(".process-step").forEach((step, i) => {
+                    const isEven = i % 2 === 0;
+                    gsap.fromTo(
+                        step,
+                        {
+                            opacity: 0,
+                            y: 50,
+                            x: isEven ? -50 : 50, // Schuif in vanaf de zijkanten
+                            filter: "blur(10px)"
                         },
-                    }
-                );
+                        {
+                            opacity: 1,
+                            y: 0,
+                            x: 0,
+                            filter: "blur(0px)",
+                            duration: 0.8,
+                            ease: "power3.out",
+                            scrollTrigger: {
+                                trigger: step,
+                                start: "top 85%", // Start animatie wanneer de bovenkant op 85% van het scherm is
+                                toggleActions: "play none none reverse"
+                            },
+                        }
+                    );
+                });
+            });
+
+            mm.add("(max-width: 767px)", () => {
+                // Mobile: Fade up without horizontal slide
+                gsap.utils.toArray<HTMLElement>(".process-step").forEach((step) => {
+                    gsap.fromTo(
+                        step,
+                        {
+                            opacity: 0,
+                            y: 40,
+                            x: 0,
+                            filter: "blur(5px)"
+                        },
+                        {
+                            opacity: 1,
+                            y: 0,
+                            x: 0,
+                            filter: "blur(0px)",
+                            duration: 0.8,
+                            ease: "power3.out",
+                            scrollTrigger: {
+                                trigger: step,
+                                start: "top 85%",
+                                toggleActions: "play none none reverse"
+                            },
+                        }
+                    );
+                });
             });
 
             // Animeer de connectielijn tussen de stappen
             gsap.fromTo(
                 ".process-line",
-                { height: 0 },
+                { height: "0%" },
                 {
                     height: "100%",
                     ease: "none",
                     scrollTrigger: {
                         trigger: ".process-line-container",
-                        start: "top center",
-                        end: "bottom center",
-                        scrub: 1, // Koppel aan scrollpositie (vloeiend met 1s vertraging)
+                        start: "top 50%",
+                        end: "bottom 50%",
+                        scrub: true, // 'true' in plaats van '1' zorgt voor perfecte synchronisatie met de dots op elke schermgrootte
                     }
                 }
             );
@@ -92,16 +124,19 @@ export default function Process() {
                     {
                         scale: 1,
                         backgroundColor: "#FF7D29", // Accent kleur
-                        duration: 0.5,
+                        duration: 0.4,
                         ease: "back.out(2)",
                         scrollTrigger: {
                             trigger: dot,
-                            start: "top center",
+                            start: "top 50%", // Exact gelijk aan de line progress
                             toggleActions: "play none none reverse"
                         }
                     }
                 );
             });
+
+            // Forceer een refresh voor het geval de lay-out na initiële render verschuift
+            setTimeout(() => ScrollTrigger.refresh(), 100);
 
         }, containerRef);
 

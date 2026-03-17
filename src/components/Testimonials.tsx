@@ -1,24 +1,26 @@
+import Image from "next/image";
+
 const testimonials = [
     {
-        initials: "JD",
-        name: "Jim de Vries",
-        role: "🔧 Eigenaar, de Vries HVAC",
+        image: "/1.png",
+        name: "Rob Disbergen",
+        role: "Makelaar, Rob Disbergen",
         quote:
-            '"Mijn oude site was slechts een visitekaartje. AIleadsite veranderde het in een 24/7 verkoper. Onze telefoon is niet gestopt met rinkelen."',
+            '"AI Lead Site heeft een geweldige landingspagina voor ons gebouwd. We merken direct verschil in het aantal aanvragen dat via de site binnenkomt."',
     },
     {
-        initials: "SR",
-        name: "Sarah de Ruiter",
-        role: "💐 Oprichter, Bloom & Vine",
+        image: "/2.png",
+        name: "Johan",
+        role: "Eigenaar, Volopzon",
         quote:
-            '"Ze beloofden een site in 48 uur en hebben geleverd. De snelheid en professionaliteit is ongeëvenaard in deze branche."',
+            '"We begonnen met alleen advertising via een landingspagina, maar ze leverden zulk goed werk dat we uiteindelijk de hele website door hen hebben laten doen!"',
     },
     {
-        initials: "MK",
-        name: "Mark de Ridder",
-        role: "🚗 Directeur, Zenith Auto",
+        image: "/3.png",
+        name: "Tommy Vermeulen",
+        role: "Oprichter, Check Mijn Huis",
         quote:
-            '"Eindelijk een techbedrijf dat \'zaken\' spreekt. Geen verwarrend jargon, gewoon duidelijke ROI en een enorme toename in leads."',
+            '"Niet alleen hebben ze een superstrakke website gebouwd, maar ook een compleet custom CRM geïntegreerd én onze advertising opgepakt. Top service!"',
     },
 ];
 
@@ -39,19 +41,25 @@ export default function Testimonials() {
                     {testimonials.map((t) => (
                         <div
                             key={t.name}
-                            className="bg-white p-10 rounded-2xl shadow-lg border-b-4 border-accent"
+                            className="bg-white p-10 rounded-2xl shadow-lg border-b-4 border-accent flex flex-col h-full"
                         >
                             <div className="flex gap-1 mb-6">
                                 {[...Array(5)].map((_, i) => (
                                     <span key={i} className="text-accent text-xl">⭐</span>
                                 ))}
                             </div>
-                            <p className="font-bold text-lg text-navy leading-relaxed mb-8">
+                            <p className="font-bold text-lg text-navy leading-relaxed mb-8 flex-grow">
                                 {t.quote}
                             </p>
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-navy text-white flex items-center justify-center font-black text-sm shrink-0">
-                                    {t.initials}
+                            <div className="flex items-center gap-4 mt-auto">
+                                <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 border-2 border-slate-100 shadow-sm">
+                                    <Image
+                                        src={t.image}
+                                        alt={`Profielfoto van ${t.name}`}
+                                        fill
+                                        className="object-cover"
+                                        sizes="56px"
+                                    />
                                 </div>
                                 <div>
                                     <p className="font-extrabold text-navy mb-1">{t.name}</p>
