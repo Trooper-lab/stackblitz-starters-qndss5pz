@@ -13,6 +13,7 @@ import { notifyReviewDesign, notifyProjectUpdate } from "@/lib/services/notifica
 import AddDesignModal from "./AddDesignModal";
 import DesignViewer from "./DesignViewer";
 import InvoiceManager from "./InvoiceManager";
+import GenerateWebsiteModal from "./GenerateWebsiteModal";
 
 const STEPS = [
     { key: "vibecheck" as const, label: "Vibecheck", desc: "Design richting bepalen", icon: Sparkles, color: "indigo" },
@@ -60,6 +61,7 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
     const editingDesign = designs.find(d => d.id === editingDesignId) || null;
     const viewingDesign = designs.find(d => d.id === viewingDesignId) || null;
 
+    const [showGenerateModal, setShowGenerateModal] = useState(false);
     const [notifSent, setNotifSent] = useState<string | null>(null);
     const [testLink, setTestLink] = useState(project.testLink || "");
     const isEditingTestLink = useRef(false);
@@ -212,6 +214,19 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
         }
     };
 
+    const handleSaveGeneratedWebsite = async (html: string, name: string) => {
+        const newDesign: ProjectDesign = {
+            id: Date.now().toString(),
+            name,
+            description: "Gegenereerd door AI op basis van bedrijfsnaam en branche",
+            htmlCode: html,
+            status: "pending",
+            phase: status === "vibecheck" || status === "design_review" ? status : "vibecheck",
+            createdAt: Timestamp.now(),
+        };
+        await handleAddDesign(newDesign);
+    };
+
     const handleUpdateDesignFeedback = async (designId: string, feedback: string) => {
         const updated = designs.map(d => 
             d.id === designId ? { ...d, feedback } : d
@@ -293,15 +308,24 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
     return (
         <>
             {showDesignModal && (
-                <AddDesignModal 
+                <AddDesignModal
                     onClose={() => {
                         closeDesignModal();
-                    }} 
-                    onAdd={handleAddDesign} 
+                    }}
+                    onAdd={handleAddDesign}
                     defaultName={designs.length === 0 && clientStatus === "lead" ? "Gratis Website Ontwerp V1" : ""}
                     initialDesign={editingDesign}
                     projectId={project.id}
                     phase={status === "vibecheck" || status === "design_review" ? status : undefined}
+                />
+            )}
+            {showGenerateModal && (
+                <GenerateWebsiteModal
+                    projectId={project.id}
+                    initialCompanyName={project.uploadData?.companyDetails?.name ?? project.title}
+                    initialIndustry={project.uploadData?.projectContext?.goals ?? ""}
+                    onSave={handleSaveGeneratedWebsite}
+                    onClose={() => setShowGenerateModal(false)}
                 />
             )}
             {viewingDesign && (
@@ -438,12 +462,20 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                                             <p className="text-xs text-slate-500">Upload homepage concepten om de klant te helpen de richting te kiezen</p>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => setShowDesignModal(true)}
-                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-bold transition-all shadow-lg shadow-indigo-500/20"
-                                    >
-                                        <Plus className="w-4 h-4" /> Concept Toevoegen
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => setShowGenerateModal(true)}
+                                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white hover:bg-primary/90 text-sm font-bold transition-all shadow-lg shadow-primary/20"
+                                        >
+                                            <Sparkles className="w-4 h-4" /> Genereer met AI
+                                        </button>
+                                        <button
+                                            onClick={() => setShowDesignModal(true)}
+                                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-bold transition-all shadow-lg shadow-indigo-500/20"
+                                        >
+                                            <Plus className="w-4 h-4" /> Concept Toevoegen
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {designs.filter(d => d.phase === 'vibecheck' || (!d.phase && status === 'vibecheck')).length === 0 ? (
@@ -455,12 +487,20 @@ export default function ProjectDetail({ project: initialProject, clientId, clien
                                             <p className="font-bold text-slate-600 mb-1">Nog geen concepten geüpload</p>
                                             <p className="text-xs text-slate-500">Upload 3 homepage concepten om de klant de juiste richting te laten kiezen.</p>
                                         </div>
-                                        <button
-                                            onClick={() => setShowDesignModal(true)}
-                                            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-bold transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
-                                        >
-                                            <Plus className="w-4 h-4" /> Eerste Concept Toevoegen
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => setShowGenerateModal(true)}
+                                                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary/90 text-sm font-bold transition-all shadow-lg shadow-primary/20 active:scale-95"
+                                            >
+                                                <Sparkles className="w-4 h-4" /> Genereer met AI
+                                            </button>
+                                            <button
+                                                onClick={() => setShowDesignModal(true)}
+                                                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-bold transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                                            >
+                                                <Plus className="w-4 h-4" /> Concept Toevoegen
+                                            </button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="space-y-3">
