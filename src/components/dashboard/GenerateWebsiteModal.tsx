@@ -13,6 +13,7 @@ interface Props {
 }
 
 export default function GenerateWebsiteModal({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   projectId,
   initialCompanyName = "",
   initialIndustry = "",
@@ -261,9 +262,9 @@ export default function GenerateWebsiteModal({
 
               <button
                 onClick={() => { setResult(null); setError(null); }}
-                className="w-full text-white/40 hover:text-white/70 text-sm transition-colors py-1"
+                className="w-full text-white/40 hover:text-white/60 text-sm transition-colors py-2"
               >
-                Opnieuw genereren
+                ← Opnieuw genereren
               </button>
             </>
           )}
