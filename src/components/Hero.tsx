@@ -89,8 +89,6 @@ export default function Hero() {
         return () => ctx.revert();
     }, []);
 
-    const avatars = ["/1.png", "/2.png", "/3.png"];
-
     return (
         <section ref={containerRef} className="relative overflow-hidden bg-navy pt-32 pb-16 md:pt-40 md:pb-24 text-white min-h-[90vh] flex items-center w-full">
             <div className="absolute top-0 right-0 h-full w-full pointer-events-none overflow-hidden">
