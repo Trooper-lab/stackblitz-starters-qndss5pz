@@ -14,8 +14,8 @@ export default function Hero() {
         const calculateFontSize = () => {
             if (!titleContainerRef.current) return;
             const containerWidth = titleContainerRef.current.clientWidth;
-            const newFontSize = (containerWidth / 15.5); 
-            const clampedSize = Math.max(26, Math.min(newFontSize, 110)); 
+            const newFontSize = (containerWidth / 15.5);
+            const clampedSize = Math.max(26, Math.min(newFontSize, 110));
             setTitleFontSize(`${clampedSize}px`);
         };
         calculateFontSize();
@@ -61,7 +61,7 @@ export default function Hero() {
                 ".hero-form-wrapper",
                 { opacity: 0, filter: "blur(30px)", y: 50, x: 30 },
                 { opacity: 1, filter: "blur(0px)", y: 0, x: 0, duration: 1.2, ease: "power3.out" },
-                0.4 
+                0.4
             );
 
             gsap.to(".bg-shape-1", {
@@ -98,15 +98,15 @@ export default function Hero() {
 
             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
                 <div className="mb-12 w-full" ref={titleContainerRef}>
-                <h1
+                    <h1
                         className="font-display font-extrabold leading-[1.05] tracking-tight text-white flex flex-col items-start gap-1 w-full"
-                        style={{ fontSize: titleFontSize, transition: 'font-size 0.1s ease-out' }}
-                >
+                        style={{ fontSize: titleFontSize, transition: "font-size 0.1s ease-out" }}
+                    >
                         <span className="opacity-0 hero-title-line pr-4 leading-tight">Van statisch naar slim.</span>
                         <span className="opacity-0 hero-title-line pr-4 leading-tight">
                             <span className="text-accent italic">Jouw AI-Leadmachine </span>in 5 dagen<span className="text-accent">.</span>
                         </span>
-                </h1>
+                    </h1>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -115,7 +115,7 @@ export default function Hero() {
                             <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-md opacity-0 hero-subtitle">
                                 Stop met investeren in statische websites. Wij bouwen een intelligent systeem dat wekelijks met je meegroeit, leads genereert en zichzelf optimaliseert via AI.
                             </p>
-                            
+
                             <div className="flex items-center gap-4 text-sm text-slate-400 opacity-0 hero-social">
                                 <div className="flex -space-x-3">
                                     {[1, 2, 3].map((i) => (
@@ -154,4 +154,18 @@ export default function Hero() {
                             </div>
                             <div className="flex items-center gap-3 opacity-0 hero-usp">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/20 shrink-0">
-                                    <Check className="h-4 w-4 t
+                                    <Check className="h-4 w-4 text-accent" strokeWidth={3} />
+                                </div>
+                                <span>AI-native CRM dat meegroeit zonder extra licentiekosten</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="relative w-full max-w-xl mx-auto lg:max-w-none lg:col-span-7 lg:pl-10 opacity-0 hero-form-wrapper">
+                        <HeroForm />
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}

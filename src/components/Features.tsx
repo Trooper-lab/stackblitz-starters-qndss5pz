@@ -17,7 +17,7 @@ const features = [
         gradient: "from-blue-500/10 to-transparent",
     },
     {
-        title: "🧠 AI Business OS",
+        title: "✨ AI first",
         description: "Geïntegreerd AI-native CRM. Je website en sales-backend zijn één slim organisme dat meegroeit zonder extra licentiekosten.",
         icon: <Brain className="w-10 h-10 text-emerald-400" />,
         gradient: "from-emerald-500/10 to-transparent",

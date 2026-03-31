@@ -1,8 +1,8 @@
 export default function Stats() {
     const stats = [
-        { value: "🔄 Adaptive", label: "Design", desc: "Nooit meer verouderd. Je site past zich wekelijks aan de markt aan — zonder extra kosten." },
+        { value: "🔓 Adaptive", label: "Website", desc: "Nooit meer verouderd. Je site past zich wekelijks aan de markt aan, zonder extra kosten." },
         { value: "🚀 5 Dagen", label: "Levertijd", desc: "Van concept naar conversie in één werkweek. Jouw leadmachine live terwijl concurrenten nog briefen." },
-        { value: "🧠 AI Business OS", label: "Geïntegreerd systeem", desc: "Website én sales-backend als één slim organisme. AI-native CRM dat meegroeit zonder extra licentiekosten." },
+        { value: "✨ AI First", label: "Geïntegreerd systeem", desc: "Website én sales-backend als één slim organisme. AI-native CRM dat meegroeit zonder extra licentiekosten." },
     ];
 
     return (
