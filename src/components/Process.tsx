@@ -12,28 +12,28 @@ if (typeof window !== "undefined") {
 const steps = [
     {
         num: "00",
-        title: "🔍 Het Voorwerk (Gratis)",
-        desc: "Jij maakt een gratis account aan en wij brengen je bedrijf in kaart. Wat zijn de kernwaarden, wie is de doelgroep en wat is de visie?",
+        title: "🔍 Strategische Intake",
+        desc: "Jij maakt een account aan en wij brengen je bedrijf in kaart: kernwaarden, doelgroep, groeistrategie en het juiste plan. Dit is de fundering van je Business OS.",
     },
     {
         num: "01",
-        title: "🎨 Het Design (Gratis)",
-        desc: "We maken 1 uniek design voor je homepage. Dit is geen AI auto-generated design, maar mensenwerk ondersteund door AI. Bij akkoord sturen we nog 2 variaties.",
+        title: "🎨 Adaptive Design",
+        desc: "Wij bouwen een design dat meegroeit. Geen statisch sjabloon — mensenwerk versterkt door AI, gericht op conversie én aanpasbaarheid op de lange termijn.",
     },
     {
         num: "02",
         title: "🛠️ Live Ontwikkeling",
-        desc: "Na akkoord op het design, bouwen we de website op een afgeschermde testlocatie zodat jij de ontwikkeling 'live' kunt bijhouden.",
+        desc: "Na akkoord op het design bouwen we je systeem op een afgeschermde testlocatie. Jij volgt de ontwikkeling live mee en geeft tussentijds feedback.",
     },
     {
         num: "03",
-        title: "🔄 Iteraties",
-        desc: "Klopt de inhoud? We sturen bij waar nodig, finetunen de details en optimaliseren de funnel.",
+        title: "🔗 Systeem & CRM Koppeling",
+        desc: "Afhankelijk van je plan koppelen we je AI-native CRM, lead-automatisering en sales-pipeline aan de website. Alles wordt één slim organisme.",
     },
     {
         num: "04",
-        title: "🚀 Publiceren of Testen",
-        desc: "We lanceren de site op je eigen domein, of eerst op een beveiligd adpagina.nl subdomein (bijv. jouwbedrijf.adpagina.nl) om eerst veilig te testen met advertentieverkeer.",
+        title: "🚀 Live & Continu Actief",
+        desc: "We lanceren op je domein. Maar hier stopt het niet — je systeem groeit wekelijks mee via adaptive updates, AI-optimalisaties en doorlopende support.",
     },
 ];
 
@@ -153,7 +153,7 @@ export default function Process() {
                         🗺️ Onze Werkwijze<span className="text-accent">.</span>
                     </h2>
                     <p className="text-lg text-slate-600 font-medium leading-relaxed mb-8">
-                        Geen eindeloze vergaderingen of onduidelijke trajecten. Een strak en transparant stappenplan van gratis visie tot lancering.
+                        Geen eindeloze vergaderingen of onduidelijke trajecten. Een strak stappenplan van strategische intake tot een levend systeem dat nooit stopt met optimaliseren.
                     </p>
 
                     {/* Gemiddelde Tijd Badge */}

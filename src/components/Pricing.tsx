@@ -14,7 +14,7 @@ const comparison = [
   {
     label: 'Opstartkosten',
     ai: '€0 (maar zelf bouwen)',
-    us: 'Vanaf €50',
+    us: 'Vanaf €295 setup (eenmalig)',
     agency: '€5.000 - €15.000+',
   },
   {
@@ -26,19 +26,25 @@ const comparison = [
   {
     label: 'Design & Strategie',
     ai: 'Generieke, standaard templates',
-    us: 'Mensenwerk + AI, focus op leads',
+    us: 'Adaptive design — wekelijks bijgewerkt',
     agency: 'Volledig maatwerk (vaak traag)',
   },
   {
     label: 'Aanpassingen & Onderhoud',
     ai: 'Zelf alles updaten en oplossen',
-    us: 'Zelf via AI chat óf wij doen het',
+    us: 'Onderdeel van de flow, geen extra kosten',
     agency: 'Traag, uurtje-factuurtje (€100/u+)',
+  },
+  {
+    label: 'CRM & Automatisering',
+    ai: 'Los pakket, aparte licentiekosten',
+    us: 'AI-native CRM inbegrepen — groeit mee',
+    agency: 'Handmatig integreren, apart budget',
   },
   {
     label: 'Eindresultaat',
     ai: 'Een digitaal visitekaartje',
-    us: 'Een geoptimaliseerde leadmachine',
+    us: 'Een levend AI Business OS',
     agency: 'Een prachtig (maar duur) kunstwerk',
   },
 ];
@@ -132,32 +138,12 @@ export default function Pricing() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-navy mb-4 leading-tight">
-            Probeer eerst, beslis later
+            Kies je groeiniveau
           </h2>
           <p className="text-lg text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
-            We zijn zo overtuigd van onze aanpak dat we je 3 gratis ontwerpen
-            geven. Kies je favoriet en we gaan pas bouwen als jij 100% 
-            tevreden bent over het resultaat.
+            Geen vage offertes of verrassingen achteraf. Transparante eenmalige setup + een vaste maandelijkse investering.
+            Commitment in beide richtingen — wij groeien mee, jij betaalt nooit voor stilstand.
           </p>
-        </div>
-
-        <div className="bg-white p-12 rounded-3xl shadow-2xl border-4 border-accent max-w-4xl mx-auto text-center mb-32">
-          <h3 className="font-display text-3xl font-extrabold text-navy mb-4">
-            Claim je 3 Gratis Homepage Designs
-          </h3>
-          <p className="text-slate-600 mb-8 max-w-xl mx-auto">
-            Geen kleine lettertjes, geen addertjes onder het gras. We maken 3
-            unieke designs voor je. Ben je overtuigd? Dan finetunen we je favoriet
-            tot in de puntjes en starten we de bouw. 
-            <br />
-            <span className="text-[10px] opacity-60">* De ontwerpen zijn concepten om de richting te bepalen.</span>
-          </p>
-          <a
-            href="#contact"
-            className="inline-block bg-accent text-white px-10 py-5 rounded-2xl text-lg font-black uppercase tracking-widest hover:bg-orange-600 transition-all duration-300 shadow-xl"
-          >
-            Ja, ik wil mijn gratis design!
-          </a>
         </div>
 
         {/* --- POSITIONERING / VERGELIJKING --- */}
@@ -211,11 +197,11 @@ export default function Pricing() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div className="max-w-xl">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-navy mb-4 leading-tight">
-              💼 Onze <span className="text-accent italic">Groeiplannen</span>{' '}
-              (Gebouwd voor Schaal)<span className="text-accent">.</span>
+              💼 Jouw <span className="text-accent italic">AI Business OS</span>{' '}
+              — kies je instapniveau<span className="text-accent">.</span>
             </h2>
             <p className="text-lg text-slate-600 font-medium leading-relaxed">
-              Geen vage offertes of technisch jargon. Duidelijke prijzen, inclusief supersnelle hosting en onderhoud. Omdat we efficiënt werken met AI, krijg jij de waarde van een high-end bureau voor een fractie van de prijs.
+              Eenmalige setup, vaste maandelijkse investering. Geen uurtje-factuurtje, geen verrassingen. We verkopen commitment — en leveren resultaat dat meegroeit.
             </p>
           </div>
 
@@ -270,23 +256,26 @@ export default function Pricing() {
                   <h3 className="font-display text-2xl lg:text-3xl font-extrabold mb-2 text-navy flex items-center gap-2">
                     {tier.name}
                   </h3>
-                  <p className="text-sm text-slate-500 font-medium mb-8">
+                  <p className="text-sm text-slate-500 font-medium mb-1">
                     {tier.desc}
                   </p>
+                  <span className={`inline-block text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-6 ${tier.featured ? 'bg-accent/10 text-accent' : 'bg-navy/10 text-navy'}`}>
+                    Focus: {tier.focus}
+                  </span>
 
                   <div className="mb-6 space-y-4">
                     <div>
                       <p className="text-[10px] sm:text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
-                        Totale waarde:
+                        Eenmalige setup:
                       </p>
-                      <p className={`text-xl font-black ${tier.featured ? 'text-orange-500' : 'text-navy'}`}>
-                        €{tier.features.reduce((acc, f) => acc + (f.numericValue || 0), 0).toLocaleString('nl-NL')}
+                      <p className={`text-2xl font-black ${tier.featured ? 'text-orange-500' : 'text-navy'}`}>
+                        {tier.setupFee}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-[10px] sm:text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
-                        Onze aanbieding:
+                        Maandelijks abonnement:
                       </p>
                       <div className="flex items-baseline gap-2">
                         <span
@@ -296,7 +285,7 @@ export default function Pricing() {
                           €{billingCycle === 'yearly' ? Math.round(tier.priceYearlyValue / 12) : tier.priceMonthlyValue}
                         </span>
                         <span className="text-sm sm:text-base font-bold text-slate-400 uppercase tracking-widest">
-                          /{billingCycle === 'yearly' ? 'Maand' : 'Maand'}
+                          /maand
                         </span>
                       </div>
                       {billingCycle === 'yearly' && (

@@ -100,13 +100,13 @@ export default function Hero() {
 
             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
                 <div className="mb-12 w-full" ref={titleContainerRef}>
-                <h1 
+                <h1
                         className="font-display font-extrabold leading-[1.05] tracking-tight text-white flex flex-col items-start gap-1 w-full"
                         style={{ fontSize: titleFontSize, transition: 'font-size 0.1s ease-out' }}
                 >
-                        <span className="opacity-0 hero-title-line pr-4 leading-tight">Verander je website in een</span>
+                        <span className="opacity-0 hero-title-line pr-4 leading-tight">Van statisch naar slim.</span>
                         <span className="opacity-0 hero-title-line pr-4 leading-tight">
-                            <span className="text-accent italic">24/7 leadmachine </span> binnen 5 dagen<span className="text-accent">.</span>
+                            <span className="text-accent italic">Jouw AI-Leadmachine </span>in 5 dagen<span className="text-accent">.</span>
                         </span>
                 </h1>
                 </div>
@@ -115,16 +115,16 @@ export default function Hero() {
                     <div className="flex flex-col gap-10 lg:col-span-5 pt-4">
                         <div className="flex flex-col gap-6">
                             <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-md opacity-0 hero-subtitle">
-                                Stop met het verliezen van klanten door een trage, verouderde website. Wij combineren de breinen van senior marketingexperts met de ongekende snelheid van AI om websites te lanceren die niet alleen prachtig zijn, maar voorspelbaar nieuwe klanten opleveren. Jij runt je bedrijf, wij vullen je agenda.
+                                Stop met investeren in statische websites. Wij bouwen een intelligent systeem dat wekelijks met je meegroeit, leads genereert en zichzelf optimaliseert via AI.
                             </p>
                             
                             <div className="flex items-center gap-4 text-sm text-slate-400 opacity-0 hero-social">
                                 <div className="flex -space-x-3">
-                                    {avatars.map((src, index) => (
+                                    {[1, 2, 3].map((i) => (
                                         <div
-                                            key={index}
+                                            key={i}
                                             className="h-10 w-10 rounded-full border-2 border-navy bg-navy-light bg-cover bg-center shadow-lg"
-                                            style={{ backgroundImage: `url('${src}')` }}
+                                            style={{ backgroundImage: `url('/${i}.png')` }}
                                         />
                                     ))}
                                 </div>
@@ -146,28 +146,14 @@ export default function Hero() {
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/20 shrink-0">
                                     <Check className="h-4 w-4 text-accent" strokeWidth={3} />
                                 </div>
-                                <span>Volledig beheer via jouw eigen dashboard</span>
+                                <span>De laatste website-migratie die je ooit zult doen</span>
                             </div>
                             <div className="flex items-center gap-3 opacity-0 hero-usp">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/20 shrink-0">
                                     <Check className="h-4 w-4 text-accent" strokeWidth={3} />
                                 </div>
-                                <span>Ontworpen door experts voor bewezen resultaten</span>
+                                <span>Aanpassingen in de flow, geen uurtje-factuurtje</span>
                             </div>
                             <div className="flex items-center gap-3 opacity-0 hero-usp">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/20 shrink-0">
-                                    <Check className="h-4 w-4 text-accent" strokeWidth={3} />
-                                </div>
-                                <span>Geoptimaliseerd voor Google (SEO) & Snelheid</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="relative w-full max-w-xl mx-auto lg:max-w-none lg:col-span-7 lg:pl-10 opacity-0 hero-form-wrapper">
-                        <HeroForm />
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
+                                    <Check className="h-4 w-4 t

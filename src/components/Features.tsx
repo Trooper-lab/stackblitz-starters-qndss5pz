@@ -1,25 +1,25 @@
 "use client";
 
-import { Clock, Rocket, Banknote } from "lucide-react";
+import { RefreshCw, Clock, Brain } from "lucide-react";
 import { motion } from "framer-motion";
 
 const features = [
     {
-        title: "⚡ Levering in 5 dagen",
-        description: "Volledig complete, op maat ontworpen websites geleverd in slechts 5 werkdagen. Geen excuses.",
-        icon: <Clock className="w-10 h-10 text-purple-400" />,
+        title: "🔄 Adaptive Design",
+        description: "Nooit meer verouderd. Je site past zich wekelijks aan de markt aan — zonder extra kosten of wachttijden.",
+        icon: <RefreshCw className="w-10 h-10 text-purple-400" />,
         gradient: "from-purple-500/10 to-transparent",
     },
     {
-        title: "🏆 Kwaliteit van een bureau",
-        description: "Hoogwaardig ontwerp en prestaties die wedijveren met 's werelds beste digitale bureaus.",
-        icon: <Rocket className="w-10 h-10 text-blue-400" />,
+        title: "⚡ 5 Dagen Levertijd",
+        description: "Van concept naar conversie in één werkweek. Jouw leadmachine staat live terwijl concurrenten nog briefen.",
+        icon: <Clock className="w-10 h-10 text-blue-400" />,
         gradient: "from-blue-500/10 to-transparent",
     },
     {
-        title: "💰 Betaalbare prijs",
-        description: "Eersteklas resultaten zonder de premium bureaukosten. Transparante prijzen voor elke schaal.",
-        icon: <Banknote className="w-10 h-10 text-emerald-400" />,
+        title: "🧠 AI Business OS",
+        description: "Geïntegreerd AI-native CRM. Je website en sales-backend zijn één slim organisme dat meegroeit zonder extra licentiekosten.",
+        icon: <Brain className="w-10 h-10 text-emerald-400" />,
         gradient: "from-emerald-500/10 to-transparent",
     },
 ];
@@ -29,9 +29,9 @@ export default function Features() {
         <section id="services" className="py-32 relative overflow-hidden">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-20">
-                    <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">🎯 Onze kernfocus</h2>
+                    <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">🎯 Waarom het AI Business OS anders is</h2>
                     <p className="text-white/60 text-lg max-w-2xl mx-auto">
-                        We hebben het traditionele bureaumodel gedestilleerd in drie essentiële pijlers om u in recordtijd de beste resultaten te geven.
+                        Geen statische website. Geen uurtje-factuurtje. Eén intelligent systeem dat met je meebeweegt, leads genereert en zichzelf continu optimaliseert.
                     </p>
                 </div>
 

@@ -9,6 +9,9 @@ export interface PricingTier {
   id: string;
   name: string;
   desc: string;
+  focus: string;
+  setupFee: string;
+  setupFeeValue: number;
   priceYearly: string;
   priceMonthly: string;
   priceYearlyValue: number;
@@ -31,55 +34,64 @@ export interface PricingAddon {
 
 export const pricingTiers: PricingTier[] = [
   {
-    id: 'starter',
-    name: '🌱 Groei Starter',
-    desc: 'Perfect voor lokale dominantie',
-    priceYearly: '€1.000',
-    priceMonthly: '100',
-    priceYearlyValue: 1000,
-    priceMonthlyValue: 100,
+    id: 'snelstarter',
+    name: '🚀 Snelstarter',
+    desc: 'Eén krachtige landingspagina, direct resultaat uit Ads.',
+    focus: 'Direct resultaat uit Ads',
+    setupFee: '€295',
+    setupFeeValue: 295,
+    priceYearly: '€950',
+    priceMonthly: '95',
+    priceYearlyValue: 950,
+    priceMonthlyValue: 95,
     featured: false,
     features: [
-      { text: 'Hoog-converterende Landingspagina', value: '€3.450', numericValue: 3450 },
-      { text: 'AI-Gedreven SEO Fundering', value: '€1.140/JR', numericValue: 1140 },
-      { text: 'Custom Lead Formulier & Funnel', value: '€795', numericValue: 795 },
-      { text: 'Premium, supersnelle hosting & GDPR compliance', value: '€420/JR', numericValue: 420 },
+      { text: 'Hoog-converterende Landingspagina (Ads-ready)', value: '€3.450', numericValue: 3450 },
+      { text: 'Custom Lead Formulier & Conversie Funnel', value: '€795', numericValue: 795 },
+      { text: 'Maandelijkse copy- & CRO-optimalisaties', value: '€600/JR', numericValue: 600 },
+      { text: 'Supersnelle hosting, SSL & GDPR compliance', value: '€420/JR', numericValue: 420 },
     ],
-    cta: 'CLAIM DIT PLAN',
+    cta: 'START JE TRANSFORMATIE',
   },
   {
-    id: 'leader',
+    id: 'marktleider',
     name: '👑 Marktleider',
-    desc: 'Onze Beste Keuze - Domineer je markt',
-    priceYearly: '€3.000',
-    priceMonthly: '300',
-    priceYearlyValue: 3000,
-    priceMonthlyValue: 300,
+    desc: 'De Levende Website — past zich wekelijks aan de markt aan.',
+    focus: 'De Levende Website',
+    setupFee: '€750',
+    setupFeeValue: 750,
+    priceYearly: '€2.500',
+    priceMonthly: '250',
+    priceYearlyValue: 2500,
+    priceMonthlyValue: 250,
     featured: true,
     features: [
-      { text: 'Tot 8 geoptimaliseerde pagina soorten', value: '€5.850', numericValue: 5850 },
-      { text: 'Volledige Conversie Funnel & Meerdere Formulieren', value: '€2.495', numericValue: 2495 },
-      { text: "Onbeperkt aantal pagina's & CMS", value: '€1.440/JR', numericValue: 1440 },
-      { text: 'Alles uit het Starter plan', value: '€5.805', numericValue: 5805, isTotal: true },
+      { text: 'Volledige multi-page website (tot 8 pagina\'s)', value: '€5.850', numericValue: 5850 },
+      { text: 'Wekelijkse AI-gedreven content & marktadaptaties', value: '€2.400/JR', numericValue: 2400 },
+      { text: 'Volledige Conversie Funnel & meerdere formulieren', value: '€2.495', numericValue: 2495 },
+      { text: 'Alles uit het Snelstarter plan', value: '€5.265', numericValue: 5265, isTotal: true },
     ],
     cta: 'BEGIN NU MET GROEIEN',
   },
   {
-    id: 'custom',
-    name: '⚡ Kracht op Maat',
-    desc: 'Voor hoog volume & gevestigde bedrijven',
-    priceYearly: '€7.000',
-    priceMonthly: '700',
-    priceYearlyValue: 7000,
-    priceMonthlyValue: 700,
+    id: 'business-os',
+    name: '🧠 Business OS',
+    desc: 'Volledige automatisering — website én sales-backend als één slim systeem.',
+    focus: 'Volledige automatisering',
+    setupFee: '€1.950',
+    setupFeeValue: 1950,
+    priceYearly: '€4.950',
+    priceMonthly: '495',
+    priceYearlyValue: 4950,
+    priceMonthlyValue: 495,
     featured: false,
     features: [
-      { text: 'Onbeperkte Pagina-architectuur', value: '€11.500', numericValue: 11500 },
-      { text: 'Geintegreerd Custom CRM', value: '€2.940/JR', numericValue: 2940 },
-      { text: 'AI integraties/automatisering', value: '€3.850', numericValue: 3850 },
-      { text: 'Toegewijde Groeistrateeg', value: '€3.600/JR', numericValue: 3600 },
+      { text: 'AI-native CRM geïntegreerd in je website', value: '€4.800/JR', numericValue: 4800 },
+      { text: 'Volledige sales-pipeline & lead-automatisering', value: '€3.850', numericValue: 3850 },
+      { text: 'AI-integraties & workflows op maat', value: '€3.600/JR', numericValue: 3600 },
+      { text: 'Alles uit het Marktleider plan', value: '€16.010', numericValue: 16010, isTotal: true },
     ],
-    cta: 'SPREEK MET EEN PRO',
+    cta: 'BEKIJK JE BUSINESS OS',
   },
 ];
 

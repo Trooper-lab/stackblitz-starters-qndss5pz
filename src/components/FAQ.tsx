@@ -4,28 +4,28 @@ import { useState } from 'react';
 
 const faqs = [
   {
-    q: '🎨 Hoe werkt het gratis design proces?',
-    a: 'Jij maakt een gratis account aan en wij maken samen met AI een uniek design voor jouw homepage. Dit is geen gratis AI auto-generated website service, maar mensenwerk versterkt door AI. Ben je overtuigd? Dan sturen we nog 2 andere variaties om er zeker van te zijn dat we goed zitten en starten we met de ontwikkeling.',
+    q: '🧠 Wat is het AI Business OS precies?',
+    a: 'Het AI Business OS is de combinatie van je website, je CRM en je sales-automatisering in één intelligent systeem. In plaats van losse tools te stapelen (website hier, CRM daar, ads-tool ergens anders), bouw je bij ons één geïntegreerd organisme dat wekelijks meegroeit. Het adaptive design past zich aan de markt aan, het AI-native CRM beheert je leads automatisch, en alles werkt samen zonder extra licentiekosten.',
   },
   {
-    q: '💰 Wat kost een AI Lead Site?',
-    a: 'Onze prijzen zijn transparant en flexibel. Je kunt kiezen voor een maandelijks abonnement (vanaf €100/mnd) of een jaarlijks abonnement (vanaf €1.000/jaar), waarbij je 2 maanden gratis krijgt. Bij beide opties is supersnelle hosting en onderhoud inbegrepen. Er zijn geen verborgen eenmalige opstartkosten.',
+    q: '💰 Hoe zit de prijsstructuur in elkaar?',
+    a: 'We werken met een transparant model: een eenmalige setup + een vaste maandelijkse investering. Geen verborgen kosten, geen uurtje-factuurtje. Snelstarter (LP): €295 setup + €95/mnd — ideaal als je direct resultaat wilt uit advertentieverkeer. Marktleider (Full Site): €750 setup + €250/mnd — de levende website die wekelijks meebeweegt. Business OS (CRM): €1.950 setup + €495/mnd — volledige automatisering van website én sales-backend. Alle plannen bevatten hosting, onderhoud en doorlopende optimalisaties.',
   },
   {
-    q: '🤖 Hoe werkt de AI Assistent precies?',
-    a: 'Wanneer je kiest voor de AI Assistent add-on (€90/mnd), krijg je direct in je dashboard toegang tot een slimme chat. Je kunt de AI opdrachten geven zoals "Pas de hoofdkleur aan naar blauw" of "Maak een nieuwe landingspagina over onze nieuwste service", en de AI voert deze wijzigingen direct en zonder technische code uit. Je werkt in een afgeschermde omgeving, zodat je website nooit zomaar offline gaat. Wij fungeren hierbij als technische back-up.',
+    q: '🔄 Wat betekent "adaptive design" in de praktijk?',
+    a: 'Adaptive design betekent dat je website nooit meer veroudert. Ons systeem monitort marktontwikkelingen en past copy, structuur en aanbod aan waar nodig — zonder dat jij er een opdracht voor hoeft in te sturen. Grotere aanpassingen bespreken we met je in de maandelijkse flow. Dit is geen uurtje-factuurtje-model, maar onderdeel van je abonnement.',
   },
   {
     q: '📈 Hoe lang duurt het voordat ik resultaat zie?',
-    a: 'Onze sites zijn vanaf dag één gebouwd voor conversie. Hoewel organische SEO (via onze Groei add-on) 30-90 dagen duurt om volledig op te starten, zien veel klanten een verhoogde leadstroom binnen de eerste 14 dagen na lancering dankzij de geoptimaliseerde site-architectuur en conversiegerichte designs. Wil je het eerst testen met advertenties? We kunnen je site ook lanceren op een adpagina.nl subdomein.',
+    a: 'Onze systemen zijn vanaf dag één gebouwd voor conversie. Veel klanten zien een verhoogde leadstroom binnen de eerste 14 dagen na lancering dankzij de geoptimaliseerde architectuur en conversiegerichte structuur. Organische SEO (via onze Groei add-on) duurt 30-90 dagen om volledig op te starten. Wil je direct testen met advertentieverkeer? We kunnen ook lanceren op een beveiligd subdomein zodat je data verzamelt vóór je het live zet.',
   },
   {
     q: '⏳ Hoe snel worden aanpassingen doorgevoerd?',
-    a: 'Omdat wij geen traditioneel website bureau zijn, focussen wij ons primair op het lanceren van nieuwe projecten. Standaard aanpassingen kunnen daarom 3 tot 4 werkdagen duren. Heb je vaker snelle aanpassingen nodig? Dan bieden we een Premium Support add-on (€150/mnd) aan waarmee wijzigingen binnen 24 uur worden doorgevoerd en je direct contact hebt via Slack of WhatsApp.',
+    a: 'Standaard aanpassingen worden binnen 3-4 werkdagen verwerkt als onderdeel van je abonnement — geen aparte factuur. Heb je hogere urgentie? Met de Premium Support add-on (€150/mnd) worden wijzigingen binnen 24 uur doorgevoerd en heb je direct contact via Slack of WhatsApp, plus een kwartaalstrategie-sessie.',
   },
   {
     q: '🚀 Zit ik aan jullie vast?',
-    a: 'Ja en nee. Wij verkopen geen losse website, maar een doorlopende service (Website as a Service). Onze abonnementen dekken de supersnelle hosting, het doorlopende onderhoud en de licenties voor de technologie die we gebruiken. Je besteedt de techniek aan ons uit, zodat jij je kunt focussen op je bedrijf. Je kunt natuurlijk opzeggen volgens je contracttermijn (maandelijks of jaarlijks), maar de website is gebouwd op ons exclusieve platform en kan niet zomaar worden overgezet naar een standaard WordPress hosting.',
+    a: 'We verkopen commitment in beide richtingen. Jij investeert in een doorlopend systeem — wij leveren doorlopend resultaat. Je kunt opzeggen volgens je contracttermijn (maandelijks of jaarlijks). Het platform is exclusief gebouwd voor maximale performance en kan niet zomaar worden overgezet naar een standaard hosting. Maar eerlijk gezegd: klanten die groeien, stappen niet over. Dat is onze beste garantie.',
   },
 ];
 

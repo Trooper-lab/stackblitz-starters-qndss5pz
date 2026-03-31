@@ -9,22 +9,22 @@ if (typeof window !== 'undefined') {
 
 const features = [
     {
-        emoji: "🧠",
-        title: "Strategisch Meesterschap",
-        description: "Je digitale aanwezigheid verdient meer dan een sjabloon. Onze senior marketeers leggen het fundament. Geen blinde AI-generatie, maar een doordachte marketingstrategie gericht op conversie.",
-        subtitle: "Mensenwerk"
+        emoji: "🔄",
+        title: "Levend, niet statisch",
+        description: "Een AI Lead Site veroudert nooit. Ons systeem monitort je markt en past copy, structuur en aanbod wekelijks aan — zonder dat jij er naar omkijkt. Geen uurtje-factuurtje, onderdeel van de flow.",
+        subtitle: "Adaptive Design"
     },
     {
-        emoji: "⚡",
-        title: "Technologische Voorsprong",
-        description: "Wij gebruiken AI om onze hoogwaardige strategieën met chirurgische precisie razendsnel tot leven te wekken. Hierdoor elimineren we de traditionele bottlenecks van ontwikkelingsbureaus.",
-        subtitle: "AI-Snelheid"
+        emoji: "🧠",
+        title: "AI Business OS",
+        description: "Je website is niet meer alleen een visitekaartje. Het is het centrale zenuwstelsel van je sales: geïntegreerd AI-native CRM, lead-pipeline en automatisering in één systeem dat meegroeit zonder extra licentiekosten.",
+        subtitle: "Volledige automatisering"
     },
     {
         emoji: "📈",
-        title: "Rendement Gedreven",
-        description: "Dit is geen statisch visitekaartje. Het is een dynamische leadmachine die is geoptimaliseerd voor Google (SEO) en maximale conversie.",
-        subtitle: "ROI"
+        title: "Commitment, geen project",
+        description: "Wij verkopen geen losse website. We bouwen een doorlopend systeem: vaste setup, vaste maandelijkse investering, voorspelbaar resultaat. De laatste website-migratie die je ooit zult doen.",
+        subtitle: "Website-as-a-Service"
     }
 ];
 
@@ -73,19 +73,19 @@ export default function WhatIsAILeadSite() {
                                 precies<span className="text-accent">?</span>
                             </h2>
                             <p className="text-xl md:text-2xl text-slate-600 max-w-xl leading-relaxed font-light italic border-l-4 border-accent/20 pl-6 mb-8">
-                                &quot;Wij bieden de perfecte symbiose tussen menselijke expertise en kunstmatige intelligentie. Een strategisch instrument om je bedrijfsgroei te accelereren, zonder de nadelen van de oude methodes.&quot;
+                                &quot;Een AI Lead Site is geen product dat je koopt — het is een intelligent systeem dat je activeert. Het groeit mee, optimaliseert zichzelf en genereert elke week relevantere leads.&quot;
                             </p>
                             <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl mb-8">
-                                <h3 className="font-display font-bold text-navy text-xl mb-3">🛑 Het Probleem met Traditionele Websites</h3>
-                                <p className="text-slate-600 mb-4 font-medium">Je hebt op dit moment twee keuzes als je een website wilt, en ze kosten je allebei geld:</p>
+                                <h3 className="font-display font-bold text-navy text-xl mb-3">🛑 Het Probleem met Statische Websites</h3>
+                                <p className="text-slate-600 mb-4 font-medium">De meeste websites zijn dood na dag één. Ze verouderen, genereren geen leads en kosten je geld zonder rendement:</p>
                                 <ul className="space-y-4">
                                     <li className="flex items-start gap-3">
                                         <span className="text-red-500 font-bold mt-1">✕</span>
-                                        <p className="text-slate-600 text-sm"><strong>Zelf knutselen met AI of templates:</strong> Kost je 40+ uur frustratie, ziet er goedkoop uit, en het ergste: het levert geen betalende klanten op. Het is een digitaal spookhuis.</p>
+                                        <p className="text-slate-600 text-sm"><strong>Statische website:</strong> Gebouwd, opgeleverd en vergeten. Na 6 maanden verouderd, na 1 jaar irrelevant. Elke aanpassing kost tijd, geld of frustratie.</p>
                                     </li>
                                     <li className="flex items-start gap-3">
                                         <span className="text-red-500 font-bold mt-1">✕</span>
-                                        <p className="text-slate-600 text-sm"><strong>Een traditioneel bureau inhuren:</strong> Je bent €5.000 tot €10.000+ kwijt, je moet 3 maanden wachten op de lancering, en je betaalt voor elke kleine wijziging €120 per uur.</p>
+                                        <p className="text-slate-600 text-sm"><strong>Losse tools stapelen:</strong> CRM hier, website daar, ads-tool ergens anders. Geen samenhang, geen automatisering, en elk systeem stuurt zijn eigen factuur.</p>
                                     </li>
                                 </ul>
                             </div>
